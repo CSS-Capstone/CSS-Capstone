@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
 // ===============================================
 // ============ Database connection ==============
@@ -117,6 +118,10 @@ app.get('/account/:id/delete', (req, res) => {
 // delete action method
 app.delete('/account/', (req, res) => {
     res.send('hello: I am the action method after user clicked delete');
+});
+
+app.get("*", (req, res) => {
+    res.send("hello: make-up link not in our domain");
 });
 
 const port = process.env.PORT || 3000;
