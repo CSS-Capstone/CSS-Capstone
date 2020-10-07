@@ -84,7 +84,7 @@ app.delete('/account/', (req, res) => {
     res.send('hello: I am the action method after user clicked delete');
 });
 
-
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
     console.log("Server is listening on port 3000");
 });
