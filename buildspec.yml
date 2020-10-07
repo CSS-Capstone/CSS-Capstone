@@ -15,7 +15,6 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Compiling the Node.js code
-      - node index.js
   post_build:
     commands:
       - echo Build completed on `date`
@@ -27,5 +26,7 @@ artifacts:
     type: zip
     files:
         - index.js
+        - public/index.html
         - package.json
         - package-lock.json
+        - node_modules/**/*
