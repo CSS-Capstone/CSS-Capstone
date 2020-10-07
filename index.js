@@ -2,6 +2,41 @@ const express = require('express');
 const path = require('path');
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ===============================================
+// ============ Database connection ==============
+// ===============================================
+const mysql = require('mysql');
+const mysqlEndpoint = `css-capstone-db.cradnn53cnyz.us-west-2.rds.amazonaws.com`;
+const mySQLConnection = mysql.createConnection({
+    host: `${mysqlEndpoint}`
+,   user: 'xxxx'
+,   password: 'xxxxx'
+,   database: 'css_capstone'
+});
+
+mySQLConnection.connect(async function(err) {
+    if (err) {
+        console.log(err);
+        throw err;
+    }
+    console.log("connected to db");
+    console.log()
+    
+    // sample insert
+    // mySQLConnection.query('INSERT INTO people (name, age, address) VALUES (?, ?, ?)', ['Larry', '41', 'California, USA'], async function(error, result) {
+    //     if (error) {
+    //         console.log(error);
+    //         throw error;
+    //     }
+    //     console.log("1 record inserted");
+    // });
+    mySQLConnection.end();
+});
+// end of database
+
+
+
 app.get('/', (req,res) => {
     res.render('index.html');
 });
