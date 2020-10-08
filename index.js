@@ -119,7 +119,7 @@ app.delete('/account/', (req, res) => {
     res.send('hello: I am the action method after user clicked delete');
 });
 
-const port = process.env.PORT || 8080;
+const port = 8080;
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
