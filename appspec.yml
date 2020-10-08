@@ -2,5 +2,6 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/CSS-Capstone
+    destination: /var/www/html/
+    # destination: /home/ubuntu/CSS-Capstone
 
