@@ -3,5 +3,5 @@ os: linux
 files:
   - source: /
     # destination: /var/www/html/
-    destination: /home/ubuntu/CSS-Capstone
+    destination: /csscap
     # destination: /
