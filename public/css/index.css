@@ -1,0 +1,127 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* ================================= */
+/* =====CSS Variables for Color===== */
+/* ********************************* */
+/* This requires later for dark mode */
+:root {
+    --nav_item_logo_color: rgb(24, 24, 24);
+    --nav_item_text_color: rgb(56, 56, 56);
+    --main_content_title: rgb(31, 31, 31);
+    --main_content_desc: rgb(92, 92, 92);
+}
+
+/* ================================= */
+/* Index Header===================== */
+/* ********************************* */
+.index_header {
+    margin-top: 1rem;
+}
+/* Index Nav */
+.index_header_nav_container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 1rem;
+    align-items: center;
+}
+
+.index_header_nav_container > h1 {
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: var(--nav_item_logo_color);
+    letter-spacing: 0.2rem;
+}
+
+.index_header_nav_container > ul {
+    display: flex;
+    justify-content: space-evenly;
+    list-style: none;
+    align-items: center;
+}
+
+.index_header_nav_container > ul > li {
+    margin-left: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+    /* border: 1px solid black;
+    border-radius: 5%; */
+    cursor: pointer;
+    letter-spacing: 0.1rem;
+    
+}
+
+.index_header_nav_container > ul > li > a {
+    text-decoration: none;
+    color: var(--nav_item_text_color);
+}
+
+/* Index Background */
+.index_header_background {
+    background: url('../images/index-head-hotel.jpg') no-repeat center center fixed;
+    min-width: 100%;
+    min-height: 90%;
+}
+
+/* ================================= */
+/* Main Contents==================== */
+/* ********************************* */
+.index_main_container {
+    margin: 3rem 5rem;
+}
+
+.index_main_service {
+    font-weight: bold;
+    text-transform: capitalize;
+    letter-spacing: 0.7rem;
+    color: var(--nav_item_text_color);
+    font-size: 2.5rem;
+}
+
+.index-divider {
+    width: 33.33%;
+    margin-bottom: 1rem;
+}
+
+.index_main_container > .index_main_contents {
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.index_main_container > .index_main_contents > .index_main_content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.index_main_container > .index_main_contents img {
+    width: 480px;
+    height: 360px;
+    border-radius: 10%;
+}
+
+.index_main_content {
+    margin-bottom: 3rem;
+}
+
+.index_main_content_text {
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.index_main_content_title {
+    letter-spacing: 0.3rem;
+    border-bottom: 2px solid var(--main_content_title);
+    margin-bottom: 1rem;
+    color: var(--main_content_title);
+}
+
+.index_main_content_desc {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    color: var(--main_content_desc);
+}
