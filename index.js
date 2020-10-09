@@ -46,7 +46,7 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    res.send('hello: about');
+    res.send('about');
 });
 
 // =============================

@@ -1,0 +1,25 @@
+/* About common */
+.about {
+    padding: 50px;
+    text-align: center;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.about__developers {
+    display: flex;
+    justify-content: space-between;
+    margin: 80px 0;
+}
+
+.deverloper__icon {
+    width: 170px;
+    height: 170px;
+    line-height: 170px;
+    font-size: 70px;
+    background-color: skyblue; 
+    margin: auto;
+    border: 1px solid var(--color-blue);
+    border-radius: 50%;
+    margin-bottom: 16px;
+}
