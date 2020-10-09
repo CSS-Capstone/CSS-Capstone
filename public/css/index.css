@@ -11,6 +11,7 @@
 :root {
     --nav_item_logo_color: rgb(24, 24, 24);
     --nav_item_text_color: rgb(56, 56, 56);
+    --header_btn_hover_color: rgb(1, 186, 239);
     --main_content_title: rgb(31, 31, 31);
     --main_content_desc: rgb(92, 92, 92);
 }
@@ -25,15 +26,24 @@
 .index_header_nav_container {
     display: flex;
     justify-content: space-between;
-    margin: 0 1rem;
+    margin: 1rem 1.5rem;
     align-items: center;
+    width: 95vw;
 }
 
 .index_header_nav_container > h1 {
     cursor: pointer;
     font-size: 2.5rem;
-    color: var(--nav_item_logo_color);
     letter-spacing: 0.2rem;
+}
+
+.index_header_nav_container > h1 > a {
+    text-decoration: none;
+    color: var(--nav_item_logo_color);
+}
+
+.index_header_nav_container > h1 > a:hover {
+    border-bottom: 2px solid var(--header_btn_hover_color);
 }
 
 .index_header_nav_container > ul {
@@ -47,11 +57,8 @@
     margin-left: 2rem;
     font-size: 2rem;
     font-weight: bold;
-    /* border: 1px solid black;
-    border-radius: 5%; */
     cursor: pointer;
     letter-spacing: 0.1rem;
-    
 }
 
 .index_header_nav_container > ul > li > a {
@@ -59,13 +66,56 @@
     color: var(--nav_item_text_color);
 }
 
-/* Index Background */
-.index_header_background {
-    background: url('../images/index-head-hotel.jpg') no-repeat center center fixed;
-    min-width: 100%;
-    min-height: 90%;
+.index_header_nav_container > ul > li > a:hover {
+    border-bottom: 1px solid var(--header_btn_hover_color);
 }
 
+.index_header_nav_container > ul > li > a:hover {
+    border-bottom: 1px solid var(--header_btn_hover_color);
+}
+
+.index_header_nav_container > ul > li > .index_header_nav_darkmode:hover {
+    border-bottom: 1px solid var(--header_btn_hover_color);
+}
+
+/* Index Background */
+.index_header_background {
+    background: url('../images/index-head-hotel.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 80vh;
+    width: 95vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.index_header_background > .index_header_btns {
+    display: flex;
+    position: absolute;
+    bottom: 20%;
+}
+
+.index_header_btn {
+    padding: 1rem;
+    margin: 0.5rem 2rem;
+    font-size: 2rem;
+    background-color: transparent;
+}
+
+.index_header_btn:hover {
+    background-color: var(--header_btn_hover_color);
+    border-radius: 50%;
+    color: var(--header_btn_hover_color);
+}
+
+.index_header_btn > a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
 /* ================================= */
 /* Main Contents==================== */
 /* ********************************* */
