@@ -35,18 +35,16 @@ app.set('view engine', 'ejs');
 // });
 // end of database
 
-
-
 app.get('/', (req,res) => {
-    res.render('index');
+    res.render('pages/index');
+});
+
+app.get('/about', (req, res) => {
+    res.render('pages/about');
 });
 
 app.get('/faq', (req, res) => {
     res.send('hello: faq')
-});
-
-app.get('/about', (req, res) => {
-    res.send('about');
 });
 
 // =============================
