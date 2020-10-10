@@ -16,14 +16,19 @@
     <!-- Custom CSS -->
     <!-- Index CSS -->
     <link rel="stylesheet" href="/css/index.css">
+    <!-- =================================================== -->
+    <!-- Partial View CSS -->
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
     <!-- Footer CSS -->
     <link rel="stylesheet" href="/css/footer.css">
+    <!-- =================================================== -->
 </head>
 <body>
     <!-- ============================================= -->
     <!-- ============ Header Start =================== -->
     <header class="index_header">
-        <nav class="index_header_nav_container">
+        <!-- <nav class="index_header_nav_container">
             <h1>
                 <a href="/">
                     <i class="fas fa-hotel"></i>&nbsp; HotelFinder
@@ -39,7 +44,8 @@
                     </div>
                 </li>
             </ul>
-        </nav>
+        </nav> -->
+        <%- include('../partials/navigation') %>
         <header class="index_header_background">
             <div class="index_header_btns">
                 <div class="index_header_searchBtn index_header_btn">
