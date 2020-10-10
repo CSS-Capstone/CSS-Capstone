@@ -118,6 +118,9 @@ app.delete('/account/', (req, res) => {
 });
 
 const port = 8080;
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
+
+// for testing
+module.exports = server;
