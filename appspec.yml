@@ -6,6 +6,6 @@ files:
     destination: /csscap
 hooks:
   ApplicationStart:
-    - location: scripts/npm-start.sh
+    - location: /csscap/scripts/npm-start.sh
       runas: root
       timeout: 60
