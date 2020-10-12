@@ -2,5 +2,5 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /var/www/html/hotelApp
-
+    # destination: /var/www/html/
+    destination: /csscap

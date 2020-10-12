@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel-Finder</title>
+    <!-- Font Awesome -->
+    <!-- <link rel="stylesheet" href="/css/font-awesome/css/fa-all-min.css">
+    <link rel="stylesheet" href="/css/font-awesome/css/fa-all.css">
+    <link rel="stylesheet" href="/css/font-awesome/js/all.js">\
+    <link href="/your-path-to-fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/css/font-awesome/css/brands.css" rel="stylesheet">
+    <link href="css/font-awesome/css/solid.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- =================================================== -->
+    <!-- Custom CSS -->
+    <!-- Index CSS -->
+    <link rel="stylesheet" href="/css/index.css">
+    <!-- =================================================== -->
+    <!-- Partial View CSS -->
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+    <!-- =================================================== -->
+</head>
+<body>
+    <!-- ============================================= -->
+    <!-- ============ Header Start =================== -->
+    <header class="index_header">
+        <!-- <nav class="index_header_nav_container">
+            <h1>
+                <a href="/">
+                    <i class="fas fa-hotel"></i>&nbsp; HotelFinder
+                </a>
+            </h1>
+            <ul>
+                <li>
+                    <a href="/about">About Us</a>
+                </li>
+                <li>
+                    <div class="index_header_nav_darkmode">
+                        <i class="far fa-moon">Dark Mode</i>
+                    </div>
+                </li>
+            </ul>
+        </nav> -->
+        <%- include('../partials/navigation') %>
+        <header class="index_header_background">
+            <div class="index_header_btns">
+                <div class="index_header_searchBtn index_header_btn">
+                    <a href="/hotel/search">Search Hotel</a>
+                </div>
+                <div class="index_header_postBtn index_header_btn">
+                    <a href="/account">Post Hotel</a>
+                </div>
+            </div>
+        </header>
+    </header>
+    <!-- ============== End of Header =================-->
+    <!-- ============================================= -->
+    <!-- ================ Main Start ==================-->
+    <main class="index_main_container">
+        <h1 class="index_main_service">Services</h1>
+        <hr class="index-divider">
+        <div class="index_main_contents">
+            <div class="index_main_content">
+                <img src="/images/index-post-hotel.jpg" alt="content1 post hotel image">
+                <div class="index_main_content_text">
+                    <h1 class="index_main_content_title">Post Your Hotel</h1>
+                    <p class="index_main_content_desc">Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad.
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                    </p>
+                </div>
+            </div>
+            <div class="index_main_content">
+                <img src="/images/index-tourist-attraction.jpg" alt="content1 post hotel image">
+                <div class="index_main_content_text">
+                    <h1 class="index_main_content_title">Tourist Attraction</h1>
+                    <p class="index_main_content_desc">Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad.
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                    </p>
+                </div>
+            </div>
+            <div class="index_main_content">
+                <img src="/images/index-public-transportation.jpg" alt="content1 post hotel image">
+                <div class="index_main_content_text">
+                    <h1 class="index_main_content_title">Tourist Attraction</h1>
+                    <p class="index_main_content_desc">Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad.
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Nesciunt quaerat sapiente nihil ut adipisci 
+                        quasi suscipit fuga obcaecati incidunt ad
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+<script src="/js/footer/footer.js"></script>
+</html>

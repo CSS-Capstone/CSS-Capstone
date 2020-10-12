@@ -36,18 +36,16 @@ app.set('view engine', 'ejs');
 // });
 // end of database
 
-
-
 app.get('/', (req,res) => {
-    res.render('index');
+    res.render('pages/index');
+});
+
+app.get('/about', (req, res) => {
+    res.render('pages/about');
 });
 
 app.get('/faq', (req, res) => {
     res.send('hello: faq')
-});
-
-app.get('/about', (req, res) => {
-    res.send('hello: about');
 });
 
 // =============================
@@ -120,6 +118,7 @@ app.delete('/account/', (req, res) => {
     res.send('hello: I am the action method after user clicked delete');
 });
 
+<<<<<<< HEAD
 app.get("*", (req, res) => {
     res.send("hello: make-up link not in our domain");
 });
@@ -128,3 +127,12 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log("Server is listening on port 3000");
 });
+=======
+const port = 8080;
+const server = app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`);
+});
+
+// for testing
+module.exports = server;
+>>>>>>> fac340bbc9368768385ffb4a505b3d037c757139
