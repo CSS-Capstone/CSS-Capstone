@@ -3,8 +3,3 @@ os: linux
 files:
   - source: /
     destination: /csscap
-hooks:
-  BeforeAllowTraffic:
-    - location: scripts/npm-start.sh
-      runas: root
-      timeout: 60
