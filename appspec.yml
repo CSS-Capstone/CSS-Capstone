@@ -4,3 +4,8 @@ files:
   - source: /
     # destination: /var/www/html/
     destination: /csscap
+hooks:
+  ApplicationStart:
+    - location: scripts/npm-start.sh
+      runas: root
+      timeout: 60
