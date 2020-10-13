@@ -16,6 +16,15 @@
     --main_content_desc: rgb(92, 92, 92);
 }
 
+html[data-theme="dark"] {
+    background-color: #333333;
+    color: rgb(231, 231, 231);
+    --nav_item_logo_color: rgb(243, 243, 243);
+    --nav_item_text_color: rgb(218, 218, 218);
+    --main_content_title: rgb(243, 243, 243);
+    --main_content_desc: rgb(202, 202, 202);
+}
+
 /* ================================= */
 /* Index Header===================== */
 /* ********************************* */
