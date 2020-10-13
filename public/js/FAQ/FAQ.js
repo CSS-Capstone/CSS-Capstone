@@ -32,3 +32,21 @@ for (i = 0; i < questions.length; i++)
         }
     });
 }
+
+// chatbot DOM Element
+const chatbot = document.querySelector('.chatbot_icon');
+// chatbot EventListener
+chatbot.addEventListener('click', this.displayChatBot);
+// chatbot util function
+function displayChatBot() {
+    const chatbotContainer = document.querySelector('.catbot_container');
+    const chatbot_icon = document.querySelector('.chatbot_icon');
+    chatbotContainer.classList.toggle('catbot_hidden');
+    if (chatbotContainer.classList.contains('catbot_hidden')) {
+        chatbot_icon.classList.remove('fa-comment-dots');
+        chatbot_icon.classList.add('fa-times-circle');
+    } else {
+        chatbot_icon.classList.remove('fa-times-circle');
+        chatbot_icon.classList.add('fa-comment-dots');
+    }
+}

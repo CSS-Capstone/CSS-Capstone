@@ -1,6 +1,12 @@
 /* =================== */
 /* root of the FAQ css */
 /* =================== */
+:root {
+    --chatbot_color: rgb(1, 186, 239);
+    --chatbot_hover_text: rgb(228, 228, 228);
+    --chatbot_hover_background: rgb(24, 24, 24);
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -73,3 +79,52 @@ body {
 .fa {
     font-size: 2rem;
 }
+
+/* ================================== */
+/* ChatBot ========================== */
+/* ================================== */
+.faq_chatbox_section {
+    background-color: red;
+    position: relative;
+}
+
+.catbot_container {
+    display: none;
+    position: absolute;
+    top: -2rem;
+    right: 3rem;
+}
+
+.catbot_hidden {
+    display: block;
+}
+
+.chatbot_icon {
+    display: inline-block;
+    color: var(--chatbot_color);
+    font-size: 2.0rem;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.chatbot_tool_tip {
+    visibility: hidden;
+    width: 120px;
+    background-color: var(--chatbot_hover_background);
+    color: var(--chatbot_hover_text);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    top: 2rem;
+    right: -3rem;
+}
+
+.chatbot_icon:hover + .chatbot_tool_tip {
+    visibility: visible;
+}
+/* ================================== */
+/* END ChatBot ====================== */
+/* ================================== */
