@@ -125,6 +125,7 @@ app.get("*", (req, res) => {
 const port = 8080;
 const server = app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
+    // console.log(process.title);
 });
 
 // for testing
