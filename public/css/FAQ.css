@@ -1,0 +1,75 @@
+/* =================== */
+/* root of the FAQ css */
+/* =================== */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: white;
+}
+
+/* =================== */
+/* header */
+/* =================== */
+
+/* div that contains the navigation bar */
+.header_root {
+    margin-top: 0.5rem;
+}
+
+/* =================== */
+/* body */
+/* =================== */
+
+/* main section of the FAQ page */
+.main_body_faq {
+    margin: 3rem 5rem;
+}
+
+/* contain all questions */
+.main_body_faq > .main_body_all_questions {
+    display:inline-block;
+    width: 100%;
+}
+
+/* container for each question */
+.main_body_faq > .main_body_all_questions > .main_body_question_container {
+    margin: 2rem 0;
+}
+
+.question_clicker {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.active, .question_clicker:hover {
+    background-color: #555;
+}
+
+.answer_container {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+    /* transform: translateY(0em);
+    z-index: 0;
+    transition: all 0.3s ease-in-out 3s, visibility 0s linear 0.3s, z-index 0s linear 0.01s; */
+}
+
+/* arrow on the question */
+.fa {
+    font-size: 2rem;
+}

@@ -45,7 +45,7 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/faq', (req, res) => {
-    res.send('hello: faq')
+    res.render('pages/FAQ')
 });
 
 // =============================
