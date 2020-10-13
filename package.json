@@ -6,7 +6,8 @@
   "dependencies": {
     "ejs": "^3.1.5",
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "chai-http": "^4.3.0",
@@ -15,8 +16,8 @@
   },
   "scripts": {
     "test": "mocha || true",
-    "start": "node index.js"
-    ,"stop": "pkill --signal SIGINT node"
+    "start": "node index.js",
+    "stop": "pkill --signal SIGINT node"
   },
   "repository": {
     "type": "git",
