@@ -40,6 +40,10 @@ app.get('/', (req,res) => {
     res.render('pages/index');
 });
 
+app.get('/test', (req,res) => {
+    res.render('pages/index-test');
+});
+
 app.get('/about', (req, res) => {
     res.render('pages/about');
 });
