@@ -15,8 +15,8 @@
   },
   "scripts": {
     "test": "mocha || true",
-    "start": "node index.js"
-    ,"stop": "pkill --signal SIGINT node"
+    "start": "node index.js",
+    "stop": "pkill --signal SIGINT node"
   },
   "repository": {
     "type": "git",
