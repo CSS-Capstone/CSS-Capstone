@@ -1,20 +1,35 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const mysql = require("mysql");
+const dotenv = require('dotenv');
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
-// const mysql = require('mysql');
-// const mysqlEndpoint = `css-capstone-db.cradnn53cnyz.us-west-2.rds.amazonaws.com`;
-// const mySQLConnection = mysql.createConnection({
-//     host: `${mysqlEndpoint}`
-// ,   user: 'xxxx'
-// ,   password: 'xxxxx'
-// ,   database: 'css_capstone'
+
+dotenv.config({ path: './.env' });
+
+const db = mysql.createConnection({
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER, 
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
+});
+
+// db.connect((err) => {
+//     if (err) {
+//         console.error('Database connection failed!! ' + err.stack);
+//         return;
+//     }
+
+//     console.log('Connected to database!!');
 // });
+
+// db.end();
 
 // mySQLConnection.connect(async function(err) {
 //     if (err) {
