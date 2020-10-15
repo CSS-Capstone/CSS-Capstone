@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Sign In Page</title>
+        <!-- Imported CSS -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+        
+        <!-- Original CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/register.css">
+    </head>
+    <body>
+        <div class = "register_box">
+            <img src="/images/register_icon.jpg" class = "avatar">
+            <h1 class = "box_title">Register</h1>
+            <form action="">
+                <p>Email</p>
+                <input type="text" name="" placeholder="Enter Email">
+                <p>Password</p>
+                <input type="password" name="" placeholder="Enter Password">
+                <p>Confirm Password</p>
+                <input type="password" name="" placeholder="Confirm Password">
+                <!-- Radio button, figure out the appropiate css -->
+                <p>Account Type</p>
+                <div class = "radio_button">
+                    <input type="radio" name="acc_type" id="finder" value="finder">
+                    <label for="finder">Finder</label>
+                    <input type="radio" name="acc_type" id="poster" value="poster">
+                    <label for="finder">Poster</label>
+                </div>
+                <!-- ============ -->
+                <input type="submit" name="" value="Make Account">
+                <span class = "log_in_link">Already have an account? </span><a href="/login">Log In</a>
+            </form>
+
+        </div>
+    </body>
+</html>

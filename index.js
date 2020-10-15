@@ -91,11 +91,11 @@ app.get('/hotel/search/:id/book', (req, res) => {
 // Register && Login============
 // =============================
 app.get('/login', (req, res) => {
-    res.send('hello: Login page');
+    res.render('pages/sign_in');
 });
 
 app.get('/register', (req, res) => {
-    res.send('hello: Register page');
+    res.render('pages/register');
 });
 
 
