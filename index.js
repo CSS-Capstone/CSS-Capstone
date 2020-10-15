@@ -115,7 +115,7 @@ app.get('/hotel/searched/:cityname', async (req, res) => {
             };
             return filterObj;
         });
-        console.log(mapHotelData);
+        // console.log(mapHotelData);
         //console.log(mapHotelData);
         const theHotelData = {
             hoteldata: hoteldata

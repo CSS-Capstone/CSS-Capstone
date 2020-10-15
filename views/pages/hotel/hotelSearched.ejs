@@ -85,13 +85,13 @@
                     map = new google.maps.Map(document.getElementById("map"), mapOption);
                     // coordinate create 
                     const hotelCoord = <%- JSON.stringify(theHotelData.mapHotelData) %>;
-                    console.log(hotelCoord);
+                    // console.log(hotelCoord);
                     hotelCoord.forEach(eachCoordinate => {
                         //console.log(eachCoordinate.location);
                         const hotelName = eachCoordinate.name;
                         const coordLat = Number(eachCoordinate.location.lat);
                         const coordLon = Number(eachCoordinate.location.lon);
-                        console.log(hotelName)
+                        // console.log(hotelName)
                         const coord = {
                             lat: coordLat
                         ,   lng: coordLon
