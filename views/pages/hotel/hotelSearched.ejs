@@ -44,10 +44,11 @@
                             <small class="hotel_desc_fullname"><%=hotel.fullName%></small>
                             <div class="hotel_desc_header">
                                 <h3><%=hotel.label%></h3>
-                                <i class="far fa-heart heart">
-                                    <a href="/login"></a>
-                                    <span class="heart_hover_text">Save it to your list. (Require Login)</span>
-                                </i>
+                                <a href="/login">
+                                    <i class="far fa-heart heart">
+                                        <span class="heart_hover_text">Save it to your list. (Require Login)</span>
+                                    </i>
+                                </a>
                             </div>
                             <div class="hotel_desc_detail_btn">
                                 <a class="hotel_desc_btn" href="/hotel/searched/detail/<%=hotel.id%>">View Detail</a>
