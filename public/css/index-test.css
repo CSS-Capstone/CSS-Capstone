@@ -1,70 +1,4 @@
-/* Global */
-:root {
-    /* Color */
-    --color-white: #ffffff;
-    --color-dark-grey: #4d4d4d;
-    --color-grey: #616161;
-    --color-light-grey: #7c7979;
-    --color-shadow: #888888;
-    --color-blue: #73aace;
-    --color-black: #000000;
-
-    /* Font size */
-    --font-large: 48px;
-    --font-medium: 28px;
-    --font-regular: 18px;
-    --font-small: 16px;
-    --font-micro: 14px;
-
-    /* Font weight */
-    --weight-bold: 700;
-    --weight-semi-bold: 500;
-    --weight-regular: 400;
-    --weight-light: 300;
-
-    /* Size */
-    --size-border-radius: 4px;
-}
-
-/* Universal tags */
-* {
-    box-sizing: border-box;
-}
-
-/* Typography */
-h1 {
-    font-size: var(--font-large);
-    font-weight: var(--weight-bold);
-    color: var(--color-black);
-    margin: 16px 0px;
-}
-
-h2 {
-    font-size: var(--font-medium);
-    font-weight: var(--weight-semi-bold);
-    color: var(--color-black);
-    margin: 8px 0px;
-}
-
-h3 {
-    font-size: var(--font-regular);
-    font-weight: var(--weight-regular);
-    color: var(--color-black);
-    margin: 8px 0px;
-}
-
-p {
-    font-size: var(--font-regular);
-    font-weight: var(--weight-regular);
-    color: var(--color-black);
-    margin: 8px 0px;
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    cursor: default;
-}
+@import "global.css";
 
 a {
     text-decoration: none;
@@ -78,6 +12,14 @@ ul {
 
 li {
     display: inline;
+}
+
+input {
+    margin-top: 5px;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+    border-bottom-style: hidden;
 }
 
 .index__bg {
@@ -138,15 +80,31 @@ li {
 }
 
 #wrapper>div:first-child {
-    width: 55%;
+    width: 70%;
 }
 
 .searchbar {
     position: absolute;
+    display: table;
+    align-content: center;
     top: 80px;
-    left: 22.5%;
-    height: 40px;
-    border-radius: 25px;
+    left: 15%;
+    height: 55px;
+    border-radius: 32px;
     box-shadow: 1px 2px 1.5px 2px var(--color-shadow);
     background-color: var(--color-white);
+}
+
+.searchbar__item {
+    padding: 8px 4px 4px 4px;
+    display: table-cell;
+    border: 1px solid transparent;
+}
+
+.searchbar__item#location {
+    padding-left: 28px;
+}
+
+#location__text {
+    outline: none;
 }

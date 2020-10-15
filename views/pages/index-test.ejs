@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <!-- Index CSS -->
     <link rel="stylesheet" href="/css/index-test.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer-test.css">
+    <!-- Datepicker -->
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
 </head>
 <body>
     <div class="index__bg">
@@ -36,9 +41,48 @@
         </nav>
         <section id="wrapper">
             <div class="searchbar">
-                searchbar
+                <div class="searchbar__item" id="location">
+                    <label for="searchbar__location">
+                        Location
+                    </label><br>
+                    <input 
+                        id="location__text" type="text" 
+                        placeholder="Where are you going?">
+                    </input>
+                </div>
+                <div class="searchbar__item" id="checkin">
+                    <label for="searchbar__checkin">
+                        Check in
+                    </label><br>
+                    <input id="checkin__date"
+                        type="text" placeholder="Add dates"/>
+                    <script>
+                        var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                        checkinDate.appendTo('#checkin__date');
+                    </script>
+                </div>
+                <div class="searchbar__item" id="checkout">
+                    <label for="searchbar__checkout">
+                        Check out
+                    </label><br>
+                    <input id="checkout__date"
+                        type="text" placeholder="Add dates"/>
+                    <script>
+                        var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                        checkinDate.appendTo('#checkout__date');
+                    </script>
+                </div>
+                <div class="searchbar__item" id="guests">
+                    Guests
+                </div>
+                <div class="searchbar__item" id="searchbtn">
+                    <button>
+                        Btn
+                    </button>
+                </div>
             </div>
         </section>
     </div>
+    <%- include('../partials/footer-test') %>
 </body>
 </html>
