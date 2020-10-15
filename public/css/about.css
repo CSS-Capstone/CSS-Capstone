@@ -7,6 +7,7 @@
     --color-light-grey: #7c7979;
     --color-blue: #73aace;
     --color-black: #000000;
+    --color-strongblue: #1f90db;
 
     /* Font size */
     --font-large: 48px;
@@ -80,7 +81,8 @@ a {
 .about__developers {
     display: flex;
     justify-content: space-between;
-    margin: 80px 0;
+    margin-top: 80px;
+    margin-bottom: 0rem;
 }
 
 .developer__icon {
@@ -106,4 +108,125 @@ a {
 
 .developer__description {
     font-size: var(--font-small);
+}
+
+/* ======================== */
+/* ======= Work Flow ====== */
+/* ======================== */
+.about__workFlow_title {
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.about__workFlow_container {
+    position: relative;
+    margin: 0;
+    min-height: 90vh;
+    height: 1100px;
+}
+.about__workFlow {
+    margin: 0;
+}
+
+.about__workFlow:before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    bottom: 0px;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    width: 4px;
+    background-color: var(--color-blue);
+}
+.about__entitries {
+    width: calc(100% - 80px);
+    max-width: 1200px;
+    margin: auto;
+    position: relative;
+    left: -5px;
+}
+
+.about__entitries .entry {
+    width: calc(50% - 80px);
+    float: left;
+    padding: 10px;
+    clear: both;
+    text-align: right;
+    border: 1px solid var(--color-grey);
+    border-radius: 2rem;
+}
+
+.about__entitries .entry:not(:first-child) {
+    margin-top: -1.0rem;
+}
+
+.about__entitries .entry .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    color: var(--color-blue);
+    text-decoration: underline;
+}
+
+/* Draw the circle */
+.about__entitries .entry .title:before {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 10px solid var(--color-white);
+    background-color: var(--color-strongblue);
+    border-radius: 100%;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    right: -111px;
+    z-index: 1000;
+}
+
+.about__entitries .entry .body {
+    line-height: 1.4em;
+    color: var(--color-dark-grey);
+    font-size: 0.8rem;
+}
+
+.about__entitries .entry .body ul li {
+    list-style: none;
+}
+
+.small_trello_link {
+    font-size: 1rem;
+}
+
+.trello_link {
+    color: var(--color-strongblue);
+    font-size: 1.2rem;
+}
+
+.trello_link:hover {
+    color: var(--color-strongblue);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.about__entitries .entry:nth-child(2n) {
+    text-align: left;
+    float: right;
+}
+
+.about__entitries .entry:nth-child(2n) .title:before {
+    left: -100px;
+}
+
+.about__entitries .entry .title.big:before {
+    width: 24px;
+    height: 24px;
+    -webkit-transform: translate(8px, -50%);
+            transform: translate(8px, -50%);
+}
+
+.about__entitries .entry:nth-child(2n) .title.big:before {
+    -webkit-transform: translate(-8px, -50%);
+            transform: translate(-8px, -50%);
 }
