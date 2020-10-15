@@ -1,17 +1,41 @@
 body {
     margin: 0;
     padding: 0;
-    background: url(../images/index-post-hotel.jpg);
+    /* background-image: url(../images/index-post-hotel.jpg);
     background-size: initial;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center; */
     font-family: sans-serif; /* can change the font later if decided */
 }
 
+/* body:after {
+    content: "";
+    position: fixed;
+    top: 0; bottom: 0; left: 0; right: 0; 
+    background: hsla(180,0%,50%,0.5);
+    pointer-events: none;
+  } */
+
+#login-background {
+    background-image: url(../images/index-post-hotel.jpg);
+    background-size: initial;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    z-index: -1000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    filter: brightness(0.2);
+}
+
 .login_box {
+    border-radius : 10px;
+    box-shadow: 0 0 50px #000;
     width: 500px;
     height: 420px;
-    background: #000;
+    background: #3d3d3d;
     color: #fff;
     top: 50%;
     left: 50%;
