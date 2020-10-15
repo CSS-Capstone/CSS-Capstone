@@ -3,10 +3,12 @@ const path = require('path');
 const app = express();
 const mysql = require("mysql");
 const dotenv = require('dotenv');
+const fetch = require('node-fetch');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
+app.use(express.json());
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
@@ -79,9 +81,63 @@ app.get('/hotel/search', (req, res) => {
     res.send('hello: main Search');
 });
 
-app.get('/hotel/search/:id', (req, res) => {
+
+// ====================================
+// Park ===============================
+// ====================================
+app.get('/hotel/searched/:cityname', async (req, res) => {
+    // API KEY will be hide to env
+    const HOTEL_API_KEY = `297461`;
+    const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
+    // Currently limited to 3
+    const HOTEL_API_URL = `http://engine.hotellook.com/api/v2/lookup.json?query=${req.params.cityname}&lang=en&lookFor=both&limit=5&token=${HOTEL_API_KEY}`
+    try {
+        const response = await fetch(HOTEL_API_URL);
+        const hoteldata = await response.json();
+        if (hoteldata.status !== 'ok') {
+            throw 'API Satus is bad';
+        }
+        // ========== Filter Data ==================
+        // 1. get country name of the location
+        const fullCountryName = hoteldata.results.locations[0].countryName;
+        //console.log(`From Express server: ${fullCountryName}`);
+        // 2. filter hotel data based on the country name 
+        // so all hotel are in united states
+        const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
+        const mapHotelData = filterHotelData.map(filteredHotel => {
+            const filterObj = {
+                id: filteredHotel.id
+            ,   name: filteredHotel.label
+            ,   location: {
+                    lat: filteredHotel.location.lat
+                ,   lon: filteredHotel.location.lon
+                }
+            };
+            return filterObj;
+        });
+        // console.log(mapHotelData);
+        //console.log(mapHotelData);
+        const theHotelData = {
+            hoteldata: hoteldata
+        ,   filterHotelData: filterHotelData
+        ,   mapHotelData: mapHotelData
+        }
+        
+        res.render('pages/hotel/hotelSearched', {theHotelData: theHotelData, theKey: theKey});
+    } catch(err) {
+        console.log(err);
+        res.send(err);
+    }
+    
+})
+
+app.get('/hotel/searched/detail/:id', (req, res) => {
     res.send('hello: Search Hotel Detail');
 });
+// ====================================
+// End of Park ========================
+// ====================================
+
 
 app.get('/hotel/search/:id/book', (req, res) => {
     res.send('hello: Searched Hotel Booking');

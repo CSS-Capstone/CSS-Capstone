@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searched Hotel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- =================================================== -->
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hotelSearched.css">
+    <!-- =================================================== -->
+    <!-- Partial View CSS -->
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+    <!-- Navigation Parital View -->
+    <%- include('../../partials/navigation') %>
+    <!-- End of Navigation Partial View -->
+    <main class="hotel_search_container">
+        <section class="hotel_searched_info">
+            <small class="hotel_searched_count"><%= theHotelData.filterHotelData.length %>+ hotels had been found</small>
+            <h1 class="hotel_searched_location">City: <%= theHotelData.hoteldata.results.locations[0].fullName %></h1>
+            <!-- <hr class="each_hotel_divider"> -->
+            <br>
+            <!-- Filter -->
+            <!-- Todo: Create Filter -->
+            <!-- ============================== -->
+            <!-- ============================== -->
+            <!-- ============================== -->
+            <!-- End of Filter -->
+            <!-- Lists of Hotels -->
+            <div class="hotel_searched_hotel_container">               
+                <% theHotelData.filterHotelData.forEach(hotel => { %>
+                    <div class="hotel_serach_each_hotel">
+                        <div class="hotel_images" data-id-set="<%=hotel.id%>">
+                            <i class="fas fa-chevron-circle-left leftArrow imgController"></i>
+                            <img src=<%=`https://photo.hotellook.com/image_v2/limit/h${hotel.id}_${0}/280/180.jpg`%> alt="Hotel Image">
+                            <i class="fas fa-chevron-circle-right rightArrow imgController"></i>
+                        </div>
+                        <div class="hotel_desc">
+                            <small class="hotel_desc_fullname"><%=hotel.fullName%></small>
+                            <div class="hotel_desc_header">
+                                <h3><%=hotel.label%></h3>
+                                <a href="/login">
+                                    <i class="far fa-heart heart">
+                                        <span class="heart_hover_text">Save it to your list. (Require Login)</span>
+                                    </i>
+                                </a>
+                            </div>
+                            <div class="hotel_desc_detail_btn">
+                                <a class="hotel_desc_btn" href="/hotel/searched/detail/<%=hotel.id%>">View Detail</a>
+                            </div>
+                            <div class="hotel_desc_footer">
+                                <i class="fas fa-star hotel_score_icon">
+                                    <span class="hotel_score_text">Rate: <%=(hotel._score / 100000).toFixed(3)%></span>
+                                </i>
+                                <h4 class="hotel_desc_price" data-score="<%=(hotel._score / 100000).toFixed(3)%>"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="each_hotel_divider">
+                <% }) %>
+            </div>
+        </section>
+        <section class="hotel_searched_map">
+           
+                <div id="map">
+                
+            
+                </div>
+            <script>
+                function initMap() {  
+                    let map;
+                    let longitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lon%>");
+                    let latitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lat%>");
+                    let mapOption = {
+                        zoom: 11,
+                        center: {
+                            lat: latitude
+                        ,   lng: longitude
+                        }
+                    };
+                    map = new google.maps.Map(document.getElementById("map"), mapOption);
+                    // coordinate create 
+                    const hotelCoord = <%- JSON.stringify(theHotelData.mapHotelData) %>;
+                    // console.log(hotelCoord);
+                    hotelCoord.forEach(eachCoordinate => {
+                        //console.log(eachCoordinate.location);
+                        const hotelName = eachCoordinate.name;
+                        const coordLat = Number(eachCoordinate.location.lat);
+                        const coordLon = Number(eachCoordinate.location.lon);
+                        // console.log(hotelName)
+                        const coord = {
+                            lat: coordLat
+                        ,   lng: coordLon
+                        };
+                        const props = {
+                            coord: coord,
+                            content: hotelName
+                        }
+                        addMarkerToMap(props);
+                    });
+
+                    function addMarkerToMap(props) {
+                        let marker = new google.maps.Marker({
+                            position: props.coord
+                        ,   map: map
+                        });
+
+                        if (props.content) {
+                            let infoWindow = new google.maps.InfoWindow({
+                                content: props.content
+                            });
+                            marker.addListener('mouseover', function() {
+                                infoWindow.open(map, marker);
+                            });
+                            marker.addListener('mouseout', function() {
+                                infoWindow.close();
+                            });
+                        }
+                    }
+                    
+                }
+            </script>
+            <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=<%=theKey%>&callback=initMap&libraries=&v=weekly">
+            </script>
+        </section>
+    </main>
+    <script src="/js/HotelSearch/hotelSearchPrice.js"></script>
+    <script src="/js/HotelSearch/hotelSearchImage.js"></script>
+    
+</body>
+</html>

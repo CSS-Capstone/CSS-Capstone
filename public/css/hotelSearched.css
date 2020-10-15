@@ -1,0 +1,209 @@
+:root {
+    --arrow_color: rgb(29, 29, 29);
+    --arrow_background_color: rgb(221, 221, 221);
+    --heart_background: rgb(223, 30, 30);
+    --heart_hover_text_color: rgb(226, 226, 226);
+    --heart_hover_text_background_color: rgb(31, 31, 31);
+    --border_bottom:  rgb(1, 186, 239);
+    --button_color: rgb(1, 186, 239);
+    --button_font_color: rgb(226, 226, 226);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+/* ================================ */
+/* Searched Hotel Container ======= */
+/* ================================ */
+.each_hotel_divider {
+    margin: 0.5rem 1rem;
+}
+
+.hotel_search_container {
+    margin: 2rem 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hotel_searched_info {
+    flex: 1;
+}
+
+.hotel_serach_each_hotel {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.hotel_images {
+    position: relative;
+}
+/* ========================== */
+/* Hotel Images ==============*/
+.hotel_images > img {
+    border-radius: 10%;
+}
+
+.leftArrow {
+    position: absolute;
+    top: 45%;
+    left: 5%;
+    font-size: 1.5rem;
+    color: var(--arrow_background_color);
+    background-color: var(--arrow_color);
+    border-radius: 55%;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+/* .hotel_images > img:hover + .leftArrow {
+    opacity: 1;
+} */
+
+.rightArrow {
+    position: absolute;
+    top: 45%;
+    right: 5%;
+    font-size: 1.5rem;
+    color: var(--arrow_background_color);
+    background-color: var(--arrow_color);
+    border-radius: 55%;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+.hotel_images:hover .leftArrow,
+.hotel_images:hover .rightArrow
+{
+    visibility: visible;
+}
+
+/* End of Hotel Images =======*/
+
+/* ========================== */
+/* Hotel Desc =============== */
+/* Header =================== */
+.hotel_desc {
+    flex: 1;
+    padding: 1rem;
+    position: relative;
+}
+
+.hotel_desc_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.heart {
+    font-size: 1rem;
+}
+
+.heart:hover {
+    color: var(--heart_background);
+    font-weight: bold;
+    cursor: pointer;    
+}
+
+.heart_hover_text {
+    position: absolute;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 2px;
+    top: 1.5rem;
+    right: -1rem;
+    background-color: var(--heart_hover_text_background_color);
+    color: var(--heart_hover_text_color);
+    width: 120px;
+    visibility: hidden;
+}
+
+.heart:hover .heart_hover_text {
+    visibility: visible;
+}
+
+/* ========================== */
+/* Hotel Desc =============== */
+/* View Detail Btn ========== */
+.hotel_desc_detail_btn {
+    margin-top: 1rem;
+}
+
+.hotel_desc_btn {
+    background-color: yellow;
+    text-decoration: none;
+    background-color: var(--button_color);
+    color: var(--button_font_color);
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10%;
+    transition: 0.3s;
+    opacity: 0.7;
+}
+
+.hotel_desc_btn:hover {
+    opacity: 1;
+}
+
+/* ========================== */
+/* Hotel Desc =============== */
+/* Footer =================== */
+.hotel_desc_footer {
+    position: absolute;
+    bottom: 1rem;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hotel_score_icon {
+    color: var(--heart_background);
+    
+}
+
+.hotel_score_text {
+    color: var(--arrow_color);
+    font-weight: 100;
+    font-size: 1rem;
+}
+
+.hotel_desc_price {
+    color: var(--arrow_color);
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--border_bottom);
+}
+/* ========================== */
+/* Right Side Map ============*/
+/* ========================== */
+.hotel_searched_map {
+    flex: 1;
+    /* background-color: red; */
+    position: relative;
+    /* height: 1000px; */
+}
+.map_container {
+    /* position: fixed;
+    height: 800px;
+    width: 100%;
+    align-items: center;
+    margin: auto; */
+}
+#map {
+    position: absolute;
+    margin: 0 auto;
+    width: 48vw;
+    height: 100%;
+    align-items: center;
+    /* position: sticky; */
+    /* padding: 0rem 1rem; */
+    
+}
