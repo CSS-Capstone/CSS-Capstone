@@ -2,11 +2,13 @@
 
 a {
     text-decoration: none;
-    color: var(--color-footer-link);
 }
 
 .footer {
     background-color: var(--color-background-grey);
+    position: absolute;
+    bottom: 0%;
+    width: 100%;
     padding: 0rem 5rem;
 }
 
