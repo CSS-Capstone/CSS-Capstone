@@ -82,25 +82,29 @@ input {
 }
 
 #wrapper>div:first-child {
-    width: 70%;
+    max-width: 80%;
+    left: 20vw;
 }
 
 .searchbar {
     position: absolute;
-    display: table;
+    display: inline-flex;
+    justify-content: space-between;
     align-content: center;
     top: 80px;
-    left: 15%;
-    height: 55px;
+    width: 60%;
+    height: 65px;
     border-radius: 32px;
     box-shadow: 1px 2px 1.5px 2px var(--color-shadow);
     background-color: var(--color-white);
 }
 
 .searchbar__item {
-    padding: 8px 4px 4px 4px;
+    position: relative;
+    padding: 0px 4px;
+    width: 20%;
     display: table-cell;
-    border: 1px solid transparent;
+    border: 0.6rem solid transparent;
 }
 
 .searchbar__item#location {
@@ -110,3 +114,4 @@ input {
 #location__searchterm {
     outline: none;
 }
+
