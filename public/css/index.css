@@ -80,7 +80,7 @@ input {
 }
 
 .submitBtn {
-    border: 1px solid transparent;
+    border: 3px solid transparent;
     padding: 0.5rem;
     border-radius: 50%;
     background-color: transparent;
@@ -88,11 +88,12 @@ input {
 }
 
 .submitBtn:hover {
-    border: 1px solid black;
+    border: 3px solid var(--color-strong-blue);
 }
 
 .submitBtn > i {
     font-size: 2rem;
+    color: var(--color-strong-blue);
 }
 
 .searchbar__item#location {
@@ -103,68 +104,42 @@ input {
     outline: none;
 }
 
-/* Float four columns side by side */
+.cards {
+    height: 40vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; 
+    margin: 5rem 2rem;
+}
+
 .cards__col {
-    float: left;
-    width: 25%;
-    height: 100px;
-    padding: 0 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 10px;
+    margin: 0rem 0.5rem;
+    background-color: white;
+
 }
 
-.card#1 {
-    background: url('../images/index-post-hotel.jpg');
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    /* Needed to position the navbar */
-    position: relative;
+.card img {
+    width: 100%;
+    height: 280px;
+    margin: 0 auto;
+    border-radius: 10%;
+    cursor: pointer;
+    transition: all ease 0.3s;
 }
 
-.card#2 {
-    background: url('../images/index-public-transportation.jpg');
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    /* Needed to position the navbar */
-    position: relative;
+.card img:hover {
+    transform: scale(0.9);
 }
 
-.card#3 {
-    background: url('../images/index-tourist-attraction.jpg');
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
 
-    /* Needed to position the navbar */
-    position: relative;
+.card_title {
+    color: var(--color-strong-blue);
+    font-weight: var(--weight-regular);
 }
 
-.cards__col#4 {
-    background: url('../images/index-head-hotel.jpg');
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
 
-    /* Needed to position the navbar */
-    position: relative;
-}
-
-/* Remove extra left and right margins, due to padding */
-.cards {margin: 0 -5px;}
-
-/* Clear floats after the columns */
-.cards:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-  
 /* Responsive columns */
 @media screen and (max-width: 600px) {
     .cards__col {
@@ -175,10 +150,3 @@ input {
 }
 
 /* Style the counter cards */
-.card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    padding: 16px;
-    text-align: center;
-    /* background-color: #f1f1f1; */
-    border-radius: 10px;
-}
