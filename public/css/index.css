@@ -23,10 +23,10 @@ input {
 }
 
 .index__bg {
-    /* background: url('../images/index-head-hotel.jpg'); */
+    background: url('../images/index-head-hotel.jpg');
     top: 0%;
     width: 100%;
-    height: 60vh;
+    height: 85vh;
 
     /* Center and scale the image nicely */
     background-position: center;
@@ -34,19 +34,19 @@ input {
     background-size: cover;
 
     /* Needed to position the navbar */
-    position: relative;
+    /* position: relative; */
+    z-index: -1;
 }
-
-/* About common */
 #navbar {
-    position: absolute;
+    /* position: absolute; */
     display: flex;
     justify-content: space-between;
     background-color: transparent;
     align-items: center;
     color: var(--color-white);
     padding: 16px;
-    width: 100%;
+    width: 90%;
+    margin: 0 auto;
 }
 
 .navbar__logo {
@@ -63,50 +63,36 @@ input {
     justify-content: flex-end;
 }
 
-.navbar__menu__item {
-    padding: 8px 12px;
-    margin: 0 4px;
-    cursor: pointer;
-    border-radius: var(--size-border-radius);
-    font-weight: var(--weight-regular);
-    font-size: var(--font-regular);
-    border: 1px solid transparent;
-}
-
-.navbar__menu__item:hover {
-    border: 1px solid var(--color-white);
-}
-
 #wrapper {
-    width: 100%;
-    background-color: blue;
-}
-;
-#wrapper>div:first-child {
-    max-width: 100%;
-    background-color: red;
-    left: 20vw;
+    width: 70%;
+    margin: 0 auto;
 }
 
-.searchbar {
-    position: absolute;
-    display: inline-flex;
+.searchbar_container {
+    display: flex;
     justify-content: space-between;
-    align-content: center;
-    top: 80px;
-    width: 60%;
-    height: 65px;
+    flex-wrap: wrap;
+    align-items: center;
     border-radius: 32px;
     box-shadow: 1px 2px 1.5px 2px var(--color-shadow);
     background-color: var(--color-white);
+    padding: 0.5rem 0.7rem;
 }
 
-.searchbar__item {
-    position: relative;
-    padding: 0px 4px;
-    width: 20%;
-    display: table-cell;
-    border: 0.6rem solid transparent;
+.submitBtn {
+    border: 1px solid transparent;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.submitBtn:hover {
+    border: 1px solid black;
+}
+
+.submitBtn > i {
+    font-size: 2rem;
 }
 
 .searchbar__item#location {

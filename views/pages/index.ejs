@@ -43,49 +43,52 @@
         <section id="wrapper">
             <div class="searchbar">
                 <form action="/test" method="post">
-                    <div class="searchbar__item" id="location">
-                        <label for="searchbar__location">
-                            Location
-                        </label><br>
-                        <input 
-                            id="location__searchterm" type="text"
-                            name="location" 
-                            placeholder="Where are you going?"/>
+                    <div class="searchbar_container">
+                        <div class="searchbar__item" id="location">
+                            <label for="searchbar__location">
+                                Location
+                            </label><br>
+                            <input 
+                                id="location__searchterm" type="text"
+                                name="location" 
+                                placeholder="Where are you going?"/>
+                        </div>
+                        <div class="searchbar__item" id="checkin">
+                            <label for="searchbar__checkin">
+                                Check in
+                            </label><br>
+                            <input 
+                                id="checkin__date" 
+                                name="chkin"
+                                type="text" placeholder="Add dates"/>
+                            <script>
+                                var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                                checkinDate.appendTo('#checkin__date');
+                            </script>
+                        </div>
+                        <div class="searchbar__item" id="checkout">
+                            <label for="searchbar__checkout">
+                                Check out
+                            </label><br>
+                            <input 
+                                id="checkout__date"
+                                name="chkout"
+                                type="text" placeholder="Add dates"/>
+                            <script>
+                                var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                                checkinDate.appendTo('#checkout__date');
+                            </script>
+                        </div>
+                        <!-- <div class="searchbar__item" id="guests">
+                            Guests
+                        </div> -->
+                        <div class="searchbar__item" id="searchbtn">
+                            <button class="submitBtn" type="submit">
+                                <i class="fas fa-search-location"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="searchbar__item" id="checkin">
-                        <label for="searchbar__checkin">
-                            Check in
-                        </label><br>
-                        <input 
-                            id="checkin__date" 
-                            name="chkin"
-                            type="text" placeholder="Add dates"/>
-                        <script>
-                            var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
-                            checkinDate.appendTo('#checkin__date');
-                        </script>
-                    </div>
-                    <div class="searchbar__item" id="checkout">
-                        <label for="searchbar__checkout">
-                            Check out
-                        </label><br>
-                        <input 
-                            id="checkout__date"
-                            name="chkout"
-                            type="text" placeholder="Add dates"/>
-                        <script>
-                            var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
-                            checkinDate.appendTo('#checkout__date');
-                        </script>
-                    </div>
-                    <div class="searchbar__item" id="guests">
-                        Guests
-                    </div>
-                    <div class="searchbar__item" id="searchbtn">
-                        <button type="submit">
-                            Btn
-                        </button>
-                    </div>
+                    
                 </form>
             </div>
         </section>
