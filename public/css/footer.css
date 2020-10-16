@@ -1,34 +1,26 @@
-/* ================================= */
-/* Footer ========================== */
-/* ********************************* */
-:root {
-    --main_content_title: rgb(31, 31, 31);
-    --main_content_desc: rgb(92, 92, 92);
+@import "global.css";
+
+a {
+    text-decoration: none;
 }
 
 .footer {
+    background-color: var(--color-background-grey);
+    bottom: 0%;
+    width: 100%;
     padding: 0rem 5rem;
-}
-
-.footer > .footer_heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .footer_heading_title {
     color: var(--main_content_title);
 }
 
-.footer_heading_desc {
-    color: var(--main_content_desc);
+.footer_content_link {
+    color: var(--color-footer-link);
 }
 
-.up_arrow {
-    font-size: 2.0rem;
-    border: none;
-    cursor: pointer;
-    color: var(--main_content_title);
+.footer_lower_content {
+    color: var(--color-footer-link);
 }
 
 .footer_divider {
@@ -41,15 +33,16 @@
     column-gap: 2rem;
 }
 
-.footer_contents > .footer_content > .footer_content_title {
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--main_content_title);
+.footer_lower_content_container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-.footer_content_desc {
-    color: var(--main_content_desc);
+.up_arrow {
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 .footer_github {
