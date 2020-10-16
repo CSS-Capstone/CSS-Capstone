@@ -67,7 +67,8 @@ app.get('/', (req, res) => {
 app.post('/test', (req, res) => {
     var searchedData = req.body;
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
-    res.render('pages/test', searchedData);
+    var locationStr = searchedData.location;
+    res.redirect(`/hotel/searched/${locationStr}`);
 });
 
 app.get('/about', (req, res) => {

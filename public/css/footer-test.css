@@ -22,6 +22,14 @@ a {
     color: var(--main_content_title);
 }
 
+.footer_content_link {
+    color: var(--color-footer-link);
+}
+
+.footer_lower_content {
+    color: var(--color-footer-link);
+}
+
 .footer_divider {
     margin: 1rem 0rem;
 }
@@ -30,13 +38,6 @@ a {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     column-gap: 2rem;
-}
-
-.footer_contents > .footer_content > .footer_content_title {
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--main_content_title);
 }
 
 .footer_github {
