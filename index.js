@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
 
 // index user input to test page
 
-app.post('/test', (req, res) => {
+app.post('/', (req, res) => {
     var searchedData = req.body;
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     var locationStr = searchedData.location;
