@@ -4,11 +4,16 @@ const app = express();
 const mysql = require("mysql");
 const dotenv = require('dotenv');
 const fetch = require('node-fetch');
+const bodyParser = require('body-parser');
+
+const trim = require('./modules/trim-city');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
@@ -53,8 +58,16 @@ const db = mysql.createConnection({
 // });
 // end of database
 
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.render('pages/index');
+});
+
+// index user input to test page
+
+app.post('/test', (req, res) => {
+    var searchedData = req.body;
+    searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
+    res.render('pages/test', searchedData);
 });
 
 app.get('/about', (req, res) => {
