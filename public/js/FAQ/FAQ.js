@@ -1,7 +1,7 @@
-//Get all the question elements for enabling dropdown
+//Get all the question DOM elements for enabling dropdown
 var questions = document.getElementsByClassName("question_clicker");
 var i;
-
+// console.log(questions);
 //loop to get to the desired question
 for (i = 0; i < questions.length; i++)
 {

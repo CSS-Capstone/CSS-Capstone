@@ -1,4 +1,6 @@
 body {
+    margin: 0;
+    padding: 0;
     font-family: sans-serif;
 }
 
@@ -14,12 +16,13 @@ body {
 }
 
 .popup {
-    position: absolute;
+    padding: 70px 30px;
+    position: fixed;
     top: -150%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1.15);
-    width: 300px;
-    height: 440px;
+    width: 500px;
+    height: 450px;
     background: #f5f5f5;
     z-index: 2;
     opacity: 0;
@@ -27,12 +30,12 @@ body {
     transition: transform 300ms ease-in-out,opacity 300ms ease-in-out;
 }
 
-.showLoginForm .popup-overlay {
+.showForm .popup-overlay {
     display: block;
 }
 
-.showLoginForm .popup {
-    top: 50%;
+.showForm .popup {
+    top: 54%;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
 }
@@ -55,47 +58,62 @@ body {
 }
 
 /* CSS for the login box, can edit to be the same as before's CSS */
-.popup .form {
+.popup .login_form {
     padding: 0 30px;
+    display: block;
 }
 
-.popup .form .avatar {
-    margin: 30px 0px 20px;
-    text-align: center;
-}
-
-.popup .form .avatar img {
-    width: 130px;
+.popup .login_form .avatar {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
+    position: absolute;
+    top: -50px;
+    left: calc(50% - 50px);
 }
 
-.popup .form .header {
+.box_title {
+    margin: 0;
+    padding: 0 0 20px;
     text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    color: #222;
-    margin: 20px 0px;
+    font-size: 22px;
 }
 
-.popup .form form p {
+.popup .login_form form p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    /* font-weight: bold;
     display: block;
     font-size: 14px;
     color: #222;
-    margin-bottom: 5px;
+    margin-bottom: 5px; */
 }
 
-.popup .form form input {
-    width: 100%;
+.popup .login_form form input {
+    /* width: 100%;
     padding: 8px 10px;
     box-sizing: border-box;
     outline: none;
     border: 1px solid #aaa;
     background: #eee;
-    border-radius: 5px;
+    border-radius: 5px; */
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.popup .form form #input_submit {
-    margin-top: 5px;
+.popup .login_form form input[type="text"], form input[type="password"] {
+    border: none;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+}
+
+.popup .login_form form #input_submit {
+    /* margin-top: 5px;
     width: 100%;
     padding: 10px 0px;
     text-transform: uppercase;
@@ -106,5 +124,130 @@ body {
     border-radius: 5px;
     cursor: pointer;
     background: #4889da;
-    color: #f5f5f5;
+    color: #f5f5f5; */
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #8ea8f5;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.popup .login_form form #input_submit:hover {
+    cursor: pointer;
+    background: #426ff5;
+    color: #000;
+}
+
+.popup .login_form form a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 20px;
+    color: rgb(129, 129, 247); 
+} 
+
+.popup .login_form form a:hover {
+   color: rgb(129, 129, 247); 
+   /* change color */
+   text-decoration: underline;
+}
+
+/* CSS for the register box, can edit to be the same as before's CSS */
+
+.popup .register_form {
+    padding: 0 30px;
+    display: none;
+}
+
+.avatar{
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    position: absolute;
+    top: -54px;
+    left: calc(50% - 50px);
+}
+
+.box_title {
+    margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.popup .register_form form p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.popup .register_form form .radio_button {
+    width: 100%;
+    margin: 10px 0 17px 0;
+    justify-content: space-evenly;
+    color: black;
+}
+
+.popup .register_form form input[type="text"], input[type="password"], input[type="submit"] {
+    /* width: 100%;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    outline: none;
+    border: 1px solid #aaa;
+    background: #eee;
+    border-radius: 5px; */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.popup .register_form form input[type="text"], form input[type="password"] {
+    border: none;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+}
+
+.popup .register_form form #input_submit {
+    /* margin-top: 5px;
+    width: 100%;
+    padding: 10px 0px;
+    text-transform: uppercase;
+    outline: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #4889da;
+    color: #f5f5f5; */
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #8ea8f5;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.popup .register_form form #input_submit:hover {
+    cursor: pointer;
+    background: #426ff5;
+    color: #000;
+}
+
+.log_in_link, .popup .register_form form a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 20px;
+    color: rgb(129, 129, 247); 
+} 
+
+.popup .register_form form a:hover {
+   color: rgb(129, 129, 247); 
+   /* change color */
+   text-decoration: underline;
 }
