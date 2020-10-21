@@ -5,15 +5,24 @@ const mysql = require("mysql");
 const dotenv = require('dotenv');
 const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
-
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+const querystring = require('querystring');
 const trim = require('./modules/trim-city');
+require('./passport-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cookieSession({
+    name: 'tuto-session',
+    keys: ['key1', 'key2']
+}));
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
@@ -26,6 +35,15 @@ const db = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
+
+const googleLoggedInCheck = (req, res, next) => {
+    if (req.user) {
+        next();
+    }
+    else {
+        res.sendStatus(401);
+    }
+}
 
 // db.connect((err) => {
 //     if (err) {
@@ -71,9 +89,35 @@ app.post('/', (req, res) => {
     res.redirect(`/hotel/searched/${locationStr}`);
 });
 
+// google
+app.get('/failed', (req, res) => {
+    res.send('You Failed to log in!');
+});
+
+app.get('/good', (req, res) => {
+    // console.log(req.user);
+    res.send(`Hello!! Google OAuth is a success!!`);
+    // res.send(`Hello, ${res.user.displayName}!!!`);
+});
+
+app.get('/google/callback', (req, res) => {
+    console.log(req.user);
+    res.send("Hellow, World!");
+});
+
+app.get('/google', passport.authenticate('google', {scope:['profile','email']}));
+
+app.get('/google/callback', passport.authenticate('google', {failureRedirect:'/failed'}),
+    function(req, res) {
+        // console.log(req.user);
+        res.redirect('/good');
+    }
+);
+// end google
+
 app.get('/about', (req, res) => {
     res.render('pages/about');
-});
+})
 
 app.get('/faq', (req, res) => {
     res.render('pages/FAQ')
@@ -167,6 +211,8 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render('pages/register');
 });
+
+// google get call
 
 
 // =============================

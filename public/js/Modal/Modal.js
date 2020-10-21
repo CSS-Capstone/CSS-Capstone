@@ -11,27 +11,19 @@ function closeForm() {
 }
 
 function showRegister() {
-    // var loginStyle = getComputedStyle(login);
-    // var registerStyle = getComputedStyle(register);
-    // console.log(loginStyle.display);
-    // console.log(registerStyle.display);
     if (getComputedStyle(register).display === "none")
     {
-        console.log("success");
-        // login.setAttribute('style', 'display: none');
-        // register.setAttribute('style', 'display: block');
+        // console.log("success");
         login.style.display = 'none';
         register.style.display = 'block';
-        box.style.height = '580px';
+        box.style.height = '510px';
     }
 }
 
 function showLogin() {
     if (getComputedStyle(login).display === "none")
     {
-        console.log("success");
-        // login.setAttribute('style', 'display: none');
-        // register.setAttribute('style', 'display: block');
+        // console.log("success");
         login.style.display = 'block';
         register.style.display = 'none';
         box.style.height = '440px';

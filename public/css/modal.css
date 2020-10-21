@@ -35,7 +35,7 @@ body {
 }
 
 .showForm .popup {
-    top: 54%;
+    top: 50%;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
 }
@@ -182,12 +182,14 @@ body {
     font-weight: bold;
 }
 
-.popup .register_form form .radio_button {
+/* uncomment if need account type */
+
+/* .popup .register_form form .radio_button {
     width: 100%;
     margin: 10px 0 17px 0;
     justify-content: space-evenly;
     color: black;
-}
+} */
 
 .popup .register_form form input[type="text"], input[type="password"], input[type="submit"] {
     /* width: 100%;
