@@ -4,7 +4,9 @@
     --color-white: #ffffff;
     --color-dark-grey: #4d4d4d;
     --color-grey: #616161;
-    --color-light-grey: #7c7979;
+    --color-mid-grey: #717171;
+    --color-light-grey: #d3d3d3;
+    --color-silver: #c0c0c0;
     --color-shadow: #888888;
     --color-blue: #73aace;
     --color-strong-blue: #217cb9;
@@ -13,7 +15,8 @@
     --color-footer-link: #222222;
 
     /* Font size */
-    --font-large: 48px;
+    --font-xlarge: 48px;
+    --font-large: 32px;
     --font-medium: 28px;
     --font-regular: 18px;
     --font-small: 16px;
@@ -36,7 +39,7 @@
 
 /* Typography */
 h1 {
-    font-size: var(--font-large);
+    font-size: var(--font-xlarge);
     font-weight: var(--weight-bold);
     color: var(--color-black);
     margin: 16px 0px;

@@ -168,10 +168,13 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
-
 // =============================
 // Basic Hotel CRUD=============
 // =============================
+app.get('/users', (req, res) => {
+    res.render('pages/users');
+});
+
 app.get('/account', (req, res) => {
     res.send('hello: user account page where user sees there posts and make actions post, edit, and delete');
 });
