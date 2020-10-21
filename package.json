@@ -5,8 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
-    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
@@ -15,8 +15,10 @@
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-oauth2": "^1.5.0",
-    "querystring": "^0.2.0"
+    "querystring": "^0.2.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "chai-http": "^4.3.0",

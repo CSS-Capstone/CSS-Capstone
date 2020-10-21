@@ -7,18 +7,20 @@ const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const cookieSession = require('cookie-session');
-const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
 const trim = require('./modules/trim-city');
+const url = require('url');
 require('./passport-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.use(cookieSession({
     name: 'tuto-session',
     keys: ['key1', 'key2']
@@ -36,7 +38,7 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-const googleLoggedInCheck = (req, res, next) => {
+const isLoggedIn = (req, res, next) => {
     if (req.user) {
         next();
     }
@@ -89,26 +91,66 @@ app.post('/', (req, res) => {
     res.redirect(`/hotel/searched/${locationStr}`);
 });
 
-// google
+// ===============================================
+// start of google
+// ===============================================
 app.get('/failed', (req, res) => {
     res.send('You Failed to log in!');
 });
 
+//need to figure out how to get req.user JSON data
+//from /google/callback get request
 app.get('/good', (req, res) => {
-    // console.log(req.user);
-    res.send(`Hello!! Google OAuth is a success!!`);
-    // res.send(`Hello, ${res.user.displayName}!!!`);
+    // =============
+    // first way to do it
+    // =============
+
+    // console.log(req.query);
+
+    // =============
+    // second way to do it
+    // =============
+
+    // console.log(req.cookies);
+    var data = req.cookies.profile;
+    // res.send(`Hello!! Google OAuth is a success!!`);
+    res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
 });
+//bangsattttt
 
-app.get('/google', passport.authenticate('google', {scope:['profile','email']}));
+app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/google/callback', passport.authenticate('google', {failureRedirect:'/failed'}),
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
     function(req, res) {
         // console.log(req.user);
+
+        // =============
+        // first way to do it
+        // =============
+
+        // res.redirect(url.format({
+        //     pathname: "/good",
+        //     query: req.user
+        // }));
+
+        // =============
+        // second way to do it
+        // =============
+
+        res.cookie("profile", req.user);
+        //this will be different in locale in the JSON data
         res.redirect('/good');
-    }
-);
-// end google
+    });
+
+app.get('/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.redirect('/');
+})
+
+// ===============================================
+// end of google
+// ===============================================
 
 app.get('/about', (req, res) => {
     res.render('pages/about');
