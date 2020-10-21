@@ -38,14 +38,14 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-const isLoggedIn = (req, res, next) => {
-    if (req.user) {
-        next();
-    }
-    else {
-        res.sendStatus(401);
-    }
-}
+// const isLoggedIn = (req, res, next) => {
+//     if (req.user) {
+//         next();
+//     }
+//     else {
+//         res.sendStatus(401);
+//     }
+// }
 
 // db.connect((err) => {
 //     if (err) {
@@ -114,7 +114,12 @@ app.get('/good', (req, res) => {
     // console.log(req.cookies);
     var data = req.cookies.profile;
     // res.send(`Hello!! Google OAuth is a success!!`);
-    res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
+    // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
+    res.render('pages/tryGoogle', {
+        username: req.cookies.profile.displayName,
+        picture: req.cookies.profile.photos[0].value,
+        email: req.cookies.profile.emails[0].value
+    })
 });
 //bangsattttt
 
