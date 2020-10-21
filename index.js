@@ -100,11 +100,6 @@ app.get('/good', (req, res) => {
     // res.send(`Hello, ${res.user.displayName}!!!`);
 });
 
-app.get('/google/callback', (req, res) => {
-    console.log(req.user);
-    res.send("Hellow, World!");
-});
-
 app.get('/google', passport.authenticate('google', {scope:['profile','email']}));
 
 app.get('/google/callback', passport.authenticate('google', {failureRedirect:'/failed'}),
