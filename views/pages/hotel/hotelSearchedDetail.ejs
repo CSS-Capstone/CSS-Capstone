@@ -12,8 +12,7 @@
     <!-- Footer CSS -->
     <link rel="stylesheet" href="/css/footer.css">
     <!-- Stripe -->
-    <script src="https://checkout.stripe.com/checkout.js" defer 
-    data-image="/images/hotelStripeImage.jpg"></script>
+    <script src="https://checkout.stripe.com/checkout.js" defer></script>
     <!-- <script src="https://js.stripe.com/v3/"></script> -->
     <script>
         const publicStripeKey = '<%=StripePublicKey%>'
@@ -173,8 +172,8 @@
     <%- include('../../partials/footer')%>
 
 </body>
-<script src="/js/hotelDetail/hotelDetailImageModal.js"></script>
-<script src="/js/hotelDetail/hotelDetailCopyUrl.js"></script>
-<script src="/js/hotelDetail/hotelDetailGetPricePerNight.js"></script>
-<script src="/js/hotelDetail/hotelDetailPriceSummary.js"></script>
+<script src="/js/hotelDetail/hotelDetailImageModal.js" defer></script>
+<script src="/js/hotelDetail/hotelDetailCopyUrl.js" defer></script>
+<script src="/js/hotelDetail/hotelDetailGetPricePerNight.js" defer></script>
+<script src="/js/hotelDetail/hotelDetailPriceSummary.js" defer></script>
 </html>
