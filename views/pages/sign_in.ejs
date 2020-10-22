@@ -9,10 +9,12 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
         
         <!-- Original CSS -->
-        <link rel="stylesheet" type="text/css" href="/css/sign_in.css">
+        <!-- <link rel="stylesheet" type="text/css" href="/css/sign_in.css"> -->
+        <link rel="stylesheet" type="text/css" href="/css/modal.css">
+        <!-- <script src = "/js/ModalLogin/ModalLogin.js"></script> -->
     </head>
     <body>
-        <div id="login-background"></div>
+        <!-- <div id="login-background"></div>
         <div class = "login_box">
             <img src="/images/sign_in_icon3.png" class="avatar">
             <h1 class = "box_title">Login</h1>
@@ -27,6 +29,10 @@
                 <a href="#">Forgot password?</a><br>
                 <a href="/register">Don't have an account?</a>
             </form>
-        </div>
+        </div> -->
+
+        <a href="#" onclick="openForm()">LOGIN</a>
+        <%- include('../partials/modal_account') %>
     </body>
+    <script src = "/js/Modal/Modal.js"></script>
 </html> 

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/css/index.css">
     <!-- Footer CSS -->
     <link rel="stylesheet" href="/css/footer.css">
+    <!-- Modal Login CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/modal.css">
     <!-- Datepicker -->
     <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
     <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
@@ -30,7 +32,8 @@
                 <span class="navbar__menu__item">
                     <a href="#"><i class="far fa-moon"></i></a>
                 </span>
-                <span class="navbar__menu__item"><a href="#">Become a host</a></span>
+                <span class="navbar__menu__item"><a href="#" onclick="openForm()">Become a host</a></span>
+                <%- include('../partials/modal_account') %>
                 <span class="navbar__menu__item">
                     <a href="#">
                         <i class="fas fa-bars"></i>

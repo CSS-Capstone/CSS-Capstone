@@ -1,0 +1,53 @@
+<div class = "popup-overlay"></div>
+<div class="popup">
+    <!-- <div class="popup-close" onclick="closeForm()">
+        &times;
+    </div> -->
+    <div class = "login_form">
+        <div class="popup-close" onclick="closeForm()">
+            &times;
+        </div>
+        <img src="/images/sign_in_icon.png" class="avatar">
+        <h1 class = "box_title">Login</h1>
+        <form action="">
+            <p>Email</p>
+            <input type="text" name="" placeholder="Enter Email">
+            <p>Password</p>
+            <input type="password" name="" placeholder="Enter Password">
+            <br>
+            <input type="submit" name="" value="Login" id = "input_submit">
+            <a href="/google">Google Sign In</a>
+            <br>
+            <a href="#">Forgot password?</a><br>
+            <a href="#" onclick="showRegister()" class = "show_register">Don't have an account?</a>
+        </form>
+    </div>
+    <div class = "register_form">
+        <div class="popup-close" onclick="closeForm()">
+            &times;
+        </div>
+        <img src="/images/register_icon_2.png" class="avatar">
+        <h1 class="box_title">Register</h1>
+        <form action="">
+            <p>Email</p>
+            <input type="text" name="" placeholder="Enter Email">
+            <p>Password</p>
+            <input type="password" name="" placeholder="Enter Password">
+            <p>Confirm Password</p>
+            <input type="password" name="" placeholder="Confirm Password">
+            <!-- Radio button, figure out the appropiate css -->
+            <!-- <p>Account Type</p>
+            <div class = "radio_button">
+                <input type="radio" name="acc_type" id="finder" value="finder">
+                <label for="finder">Finder</label>
+                <input type="radio" name="acc_type" id="poster" value="poster">
+                <label for="finder">Poster</label>
+            </div> -->
+            
+            <!-- ============ -->
+            <input type="submit" name="" value="Make Account" id = "input_submit">
+            <span class = "log_in_link">Already have an account? </span><a href="#" onclick = "showLogin()" class = "show_login">Log In</a>
+        </form>
+    </div>
+</div>
+<script src = "/js/Modal/Modal.js"></script>
