@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
 
 const trim = require('./modules/trim-city');
-
+const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
@@ -142,7 +142,48 @@ app.get('/hotel/searched/:cityname', async (req, res) => {
 })
 
 app.get('/hotel/searched/detail/:id', (req, res) => {
-    res.send('hello: Search Hotel Detail');
+    const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+    const hotelId = req.params.id;
+    const hotelLabel = req.query.label;
+    const hotelFullName = req.query.fullname;
+    const hotelScore = req.query.score;
+    const hotelCoordLat = req.query.lat;
+    const hotelCoordLon = req.query.lon;
+    const hotelLocationName = req.query.locationName;
+    const hotelObj = {
+        hotelId
+    ,   hotelLabel
+    ,   hotelFullName
+    ,   hotelScore
+    ,   hotelCoordLat
+    ,   hotelCoordLon
+    ,   hotelLocationName
+    };
+    res.render('pages/hotel/hotelSearchedDetail', {hotelObj: hotelObj, StripePublicKey:StripePublicKey});
+});
+
+app.get('/hotel/searched/detail/:id/payment', (req, res) => {
+    res.render('pages/booking/bookConfirm');
+});
+
+app.post('/hotel/searched/detail/:id/payment', (req, res) => {
+    // console.log(res.status());
+    const paymentData = req.body;
+    const passingData = req.body.body;
+    const hotelPrice = Number(paymentData.body.totalPrice * 100);
+    console.log(hotelPrice);
+    console.log(paymentData);
+    // charge on stripe
+    stripe.customers.create({
+        email: paymentData.email
+    ,   source: paymentData.token
+    }).then(customer => stripe.charges.create({
+        customer: customer.id
+    ,   currency: 'usd'
+    ,   amount: hotelPrice
+    })).then(function() {
+        res.render('pages/booking/bookConfirm', {paymentData:paymentData});
+    });
 });
 // ====================================
 // End of Park ========================

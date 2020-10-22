@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hotelSearchedDetail.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+    <!-- Stripe -->
+    <script src="https://checkout.stripe.com/checkout.js" defer 
+    data-image="/images/hotelStripeImage.jpg"></script>
+    <!-- <script src="https://js.stripe.com/v3/"></script> -->
+    <script>
+        const publicStripeKey = '<%=StripePublicKey%>'
+    </script>
+    <script src="/js/hotelDetail/hotelDetailStripePayment.js" defer></script>
+    <!-- End of Stripe -->
+</head>
+<body>
+    <!-- Parital Navigation -->
+    <%- include('../../partials/navigation') %>
+    <!-- End of Partial -->
+    <header class="hotelDetail_header">
+        <h2 class="hotelDetail_hotelName"><%=hotelObj.hotelLabel%></h2>
+        <div class="hotelDetail_header_contents">
+            <div class="hotelDetail_basicInfo">
+                <i data-rate-value="<%=(Number(hotelObj.hotelScore) / 100000).toFixed(3)%>" class="fas fa-star hotel_rating"><%=(hotelObj.hotelScore / 100000).toFixed(3)%></i>
+                <p class="hotelDetail_hotelLocation"><%=hotelObj.hotelLocationName%></p>
+            </div>
+            <div class="hotelDetail_export">
+                <i class="fas fa-share-square copyLink">&nbsp; Share
+                    <span class="tooltiptext">Click to Copy URL</span>
+                </i>
+                <i class="far fa-heart heart">
+                    <span class="heart_hover_text">Save it to your list. (Require Login)</span>
+                </i>
+            </div>
+        </div>
+        <div class="hotelDetail_hotelImages">
+            <div class="hoteDetail_hotelImageContainer">
+                <div class="hotelDetail_hotelImageBlock">
+                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_1/660/490.jpg" alt="Hotel Image 1" data-image-id="<%=hotelObj.hotelId%>" data-image-num="1"/>
+                </div>
+                <div class="hotelDetail_hotelImageGrid">
+                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_2/360/235.jpg" alt="Hotel Image 2" data-image-id="<%=hotelObj.hotelId%>" data-image-num="2"/>
+                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_3/360/235.jpg" alt="Hotel Image 3" data-image-id="<%=hotelObj.hotelId%>" data-image-num="3"/>
+                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_4/360/235.jpg" alt="Hotel Image 4" data-image-id="<%=hotelObj.hotelId%>" data-image-num="4"/>
+                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_5/360/235.jpg" alt="Hotel Image 5" data-image-id="<%=hotelObj.hotelId%>" data-image-num="5"/>
+                    <button class="hotelDetail_moreImage_btn" data-image-hotelId="<%=hotelObj.hotelId%>">
+                        <strong>Show All Photos</strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- User Hotel Booking Section -->
+    <section class="hotelDetail_main">
+        <main class="hotelDetail_main_userinfo">
+            <!-- <form action="#"> -->
+                <div class="hotelDetail_main_booking_container">
+                    <div class="hotelDetail_booking_header">
+                        <h2 class="hotelDetail_header_title">YOUR &nbsp;<span class="hotelDetail_header_subTitle">Information</span></h2>
+                        <img class="hotelDetail_header_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_1/330/330.jpg" alt="hotel image">
+                        <h3 class="hotelDetail_default_hotelPrice">
+                            
+                        </h3>
+                        <button id="checkout-button" class="hotelDetail_book_btn" data-stripe-id="<%=StripePublicKey%>" data-hotel-id="<%=hotelObj.hotelId%>">Book It</button>
+                        <div class="hotelDetail_summary">
+                            <ul class="hotelDetail_summary_details">
+                                <li>
+                                   <small>Selected Room <strong>deluxe</strong> Price: <strong>$25.00</strong></small>
+                               </li> 
+                               <li>
+                                   <small>Number of guest(s) <strong>1:</strong> Price: <strong>$0.00</strong></small>
+                               </li>
+                            </ul>
+                            <h3 class="hotelDetail_summary_totalPrice"></h3>
+                        </div>
+                    </div>
+                    <div class="hotelDetail_userinfo">
+                        <div class="form_group">
+                            <label for="userFirstName">First Name: </label>
+                            <input type="text" id="userFirstName" placeholder="first name"/>
+                            <small class="validationUserFirstName"></small>
+                        </div>
+                        <div class="form_group">
+                            <label for="userLastName">Last Name: </label>
+                            <input type="text" id="userLastName" placeholder="last name"/>
+                            <span class="validationUserLastName"></span>
+                        </div>
+                        <div class="form_group">
+                            <label for="userEmail">Email: </label>
+                            <input type="email" id="userEmail" placeholder="email address"/>
+                            <span class="validation"></span>
+                        </div>
+                        <div class="form_group">
+                            <label for="userPhone">Phone: (xxx-xxx-xxxx): </label>
+                            <input 
+                                type="text" 
+                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}"
+                                placeholder="123-123-1234"
+                                id="userPhone"
+                            />
+                            <span class="validation"></span>
+                        </div>
+                        <div class="hotel_form_group">
+                            <section class="hotelInfo_room_section">
+                                <h3 class="hotelInfo_room_title">Room Type</h3>
+                                <div class="hotel_room_radio_container">
+                                    <div>
+                                        <input type="radio" name="hotelRoomType" id="single" value="single" checked/>
+                                        <label for="Single">Single</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="hotelRoomType" id="deluxe" value="deluxe"/>
+                                        <label for="Deluxe">Deluxe</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="hotelRoomType" id="double-double" value="double-double"/>
+                                        <label for="Double-Double">Double-Double</label>
+                                    </div>
+                                </div>
+                            </section>
+                            <!-- Hotel Guest Select -->
+                            <section class="hotelInfo_guest_section">
+                                <small class="hotelPeople_title">Guests</small>
+                                <div class="hotel_guest_select_option">
+                                    <select name="guests" id="guests" class="guests">
+                                        <!-- Guest 1 is default no additional price charge -->
+                                        <option value="0" selected>Guest 1</option>
+                                        <option value="1">Guest 2</option>
+                                        <option value="2">Guest 3</option>
+                                        <option value="3">Guest 4 or More</option>
+                                    </select>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            <!-- </form> -->
+        </main>
+    </section>
+    <!-- Things to know -->
+    
+    <section class="hotelDetail_things_to_know">
+        <p>
+            <%=hotelObj.hotelCoordLat%>
+        </p>
+        <p>
+            <%=hotelObj.hotelCoordLon%>
+        </p>
+    </section>
+    <!-- =============================== -->
+    <!-- =========Create Modal========== -->
+    <!-- =============================== -->
+    <div class="modal" id="#myModal">
+        <header>
+            <span class="close_modal_btn">&times;</span>
+            <p class="modal_img_counter"></p>
+        </header>
+        <i class="fas fa-chevron-circle-left modal-left"></i>
+        <main class="modal_image_container">
+            <img class="modal_img" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_2/580/630.jpg" alt="Hotel Image 2" data-modal-hotelId="<%=hotelObj.hotelId%>"/>
+        </main>
+        <i class="fas fa-chevron-circle-right modal-right"></i>
+    </div>
+    <hr>
+    <%- include('../../partials/footer')%>
+
+</body>
+<script src="/js/hotelDetail/hotelDetailImageModal.js"></script>
+<script src="/js/hotelDetail/hotelDetailCopyUrl.js"></script>
+<script src="/js/hotelDetail/hotelDetailGetPricePerNight.js"></script>
+<script src="/js/hotelDetail/hotelDetailPriceSummary.js"></script>
+</html>
