@@ -1,0 +1,86 @@
+@import "global.css";
+
+.profile__wrapper {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    margin: 5rem 2rem;
+}
+
+.profile__left {
+    padding-top: 2.6rem;
+    width: 100%;
+    border-radius: 2.5%;
+    border: 1px solid var(--color-light-grey);
+}
+
+.profile__image {
+    display: inline-block;
+    width: 129px;
+    height: 129px;
+    margin: 0 auto;
+    background-color: yellow;
+    border-radius: 50%;
+    border: 1px solid transparent;
+}
+
+.profile__left__upper {
+    width: 100%;
+    text-align: center;
+}
+
+.profile__left__mid {
+    font-size: var(--font-regular);
+    font-weight: var(--weight-regular);
+    color: var(--color-black);
+    margin: 8px 0px;
+    padding: 10px;
+    padding-top: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.profile__bottom {
+    padding-left: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.profile__bottom__heading {
+    font-size: var(--font-regular);
+    font-weight: var(--weight-regular);
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.profile__right {
+    padding-left: 5rem;
+    width: 100%;
+}
+
+.profile__right__heading {
+    font-size: var(--font-large);
+    font-weight: var(--weight-regular);
+    padding-bottom: 0.5rem;
+}
+
+.profile__right__joined {
+    font-size: var(--font-micro);
+    color: var(--color-silver);
+    padding-bottom: 0.5rem;
+}
+
+#underline {
+    text-decoration: underline;
+}
+
+i {
+    margin-bottom: 1.2rem;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid var(--color-light-grey);
+    margin: auto;
+    padding: 0;
+    width: 87%;
+}

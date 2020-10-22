@@ -1,0 +1,345 @@
+@import "global.css";
+/* Give Entire Header a Margin */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgb(235, 235, 235);
+}
+
+.hotelDetail_header {
+    margin: 0 auto;
+    width: 90%;
+}
+
+.hotelDetail_header_contents {
+    margin: 1rem 0rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.hotelDetail_basicInfo > .hotel_rating {
+    color: red;
+}
+
+.hotelDetail_basicInfo > .hotelDetail_hotelLocation {
+    display: inline;
+}
+
+.hotelDetail_export {
+    position: relative;
+}
+
+.copyLink {
+    cursor: pointer;
+}
+
+.tooltiptext {
+    border: 1px solid black;
+    padding: 0.2rem;
+    position: absolute;
+    top: -250%;
+    right: 60%;
+    z-index: 1;
+    visibility: none;
+    opacity: 0.00;
+    width: 120px;
+    border-radius: 0.5rem;
+}
+
+.copyLink:hover .tooltiptext {
+    opacity: 1;
+}
+
+.hotelDetail_hotelImages {
+    width: 100%;
+}
+
+.hoteDetail_hotelImageContainer {
+    display: flex;
+    justify-content: center;
+    align-content: space-around;
+    flex-wrap: wrap;
+}
+
+.hoteDetail_hotelImageContainer img {
+    border-radius: 2%;
+    -webkit-box-shadow: 3px 3px 5px 6px rgb(144, 144, 144);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    3px 3px 5px 6px rgb(149, 149, 149);  /* Firefox 3.5 - 3.6 */
+    box-shadow:         3px 3px 5px 6px rgb(143, 143, 143);
+    cursor: pointer;
+    transition: all ease-in-out 0.3s;
+    z-index: 0;
+}
+
+.hoteDetail_hotelImageContainer img:hover {
+    transform: scale(0.98);
+}
+
+.hotelDetail_hotelImageGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    position: relative;
+}
+
+.hotelDetail_hotelImageGrid img {
+    margin-bottom: 20px;
+    margin-left: 14px;
+    margin-top: 0px;
+}
+
+.hotelDetail_moreImage_btn {
+    position: absolute;
+    bottom: 6%;
+    right: 5%;
+    padding: 0.5rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    z-index: 1;
+}
+
+.hotelDetail_moreImage_btn:hover {
+    color: var(--color-navy);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-navy);
+}
+
+/* ============================== */
+/* Form ========================= */
+/* ============================== */
+
+/* ============================== */
+/* Left Side Contents =========== */
+/* ============================== */
+.hotelDetail_main {
+    width: 95%;
+    margin: 2rem auto;
+}
+
+.hotelDetail_main_booking_container {
+    display: flex;
+    width: 90%;
+    height: 90%;
+    margin: 0rem auto;
+}
+
+.hotelDetail_booking_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+    justify-content: space-between;
+    z-index: 1;
+    border-radius: 2rem;
+    -moz-box-shadow:    inset 0 0 10px #B4D1EE;
+    -webkit-box-shadow: inset 0 0 10px #B4D1EE;
+    box-shadow:         inset 0 0 10px #B4D1EE;
+    background-color: rgb(251, 251, 251);
+    padding: 3rem 0rem;
+}
+
+.hotelDetail_header_title {
+    font-weight: bold;
+    color: var(--color-dark-grey);
+    padding: 2rem 0rem;
+}
+
+.hotelDetail_header_subTitle {
+    letter-spacing: 0.2rem;
+}
+
+.hotelDetail_header_image {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 20px #589fe6;
+}
+
+.hotelDetail_default_hotelPrice {
+    color: var(--color-dark-grey);;
+    padding: 1rem 0rem;
+}
+
+.hotelDetail_book_btn {
+    outline: none;
+    width: 180px;
+    height: 50px;
+    font-size: 1.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: rgb(245, 245, 245);
+    background-color: rgb(30,144,255);
+    border: none;
+    transition: all ease-in-out 0.3s;
+}
+
+.hotelDetail_book_btn:hover {
+    border: 1px solid rgb(240, 240, 240);
+}
+
+.hotelDetail_summary_details {
+    list-style: none;
+    padding: 1rem;
+}
+/* ================================== */
+/* Right Side Content =============== */
+/* ================================== */
+.hotelDetail_userinfo {
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    align-self: center;
+    width: 70%;
+    border-radius: 1rem;
+    background-color: rgb(250, 250, 250);
+}
+
+.form_group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.form_group > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    width: 25%;
+    font-weight: bold;
+    color: rgb(24, 111, 197);
+}
+
+.form_group > input {
+    padding: 0.5rem;
+    width: 40%;
+    border-radius: 2rem;
+    outline: none;
+    border: 2px solid rgb(24, 111, 197);
+    font-weight: bold;
+}
+
+.hotel_form_group {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    font-weight: bold;
+    margin: 0.5rem auto;
+    border: 1px solid rgb(24, 111, 197);
+    border-radius: 0.5rem;
+    justify-content: space-evenly;
+    padding: 0.5rem;
+}
+
+.hotelInfo_room_section {
+    display: flex;
+    flex-direction: column;
+    flex: 1.5;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0rem 1rem;
+    border-right: 1px solid rgb(24, 111, 197);
+}
+
+.hotelInfo_room_section > .hotelInfo_room_title {
+    font-weight: bold;
+}
+
+.hotel_room_radio_container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.hotelInfo_guest_section {
+    flex: 1;
+    padding: 0rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hotel_guest_select_option {
+    text-align: right;
+    width: 70%;
+    position: relative;
+}
+
+#guests {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid gray;
+    border-radius: 0.5rem;
+    outline: none;
+    cursor: pointer;
+}
+
+/* ============================== */
+/* ========= Modal CSS ========== */
+/* ============================== */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 10rem;
+    background-color: var(--color-footer-link);
+    background-color: rgba(243, 243, 243, 0.9);
+    z-index: 1;
+}
+
+.close_modal_btn {
+    position: absolute;
+    color: var(--color-footer-link);
+    font-size: 3rem;
+    top: 5rem;
+    left: 5rem;
+    cursor: pointer;
+}
+
+.close_modal_text {
+    font-size: 1rem;
+}
+.modal_image_container {
+    margin: 0 auto;
+    width: 80%;
+    height: 80%;
+}
+
+.modal_image_container > img {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: 100%;
+    border-radius: 2rem;
+}
+
+.modal-left {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    font-size: 2rem;
+    color: var(--color-footer-link);
+    cursor: pointer;
+}
+
+.modal-right {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    font-size: 2rem;
+    color: var(--color-footer-link);
+    cursor: pointer;
+}

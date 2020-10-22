@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel-Finder</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Index CSS -->
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/users.css">
+    <!-- Datepicker -->
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+</head>
+<body>
+    <!-- <div class="index__bg">
+        <nav id="navbar">
+            <div class="navbar__logo">
+                <i class="fas fa-hotel"></i>
+                <a href="/">Hotel Finder</a>
+            </div>
+            <div class="navbar__center__menu">
+                <span class="navbar__menu__item active">
+                    <a href="/about/">About Us</a>
+                </span>
+            </div>
+            <div class="navbar__right__menu">
+                <span class="navbar__menu__item">
+                    <a href="#"><i class="far fa-moon"></i></a>
+                </span>
+                <span class="navbar__menu__item"><a href="#">Become a host</a></span>
+                <span class="navbar__menu__item">
+                    <a href="#">
+                        <i class="fas fa-bars"></i>
+                        <i class="far fa-user-circle"></i>
+                    </a>
+                </span>
+            </div>
+        </nav>
+    </div> -->
+    <section class="profile__wrapper">
+        <div class="profile__left">
+            <div class="profile__left__upper">
+                <img class="profile__image"></img>
+                <br>
+                <a href="" id="underline">Update photo</a>
+            </div>
+            <div class="profile__left__mid">
+                <i class="far fa-star"></i> 1 review
+                <br>
+                <i class="fas fa-hotel"></i> 5 hotels
+                <br>
+                <i class="fas fa-check-double"></i> Identity verified
+            </div>
+            <hr/>
+            <div class="profile__bottom">
+                <div class="profile__bottom__heading">
+                    Name of the user confirmed
+                </div>
+                <i class="fas fa-check"></i> Identity
+                <br>
+                <i class="fas fa-check"></i> Email address
+                <br>
+                <i class="fas fa-check"></i> Phone number
+                <br>
+                <i class="fas fa-check"></i> Work email
+                <br>
+            </div>
+        </div>
+        <div class="profile__right">
+            <div class="profile__right__heading">
+                Hi, I'm user name
+            </div>
+            <div class="profile__right__joined">
+                Joined in 20xx
+            </div>
+            <a href=# id="underline">Edit profile</a>
+    
+            <div>
+                About
+            </div>
+            <div class="profile__right__about">
+                <i class="fas fa-home"></i> Lives in Someplace, State
+                <br>
+                <i class="fas fa-comment-alt"></i> Speaks English, Coreana
+            </div>
+        </div>
+    </section>
+    <!-- <div class="user__tab">
+        <button class="tablinks" onclick="openCity(event, 'London')">London</button>
+        <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+    </div>
+
+    <div id="London" class="tabcontent">
+        <h3>London</h3>
+        <p>London is the capital city of England.</p>
+    </div>
+    
+    <div id="Paris" class="tabcontent">
+        <h3>Paris</h3>
+        <p>Paris is the capital of France.</p> 
+    </div>
+    
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script> -->
+    <%- include('../partials/footer') %>
+</body>
+</html>
