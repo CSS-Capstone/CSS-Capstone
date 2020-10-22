@@ -51,7 +51,10 @@
                                 </a>
                             </div>
                             <div class="hotel_desc_detail_btn">
-                                <a class="hotel_desc_btn" href="/hotel/searched/detail/<%=hotel.id%>">View Detail</a>
+                                <a class="hotel_desc_btn" 
+                                    href="/hotel/searched/detail/<%=hotel.id%>?label=<%=hotel.label%>&fullname=<%=hotel.fullName%>&score=<%=hotel._score%>&lat=<%=hotel.location.lat%>&lon=<%=hotel.location.lon%>&locationName=<%=hotel.locationName%>">
+                                    View Detail
+                                </a>
                             </div>
                             <div class="hotel_desc_footer">
                                 <i class="fas fa-star hotel_score_icon">
@@ -130,6 +133,7 @@
             </script>
         </section>
     </main>
+    <%- include('../../partials/footer') %>
     <script src="/js/HotelSearch/hotelSearchPrice.js"></script>
     <script src="/js/HotelSearch/hotelSearchImage.js"></script>
     
