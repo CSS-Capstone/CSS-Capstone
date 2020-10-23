@@ -241,6 +241,7 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
     const weatherDataResponse = await fetch(weatherAPIURL);
     const weatherData = await weatherDataResponse.json();
+    const airQualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=`;
     console.log(weatherData);
     const hotelObj = {
         hotelId
