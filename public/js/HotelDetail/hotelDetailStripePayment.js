@@ -86,7 +86,7 @@ function organizeDataFromStripe() {
     } 
 
     if (document.querySelector('#userPhone').value.length !== 0) {
-        const phoneRegex = /\d{3}[- ]\d{3}[- ]\d{4}$/
+        const phoneRegex = /\d{3}[- ]\d{3}[- ]\d{4}$/;
         const phone = document.querySelector('#userPhone').value;
         console.log(phoneRegex.test(phone));
         if(!phoneRegex.test(phone)) {
