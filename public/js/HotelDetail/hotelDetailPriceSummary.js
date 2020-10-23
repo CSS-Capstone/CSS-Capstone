@@ -82,6 +82,7 @@ function getPriceRoomType() {
     const roomPrice = [0, 25, 35];
     let returnPrice = 0;
     let selectedRoomType = ``;
+    console.log(roomTypeRadios.length);
     for (let i = 0; i < roomTypeRadios.length; i++) {
         if (roomTypeRadios[i].checked) {
             selectedRoomType = (roomTypeRadios[i].value);
