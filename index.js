@@ -228,8 +228,9 @@ app.get('/hotel/searched/:cityname', async (req, res) => {
     
 })
 
-app.get('/hotel/searched/detail/:id', (req, res) => {
+app.get('/hotel/searched/detail/:id', async (req, res) => {
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+    const AirQualityKey = process.env.AIR_QUALITY_KEY;
     const hotelId = req.params.id;
     const hotelLabel = req.query.label;
     const hotelFullName = req.query.fullname;
@@ -237,6 +238,10 @@ app.get('/hotel/searched/detail/:id', (req, res) => {
     const hotelCoordLat = req.query.lat;
     const hotelCoordLon = req.query.lon;
     const hotelLocationName = req.query.locationName;
+    const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
+    const weatherDataResponse = await fetch(weatherAPIURL);
+    const weatherData = await weatherDataResponse.json();
+    console.log(weatherData);
     const hotelObj = {
         hotelId
     ,   hotelLabel
@@ -246,7 +251,7 @@ app.get('/hotel/searched/detail/:id', (req, res) => {
     ,   hotelCoordLon
     ,   hotelLocationName
     };
-    res.render('pages/hotel/hotelSearchedDetail', {hotelObj: hotelObj, StripePublicKey:StripePublicKey});
+    res.render('pages/hotel/hotelSearchedDetail', {hotelObj: hotelObj, StripePublicKey:StripePublicKey, weatherData:weatherData});
 });
 
 app.get('/hotel/searched/detail/:id/payment', (req, res) => {

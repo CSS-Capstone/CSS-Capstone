@@ -139,14 +139,53 @@
         </main>
     </section>
     <!-- Things to know -->
-    
+    <!-- Todo: create tab -->
     <section class="hotelDetail_things_to_know">
-        <p>
-            <%=hotelObj.hotelCoordLat%>
-        </p>
-        <p>
-            <%=hotelObj.hotelCoordLon%>
-        </p>
+        <h2 class="">Things to know</h2>
+        <div class="hotelDetail_tab_container">
+            <div class="hotelDetail_tab_button_container">
+                <button class="hotelDetail_tab_btn" id="hotelDetail_tab_btn_first">Weather</button>
+                <button class="hotelDetail_tab_btn">Covid</button>
+                <button class="hotelDetail_tab_btn">Public Transportation</button>
+                <button class="hotelDetail_tab_btn">Currency</button>
+            </div>
+            <div class="hotelDetail_tab_panel" id="hotelDetail_tab_panel_first">
+                <div class="hotelDetail_weather_container">
+                    <div class="hotelDetail_weather_leftside">
+                        <h3 class="weather_left_title">Current Weather in City</h3>
+                        <h2><%=hotelObj.hotelLocationName%></h2>
+                        <img class="weather_left_icon" src="http://openweathermap.org/img/w/<%=weatherData.weather[0].icon%>.png" alt="weather of the city">
+                        <p class="weather_left_description"><%=weatherData.weather[0].description%></p>
+                        <p class="weather_left_feelslike">Feels like <%=(weatherData.main.feels_like * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
+                    </div>
+                    <div class="hotelDetail_weather_rightside">
+                        <p>Current Temperature(Kelvin): <%=weatherData.main.temp%>&#8490;</p>
+                        <p>Current Temperature(Fahrenheit): <%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
+                        <p>Current Temperature(Celsius): <%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</p>
+                        <div>
+                            <h3>Wind Speed</h3>
+                            <i class="fas fa-wind"></i><%=weatherData.wind.speed%>
+                        </div>
+                        <div>
+                            <h3>Humidity</h3>
+                            <i class="fas fa-tint-slash"></i><%=weatherData.main.humidity%>%
+                        </div>
+                    </div>
+                </div>
+                <div class="hotelDetail_air_quality">
+
+                </div>
+            </div>
+            <div class="hotelDetail_tab_panel">
+                Covid API
+            </div>
+            <div class="hotelDetail_tab_panel">
+                Public Transportation API
+            </div>
+            <div class="hotelDetail_tab_panel">
+                Currency API
+            </div>
+        </div>
     </section>
     <!-- =============================== -->
     <!-- =========Create Modal========== -->
@@ -176,4 +215,5 @@
 <script src="/js/HotelDetail/hotelDetailCopyUrl.js" defer></script>
 <script src="/js/HotelDetail/hotelDetailGetPricePerNight.js" defer></script>
 <script src="/js/HotelDetail/hotelDetailPriceSummary.js" defer></script>
+<script src="/js/HotelDetail/hotelDetailTabController.js" defer></script>
 </html>

@@ -284,6 +284,40 @@ body {
     cursor: pointer;
 }
 
+/* ====================== */
+/* Things to Know Section */
+.hotelDetail_things_to_know {
+    background-color: red;
+    width: 95%;
+    margin: 0 auto;
+    height: 500px;
+    /* Maybe set up the height */
+}
+
+.hotelDetail_tab_button_container {
+    height: auto;
+    background-color: blue;
+    display: flex;
+    /* justify-content: space-between; */
+    width: 100%;
+}
+
+.hotelDetail_tab_button_container button {
+    width: 25%;
+    height: 100%;
+    margin: 1rem 0rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.hotelDetail_tab_panel {
+    height: 400px;
+    background-color: purple;
+    padding: 1.5rem;
+    display: none;
+}
+
+
 /* ============================== */
 /* ========= Modal CSS ========== */
 /* ============================== */
