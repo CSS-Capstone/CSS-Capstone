@@ -287,16 +287,15 @@ body {
 /* ====================== */
 /* Things to Know Section */
 .hotelDetail_things_to_know {
-    background-color: red;
-    width: 95%;
+    width: 80%;
     margin: 0 auto;
-    height: 500px;
+    height: auto;
+    /* height: 500px; */
     /* Maybe set up the height */
 }
 
 .hotelDetail_tab_button_container {
     height: auto;
-    background-color: blue;
     display: flex;
     /* justify-content: space-between; */
     width: 100%;
@@ -308,15 +307,139 @@ body {
     margin: 1rem 0rem;
     padding: 1rem;
     cursor: pointer;
+    outline: none;
+    border: none;
+    font-size: 1.3rem;
 }
 
 .hotelDetail_tab_panel {
-    height: 400px;
-    background-color: purple;
     padding: 1.5rem;
-    display: none;
+    height: 400px;
+    background-color: rgb(251, 251, 251);
+}
+/* ========================== */
+/* Weather Container ======== */
+.hotelDetail_weather_air_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
 }
 
+.hotelDetail_weather_container {
+    flex: 2;
+    display: flex;
+    justify-content: space-evenly;
+    height: 100%;
+}
+
+.hotelDetail_weather_leftside {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 2rem;
+    align-items: center;
+    padding: 1rem;
+    width: 30%;
+    -moz-box-shadow:    inset 0 0 10px #B4D1EE;
+    -webkit-box-shadow: inset 0 0 10px #B4D1EE;
+    box-shadow:         inset 0 0 10px #B4D1EE;
+    background-color: rgb(251, 251, 251);
+}
+
+.hotelDetail_weather_leftside h3 {
+    color: var(--color-dark-grey);
+}
+
+.hotelDetail_weather_leftside h2 {
+    color: var(--color-regular-blue);
+}
+
+.hotelDetail_weather_leftside p {
+    color: var(--color-mid-grey);
+}
+
+.hotelDetail_weather_rightside {
+    width: 60%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    /* border: 2px solid var(--color-regular-blue); */
+    border-radius: 2rem;
+    padding: 1rem;
+    -moz-box-shadow:    inset 0 0 10px #B4D1EE;
+    -webkit-box-shadow: inset 0 0 10px #B4D1EE;
+    box-shadow:         inset 0 0 10px #B4D1EE;
+    background-color: rgb(251, 251, 251);
+}
+
+.hotelDetail_weather_rightside p {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    color: var(--color-mid-grey);
+}
+
+.hotelDetail_weather_rightside h3 {
+    color: var(--color-mid-grey);
+}
+
+.hotelDetail_weather_wind {
+    color: var(--color-mid-grey);
+}
+
+.fa-wind {
+    color: blue;
+    font-size: 1.5rem;
+}
+
+.hotelDetail_weather_humid {
+    color: var(--color-mid-grey); 
+}
+
+.fa-tint-slash {
+    color: orange;
+    font-size: 1.5rem;
+}
+
+.weather_left_icon {
+    width: 120;
+    height: 120px;
+}
+
+.hotelDetail_air_quality_container {
+    flex: 1;
+}
+/* ================== */
+/* Air Quality =======*/
+.hotelDetail_air_quality_left {
+    /* background-color: green; */
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    -moz-box-shadow:    inset 0 0 10px #B4D1EE;
+    -webkit-box-shadow: inset 0 0 10px #B4D1EE;
+    box-shadow:         inset 0 0 10px #B4D1EE;
+    background-color: rgb(251, 251, 251);
+    border-radius: 5rem;
+}
+
+.hotelDetail_air_quality_left h2 {
+    color: var(--color-mid-grey); 
+}
+
+.hotelDetail_air_quality_left p {
+    color: var(--color-mid-grey);
+}
+
+.hotelDetail_air_quality_left > i {
+    font-size: 4rem;
+}
 
 /* ============================== */
 /* ========= Modal CSS ========== */

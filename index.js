@@ -241,8 +241,11 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
     const weatherDataResponse = await fetch(weatherAPIURL);
     const weatherData = await weatherDataResponse.json();
-    const airQualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=`;
-    console.log(weatherData);
+    const airqualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=${process.env.AIR_QUALITY_KEY}`;
+    const air_qualityDataReponse = await fetch(airqualityAPIURL);
+    const airQualityData = await air_qualityDataReponse.json();
+    // console.log(weatherData);
+    console.log(airQualityData);
     const hotelObj = {
         hotelId
     ,   hotelLabel
@@ -252,7 +255,12 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     ,   hotelCoordLon
     ,   hotelLocationName
     };
-    res.render('pages/hotel/hotelSearchedDetail', {hotelObj: hotelObj, StripePublicKey:StripePublicKey, weatherData:weatherData});
+    res.render('pages/hotel/hotelSearchedDetail', {
+        hotelObj: hotelObj, 
+        StripePublicKey:StripePublicKey, 
+        weatherData:weatherData,
+        airQualityData: airQualityData
+    });
 });
 
 app.get('/hotel/searched/detail/:id/payment', (req, res) => {

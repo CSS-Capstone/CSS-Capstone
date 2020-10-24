@@ -150,32 +150,40 @@
                 <button class="hotelDetail_tab_btn">Currency</button>
             </div>
             <div class="hotelDetail_tab_panel" id="hotelDetail_tab_panel_first">
-                <div class="hotelDetail_weather_container">
-                    <div class="hotelDetail_weather_leftside">
-                        <h3 class="weather_left_title">Current Weather in City</h3>
-                        <h2><%=hotelObj.hotelLocationName%></h2>
-                        <img class="weather_left_icon" src="http://openweathermap.org/img/w/<%=weatherData.weather[0].icon%>.png" alt="weather of the city">
-                        <p class="weather_left_description"><%=weatherData.weather[0].description%></p>
-                        <p class="weather_left_feelslike">Feels like <%=(weatherData.main.feels_like * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
-                    </div>
-                    <div class="hotelDetail_weather_rightside">
-                        <p>Current Temperature(Kelvin): <%=weatherData.main.temp%>&#8490;</p>
-                        <p>Current Temperature(Fahrenheit): <%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
-                        <p>Current Temperature(Celsius): <%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</p>
-                        <div>
-                            <h3>Wind Speed</h3>
-                            <i class="fas fa-wind"></i><%=weatherData.wind.speed%>
+                <div class="hotelDetail_weather_air_container">
+                    <div class="hotelDetail_weather_container">
+                        <div class="hotelDetail_weather_leftside">
+                            <h3 class="weather_left_title">Current Weather in City</h3>
+                            <h2><%=hotelObj.hotelLocationName%></h2>
+                            <img class="weather_left_icon" src="http://openweathermap.org/img/w/<%=weatherData.weather[0].icon%>.png" alt="weather of the city">
+                            <p class="weather_left_description"><%=weatherData.weather[0].description%></p>
+                            <p class="weather_left_feelslike">Feels like <%=(weatherData.main.feels_like * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
                         </div>
-                        <div>
-                            <h3>Humidity</h3>
-                            <i class="fas fa-tint-slash"></i><%=weatherData.main.humidity%>%
+                        <div class="hotelDetail_weather_rightside">
+                            <p>Current Temperature(Kelvin): <strong><%=weatherData.main.temp%>&#8490;</strong></p>
+                            <p>Current Temperature(Fahrenheit): <strong><%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</strong></p>
+                            <p>Current Temperature(Celsius): <strong><%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</strong></p>
+                            <div class="hotelDetail_weather_wind">
+                                <h3>Wind Speed</h3>
+                                <i class="fas fa-wind"></i>&nbsp; <strong><%=weatherData.wind.speed%>mph</strong>
+                            </div>
+                            <div class="hotelDetail_weather_humid">
+                                <h3>Humidity</h3>
+                                <i class="fas fa-tint-slash"></i>&nbsp; <strong><%=weatherData.main.humidity%>%</strong>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="hotelDetail_air_quality">
-
+                    <div class="hotelDetail_air_quality_container">
+                        <div class="hotelDetail_air_quality_left">
+                            <h2 class="hotelDetail_air_quality_title">Air Quality</h2>
+                            <i class="face"></i>
+                            <p class="hotelDetail_air_quality_value"></p>
+                            <p class="hotelDetail_air_quality_index" data-air-quality-index="<%=airQualityData.data[0].aqi%>">Air Index: <%=airQualityData.data[0].aqi%></p>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- Covid Panel -->
             <div class="hotelDetail_tab_panel">
                 Covid API
             </div>
