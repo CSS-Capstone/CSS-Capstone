@@ -1,9 +1,10 @@
 @import "global.css";
 
 .profile__wrapper {
+    width: 65%;
     display: grid;
     grid-template-columns: 350px 1fr;
-    margin: 5rem 2rem;
+    margin: 3rem auto 3rem auto;
 }
 
 .profile__left {
@@ -53,6 +54,7 @@
 .profile__right {
     padding-left: 5rem;
     width: 100%;
+    
 }
 
 .profile__right__heading {
@@ -65,6 +67,38 @@
     font-size: var(--font-micro);
     color: var(--color-silver);
     padding-bottom: 0.5rem;
+}
+
+.profile__right__heading__sub  {
+    font-size: var(--font-medium);
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+}
+
+.user__tab__wrapper {
+    width: 65%;
+    margin: 0rem auto 2rem auto;
+}
+
+.user__tab {
+    margin-bottom: 2rem;
+    background-color: blue;
+}
+
+.user__tab__link {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    font-size: var(--font-regular);
+    float: left;
+    border: 1px solid var(--color-light-grey);
+    cursor: pointer;
+    width: 25%;
+}
+
+.user__tab__content {
+    display: none;
+    padding: 100px 20px;
+    border: 1px solid var(--color-light-grey);
 }
 
 #underline {
@@ -83,4 +117,11 @@ hr {
     margin: auto;
     padding: 0;
     width: 87%;
+}
+
+.right__divider {
+    margin-top: 1.5rem;
+    width: 100% !important;
+    height: 1px;
+    border-bottom: 1px solid var(--color-light-grey);
 }
