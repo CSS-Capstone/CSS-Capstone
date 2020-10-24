@@ -90,15 +90,28 @@
     color: var(--color-black);
     font-size: var(--font-regular);
     float: left;
-    border: 1px solid var(--color-light-grey);
+    border: 1px solid transparent;
     cursor: pointer;
     width: 25%;
+    padding: 10px 20px;
+}
+
+.user__tab__link:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.user__tab__link:focus {
+    outline: 0;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
 .user__tab__content {
     display: none;
     padding: 100px 20px;
-    border: 1px solid var(--color-light-grey);
+    border-bottom: 1px solid var(--color-light-grey);
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
 }
 
 #underline {
