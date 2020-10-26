@@ -292,42 +292,88 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     const hotelCoordLat = req.query.lat;
     const hotelCoordLon = req.query.lon;
     const hotelLocationName = req.query.locationName;
+    const hotelCountryName = req.query.countryName;
+    //console.log(hotelCountryName);
+    // Geoendoing
+    const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
+    const GEOAPIURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hotelCoordLat},${hotelCoordLon}&key=${theKey}`;
+    const GEO_RESPONSE = await fetch(GEOAPIURL);
+    const GEO_Data = await GEO_RESPONSE.json();
+    //console.log("Geo Data: ", GEO_Data.results[0].formatted_address);
+    const GEO_Formatted_Address = GEO_Data.results[0].formatted_address;
     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
-    const weatherDataResponse = await fetch(weatherAPIURL);
-    const weatherData = await weatherDataResponse.json();
-    const airqualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=${process.env.AIR_QUALITY_KEY}`;
-    const air_qualityDataReponse = await fetch(airqualityAPIURL);
-    const airQualityData = await air_qualityDataReponse.json();
-    // console.log(weatherData);
-    console.log(airQualityData);
-    const hotelObj = {
-        hotelId
-    ,   hotelLabel
-    ,   hotelFullName
-    ,   hotelScore
-    ,   hotelCoordLat
-    ,   hotelCoordLon
-    ,   hotelLocationName
-    };
-    res.render('pages/hotel/hotelSearchedDetail', {
-        hotelObj: hotelObj, 
-        StripePublicKey:StripePublicKey, 
-        weatherData:weatherData,
-        airQualityData: airQualityData
-    });
+    const airqualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=${AirQualityKey}`;
+    try {
+        const weatherDataResponse = await fetch(weatherAPIURL);
+        const weatherData = await weatherDataResponse.json();
+        //console.log(weatherData);
+        try {
+            const air_qualityDataReponse = await fetch(airqualityAPIURL);
+            const airQualityData = await air_qualityDataReponse.json();
+            const hotelObj = {
+                hotelId
+            ,   hotelLabel
+            ,   hotelFullName
+            ,   hotelScore
+            ,   hotelCoordLat
+            ,   hotelCoordLon
+            ,   hotelLocationName
+            ,   hotelCountryName
+            ,   GEO_Formatted_Address
+            };
+            res.render('pages/hotel/hotelSearchedDetail', {
+                hotelObj: hotelObj, 
+                StripePublicKey:StripePublicKey, 
+                weatherData:weatherData,
+                airQualityData: airQualityData
+            });
+        } catch(error) {
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+app.get('/hotel/searched/detail/covid/:country', async (req, res) => {
+    const countryCode = req.params.country;
+    const COVID_API_URL = `https://corona-api.com/countries/${countryCode}`;
+    const covidAPIResponse = await fetch(`${COVID_API_URL}`);
+    const covidAPIData = await covidAPIResponse.json();
+    //console.log(covidAPIData);
+    res.json(covidAPIData);
+});
+
+// get current currency
+app.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => {
+    const targetCurrency = req.params.currencyCode;
+    try {
+        const coutryIOCurrencyRes = await fetch(`http://country.io/currency.json`);
+        const coutryIOCurrencyData = await coutryIOCurrencyRes.json();
+        const currencyTarget = coutryIOCurrencyData[targetCurrency];
+        res.json(currencyTarget);
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 app.get('/hotel/searched/detail/:id/payment', (req, res) => {
-    res.render('pages/booking/bookConfirm');
+    let hotelCookieData = req.cookies.hotelBookingData;
+    //res.clearCookie("hotelBookingData");
+    console.log("From GET: ", hotelCookieData);
+    res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
 });
 
 app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     // console.log(res.status());
     const paymentData = req.body;
     const passingData = req.body.body;
-    const hotelPrice = Number(paymentData.body.totalPrice * 100);
-    console.log(hotelPrice);
+    console.log(passingData);
+    const hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
+    hotelPrice = Number(hotelPrice);
     console.log(paymentData);
+    console.log(`The Price: `, hotelPrice);
+    res.cookie('hotelBookingData', paymentData);
     // charge on stripe
     stripe.customers.create({
         email: paymentData.email
@@ -337,7 +383,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     ,   currency: 'usd'
     ,   amount: hotelPrice
     })).then(function() {
-        res.render('pages/booking/bookConfirm', {paymentData:paymentData});
+        res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
     });
 });
 // ====================================

@@ -42,13 +42,26 @@ function sendStripeDataForBack_End() {
     const theTotalGuestNumStripe = theInformationForStripe[1];
     const theRoomTypeStripe = theInformationForStripe[2];
     const hotelBookingId = hotelBookBtn.getAttribute('data-hotel-id');
+    const hotelNameDOM  = document.querySelector('.hotelDetail_hotelName');
+    const hotelName = hotelNameDOM.getAttribute(`data-hotel-label`);
+    const hotelLocationDOM = document.querySelector('.hotelDetail_hotelLocation');
+    const hotelLocation = hotelLocationDOM.getAttribute('data-hotel-location');
+    const hotelAddressDOM = document.querySelector('.hotelDetail_address');
+    const hotelAddress = hotelAddressDOM.getAttribute('data-hotel-address');
     console.log(hotelBookingId);
     console.log(theTotalHotelPriceStripe);
+    console.log(hotelName);
+    console.log(hotelLocation);
+    console.log(hotelAddress);
+
     const body = {
         hotelId: hotelBookingId
     ,   totalPrice: theTotalHotelPriceStripe
     ,   guestNumber: theTotalGuestNumStripe
     ,   roomType: theRoomTypeStripe
+    ,   hotelName: hotelName
+    ,   hotelLocation: hotelLocation
+    ,   hotelAddress: hotelAddress
     // ,   tokenId: token.id
     }
     return body;
