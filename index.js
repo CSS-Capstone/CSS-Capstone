@@ -6,12 +6,15 @@ const dotenv = require('dotenv');
 const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const cookieSession = require('cookie-session');
+const facebookStrategy = require('passport-facebook').Strategy;
+// const cookieSession = require('cookie-session');
+// const expressSession = require('express-session'); 
 const cookieParser = require('cookie-parser');
 const trim = require('./modules/trim-city');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 const url = require('url');
-require('./passport-setup');
+require('./passport-google-setup');
+require('./passport-facebook-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
@@ -21,11 +24,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
+// app.use(session({secret:"this is your secret key"}));
 app.use(cookieParser());
-app.use(cookieSession({
-    name: 'tuto-session',
-    keys: ['key1', 'key2']
-}));
+// app.use(cookieSession({
+//     name: 'tuto-session',
+//     keys: ['key1', 'key2']
+// }));
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
@@ -93,15 +97,66 @@ app.post('/', (req, res) => {
 });
 
 // ===============================================
+// start of facebook
+// ===============================================
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook/failed' }),
+    function(req, res) {
+        // console.log(req.user);
+
+        // =============
+        // first way to do it
+        // =============
+
+        // res.redirect(url.format({
+        //     pathname: "/good",
+        //     query: req.user
+        // }));
+
+        // =============
+        // second way to do it
+        // =============
+        
+        res.cookie("profile", req.user);
+        //this will be different in locale in the JSON data
+        res.redirect('/facebook/good');
+    });
+
+app.get('/facebook/good', (req, res) => {
+    // console.log(req.user);
+    let data = req.cookies.profile;
+    console.log(data);
+    res.send("Hello, facebook auth works");
+});
+
+app.get('/facebook/failed', (req, res) => {
+    res.send("Hello, facebook auth fails");
+});
+
+app.get('/facebook/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.redirect('/');
+});
+
+// ===============================================
+// end of facebook
+// ===============================================
+
+// ======================================================
+
+// ===============================================
 // start of google
 // ===============================================
-app.get('/failed', (req, res) => {
+app.get('/google/failed', (req, res) => {
     res.send('You Failed to log in!');
 });
 
 //need to figure out how to get req.user JSON data
 //from /google/callback get request
-app.get('/good', (req, res) => {
+app.get('/google/good', (req, res) => {
     // =============
     // first way to do it
     // =============
@@ -122,11 +177,10 @@ app.get('/good', (req, res) => {
         email: req.cookies.profile.emails[0].value
     })
 });
-//bangsattttt
 
 app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google/failed' }),
     function(req, res) {
         // console.log(req.user);
 
@@ -148,7 +202,7 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
         res.redirect('/good');
     });
 
-app.get('/logout', (req, res) => {
+app.get('/google/logout', (req, res) => {
     req.session = null;
     req.logout();
     res.redirect('/');
@@ -310,7 +364,9 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
-// google get call
+app.get('/reset_password', (req, res) => {
+    res.render('pages/')
+})
 
 
 // =============================
