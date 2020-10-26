@@ -3,9 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Hotelfinder-Thanks for Booking</title>
+    <!-- Fontawesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/bookConfirm.css">
+    <!-- Partial View CSS -->
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
 </head>
 <body>
-    <p>Hello Booking Page</p>
+    <%- include('../../partials/navigation') %>
+    <section class="saveASPDF">
+        <section class="bookConfirm_header_container">
+            <h1 class="bookConfirm_header_head">
+                <!-- <i class="fas fa-bed"></i> -->
+                Thanks For Booking through 
+                <span class="bookConfirm_header_head_span">Hotel Finder</span>
+            </h1>
+            <div class="bookConfirm_header_item_container">
+                <div class="bookConfirm_header_item">
+                    <h2 class="bookConfirm_header_item_customer_destination">You are going to 
+                        <span class="bookConfirm_header_item_user_selected_destination">
+                            <%=hotelCookieData.body.hotelName%>!
+                        </span>
+                    </h2>
+                    <p>Located in <%=hotelCookieData.body.hotelLocation%></p>
+                 </div>
+                 <div class="bookConfirm_header_print">
+                     <button class="bookConfirm_header_print_btn">Print</button>
+                 </div>
+            </div>
+        </section>
+        <section class="bookConfirm_main_container">
+            <div class="bookConfirm_main_left">
+                <div class="bookConfirm_main_guest">
+                    <div class="bookConfirm_main_guest_num">
+                        <h3>Guest</h3>
+                        <small>The number of guests you booked</small>
+                    </div>
+                    <div class="bookCOnfirm_main_guest_total">
+                        <% if (Number(hotelCookieData.body.guestNumber) == 2) { %>
+                            <p><%=hotelCookieData.body.guetsNumber + 1 %> and more</p>
+                        <% } else { %>
+                            <p><%=Number(hotelCookieData.body.guestNumber) + 1%></p>
+                        <% } %> 
+                    </div>
+                </div>
+                <hr class="bookConfirm_main_divider">
+                <div class="bookConfirm_main_hotel_roomType">
+                    <div class="bookConfirm_main_hotel_roomType_left">
+                        <h3>Room Type</h3>
+                        <small>The room type you selected</small>
+                    </div>
+                    <div class="bookConfirm_main_hotel_roomType_right">
+                        <p><%=hotelCookieData.body.roomType%></p>
+                    </div>
+                </div>
+                <hr class="bookConfirm_main_divider">
+                <div class="bookConfirm_main_hotel_address">
+                    <h3>Address</h3>
+                    <div>
+                        <p><%=hotelCookieData.body.hotelAddress%></p>
+                    </div>
+                </div>
+                <hr class="bookConfirm_main_divider">
+                <div class="bookConfirm_main_hotel_totalPrice">
+                    <h2 class="total Price_text">Total Charged: </h2>
+                    <h2 class="total_price">$<%=hotelCookieData.body.totalPrice%></h2>
+                </div>
+            </div>
+            <div class="bookConfirm_main_right">
+                <h3><%=hotelCookieData.body.hotelName%></h3>
+                <img class="bookConfirm_main_right_main_hotelPicture" src="/images/hotelStripeImage.jpg" alt="">
+                <p class="bookConfirm_main_right_first_para">Have any question about your booking?</p>
+                <p>Feel free to contact with the ADMIN.</p>
+                <p>Contact: Admin@Admin.com</p>
+            </div>
+        </section>
+    </section>
+    
+    <%- include('../../partials/footer') %>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script src="/js/Book/bookSavePDF.js"></script>
 </html>

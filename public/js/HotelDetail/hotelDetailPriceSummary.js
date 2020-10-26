@@ -96,7 +96,7 @@ function getPriceRoomType() {
 function getTotalPrice(hotelPrice, guestAdditionalPrice, roomTypePrice) {
     let totalPrice = 0;
     console.log("In Total Price: ", hotelPrice, guestAdditionalPrice, roomTypePrice);
-    totalPrice = (Number(hotelPrice) + Number(guestAdditionalPrice) + Number(roomTypePrice));
+    totalPrice = (Number(hotelPrice) + Number(guestAdditionalPrice) + Number(roomTypePrice)).toFixed(2);
     return totalPrice;
 }
 

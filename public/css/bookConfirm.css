@@ -1,0 +1,200 @@
+@import 'Global.css';
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.bookConfirm_header_container {
+    width: 90%;
+    margin: 0 auto;
+    /* background-color: red; */
+}
+.bookConfirm_header_head {
+    font-size: 1.5rem;
+    color: var(--color-mid-grey);
+}
+
+.fa-bed {
+    color: #589fe6;
+    font-size: 1.8rem;
+}
+
+.bookConfirm_header_head_span {
+    color: #589fe6;
+    font-size: 1.8rem;
+}
+
+/* ====================== */
+/* Header ================*/
+.bookConfirm_header_item_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookConfirm_header_item_customer_destination {
+    color: var(--color-dark-grey); 
+    font-size: 1.2rem;
+}
+
+.bookConfirm_header_item_user_selected_destination {
+    color: #589fe6;
+    font-size: 1.5rem;
+}
+
+.bookConfirm_header_item p {
+    color: var(--color-mid-grey); 
+}
+
+
+.bookConfirm_header_print_btn {
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
+    background-color: transparent;
+    outline: none;
+    border-radius: 2rem;
+    border: 1px solid #589fe6;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-dark-grey);
+    transition: all ease-in 0.2s;
+}
+
+.bookConfirm_header_print_btn:hover {
+    background-color: #589fe6;
+    color: white;
+}
+
+.bookConfirm_main_container {
+    width: 90%;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    border: 1px solid var(--color-light-grey);
+    border-radius: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.bookConfirm_main_left {
+    flex: 1.5;
+    margin-right: 3rem;
+}
+
+/* ======================= */
+/* Guest ================= */
+.bookConfirm_main_guest {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookConfirm_main_guest_num h3 {
+    font-weight: bold;
+    color: var(--color-dark-grey);
+}
+
+.bookConfirm_main_guest_num small {
+    color: var(--color-mid-grey);
+}
+
+.bookCOnfirm_main_guest_total {
+    color: var(--color-dark-grey);
+}
+
+.bookConfirm_main_divider {
+    color: var(--color-mid-grey);
+    margin: 1rem 0rem;
+}
+
+/* =========================== */
+/* Room Type ================= */
+.bookConfirm_main_hotel_roomType {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookConfirm_main_hotel_roomType_left h3 {
+    font-weight: bold;
+    color: var(--color-dark-grey);
+}
+
+.bookConfirm_main_hotel_roomType_left small {
+    color: var(--color-mid-grey);
+}
+
+.bookConfirm_main_hotel_roomType_right p {
+    color: var(--color-dark-grey);
+}
+
+/* ============================= */
+/* Address ===================== */
+.bookConfirm_main_hotel_address {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.bookConfirm_main_hotel_address h3 {
+    font-weight: bold;
+    color: var(--color-dark-grey);
+}
+
+.bookConfirm_main_hotel_address p {
+    color: var(--color-mid-grey);
+    font-size: 1rem;
+}
+
+.bookConfirm_main_hotel_totalPrice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookConfirm_main_hotel_totalPrice h2 {
+    color: var(--color-mid-grey);
+}
+
+/* =============================== */
+/* Book Confirm Right =============*/
+.bookConfirm_main_right {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid var(--color-light-grey);
+    border-radius: 2rem;
+    padding: 1rem 0.5rem;
+}
+
+.bookConfirm_main_right img {
+    width: 180px;
+    height: 180px;
+}
+
+.bookConfirm_main_right h3 {
+    color: #589fe6;
+    font-weight: bold;
+}
+
+.bookConfirm_main_right_main_hotelPicture {
+    border-radius: 50%;
+    -webkit-box-shadow: 3px 3px 5px 2px rgb(144, 144, 144);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    3px 3px 5px 2px rgb(149, 149, 149);  /* Firefox 3.5 - 3.6 */
+    box-shadow:         3px 3px 5px 2px rgb(143, 143, 143);
+}
+
+.bookConfirm_main_right_first_para {
+    padding-top: 1rem;
+}
+
+.bookConfirm_main_right p {
+    margin: 0.5rem 0rem;
+    color: var(--color-mid-grey);
+    font-size: 0.8rem;
+}

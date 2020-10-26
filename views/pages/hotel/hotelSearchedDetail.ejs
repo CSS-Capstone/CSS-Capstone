@@ -19,11 +19,11 @@
     <%- include('../../partials/navigation') %>
     <!-- End of Partial -->
     <header class="hotelDetail_header">
-        <h2 class="hotelDetail_hotelName"><%=hotelObj.hotelLabel%></h2>
+        <h2 class="hotelDetail_hotelName" data-hotel-label="<%=hotelObj.hotelLabel%>"><%=hotelObj.hotelLabel%></h2>
         <div class="hotelDetail_header_contents">
             <div class="hotelDetail_basicInfo">
                 <i data-rate-value="<%=(Number(hotelObj.hotelScore) / 100000).toFixed(3)%>" class="fas fa-star hotel_rating"><%=(hotelObj.hotelScore / 100000).toFixed(3)%></i>
-                <p class="hotelDetail_hotelLocation"><%=hotelObj.hotelLocationName%></p>
+                <p class="hotelDetail_hotelLocation" data-hotel-location="<%=hotelObj.hotelLocationName%>"><%=hotelObj.hotelLocationName%></p>
             </div>
             <div class="hotelDetail_export">
                 <i class="fas fa-share-square copyLink">&nbsp; Share
@@ -76,6 +76,10 @@
                         </div>
                     </div>
                     <div class="hotelDetail_userinfo">
+                        <div class="hotelDetail_address" data-hotel-address="<%=hotelObj.GEO_Formatted_Address%>">
+                            <h2>Hotel Address</h2>
+                            <p><%=hotelObj.GEO_Formatted_Address%></p>
+                        </div>
                         <div class="form_group">
                             <label for="userFirstName">First Name: </label>
                             <input type="text" id="userFirstName" placeholder="first name"/>
@@ -141,7 +145,8 @@
     <!-- Things to know -->
     <!-- Todo: create tab -->
     <section class="hotelDetail_things_to_know">
-        <h2 class="">Things to know</h2>
+        <h2 class="hotelDetail_thingstoKnow_title" data-currency-countryName="<%=weatherData.sys.country%>">Things to know</h2>
+        
         <div class="hotelDetail_tab_container">
             <div class="hotelDetail_tab_button_container">
                 <button class="hotelDetail_tab_btn" id="hotelDetail_tab_btn_first">Weather</button>
@@ -185,13 +190,29 @@
             </div>
             <!-- Covid Panel -->
             <div class="hotelDetail_tab_panel">
-                Covid API
+                <div class="hotelDetail_covid_header">
+                    <h2 class="hotelDetail_covid_countryName"></h2>
+                    <small class="hotelDetail_covid_lastupdate" data-weather-countryName="<%=weatherData.sys.country%>"></small>
+                </div>
+                <div class="chart_data">
+                    <canvas id="myChart" class="graph"></canvas>
+                </div>
             </div>
             <div class="hotelDetail_tab_panel">
                 Public Transportation API
             </div>
             <div class="hotelDetail_tab_panel">
-                Currency API
+                <div class="hotelDetail_currency_container">
+                    <div class="hotelDetail_currency_left">
+                        <h2 class="hotelDetail_curreny_default"></h2>
+                        <small class="hotelDetail_currency_default_from"></small>
+                        <p class="hotelDetail_currency_to"></p>
+                        <small class="hotelDetail_currency_lastUpdated"></small>
+                    </div>
+                    <div class="hotelDetail_currency_right">
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -210,7 +231,7 @@
         <i class="fas fa-chevron-circle-right modal-right"></i>
     </div>
     <hr>
-    <%- include('../../partials/footer')%>
+    <%- include('../../partials/footer') %>
 
 </body>
 <script src="https://checkout.stripe.com/checkout.js" defer></script>
@@ -224,4 +245,6 @@
 <script src="/js/HotelDetail/hotelDetailGetPricePerNight.js" defer></script>
 <script src="/js/HotelDetail/hotelDetailPriceSummary.js" defer></script>
 <script src="/js/HotelDetail/hotelDetailTabController.js" defer></script>
+<!-- Chart js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0" defer></script>
 </html>
