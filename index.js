@@ -13,8 +13,8 @@ const cookieParser = require('cookie-parser');
 const trim = require('./modules/trim-city');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 const url = require('url');
-require('./passport-google-setup');
-require('./passport-facebook-setup');
+require('./passport/passport-google-setup');
+require('./passport/passport-facebook-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
@@ -199,12 +199,13 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 
         res.cookie("profile", req.user);
         //this will be different in locale in the JSON data
-        res.redirect('/good');
+        res.redirect('/google/good');
     });
 
 app.get('/google/logout', (req, res) => {
     req.session = null;
     req.logout();
+    //delete cookie data from the previous user
     res.redirect('/');
 })
 
