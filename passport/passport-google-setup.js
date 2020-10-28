@@ -28,8 +28,8 @@ passport.use(new GoogleStrategy({
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
     passReqToCallback: true
 }, function(req, accessToken, refreshToken, profile, done){
-    // console.log(profile);
-    
+    //console.log(profile);
+   
     return done(null, profile);
 }
 ));
