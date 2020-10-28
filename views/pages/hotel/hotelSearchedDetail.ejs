@@ -79,6 +79,8 @@
                         <div class="hotelDetail_address" data-hotel-address="<%=hotelObj.GEO_Formatted_Address%>">
                             <h2>Hotel Address</h2>
                             <p><%=hotelObj.GEO_Formatted_Address%></p>
+                            <h2>City Full Name</h2>
+                            <p><%=hotelObj.cityFullName%></p>
                         </div>
                         <div class="form_group">
                             <label for="userFirstName">First Name: </label>
@@ -151,7 +153,7 @@
             <div class="hotelDetail_tab_button_container">
                 <button class="hotelDetail_tab_btn" id="hotelDetail_tab_btn_first">Weather</button>
                 <button class="hotelDetail_tab_btn">Covid</button>
-                <button class="hotelDetail_tab_btn">Public Transportation</button>
+                <button class="hotelDetail_tab_btn" id="tab_video" data-hotel-city-fullname="<%=hotelObj.cityFullName%>">Video of the City</button>
                 <button class="hotelDetail_tab_btn">Currency</button>
             </div>
             <div class="hotelDetail_tab_panel" id="hotelDetail_tab_panel_first">
@@ -199,7 +201,17 @@
                 </div>
             </div>
             <div class="hotelDetail_tab_panel">
-                Public Transportation API
+                <video class="hotelDetail_cityVideo_frame" 
+                    src="" 
+                    width="1218" 
+                    height="400" 
+                    loop muted 
+                    type="video/mp4"
+                    controls preload="1">
+                </video>
+                <div class="video_buttonContainer">
+                    <button class="video_show_more_btn">Show More Videos</button>
+                </div>
             </div>
             <div class="hotelDetail_tab_panel">
                 <div class="hotelDetail_currency_container">
@@ -210,7 +222,22 @@
                         <small class="hotelDetail_currency_lastUpdated"></small>
                     </div>
                     <div class="hotelDetail_currency_right">
-                        
+                        <h2 class="hotelDetail_currency_right_header">Type the Value and Press Enter to Convert</h2>
+                        <div class="hotelDetail_currency_from_top">
+                            <p class="currency_top_default"></p>
+                            <div class="currency_top_input_container">
+                                <i class="fas fa-dollar-sign"></i>&nbsp; 
+                                <input class="currency_top_amount" type="text" placeholder="Press Enter when you type amount"/>
+                            </div>
+                            <span class="currency_validation"></span>
+                        </div>
+                        <div class="currency_middle_divider">
+                            <h1 class="currency_middle">TO</h1>
+                        </div>
+                        <div class="hotelDetail_currency_to_botton">
+                            <p class="currency_bottom_countryCode"></p>
+                            <h3 class="current_bottom_result"></h3>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -219,7 +246,7 @@
     <!-- =============================== -->
     <!-- =========Create Modal========== -->
     <!-- =============================== -->
-    <div class="modal" id="#myModal">
+    <div class="modal" id="myModal">
         <header>
             <span class="close_modal_btn">&times;</span>
             <p class="modal_img_counter"></p>
@@ -230,6 +257,28 @@
         </main>
         <i class="fas fa-chevron-circle-right modal-right"></i>
     </div>
+
+    <div class="video_modal" id='videoModal'>
+        <header>
+            <span class="close_video_modal_btn">&times;</span>
+            <main class="modal_video_container">
+                <video 
+                    class="modal_video" 
+                    src=""
+                    loop muted 
+                    type="video/mp4"
+                    controls preload="1">
+                </video>
+            </main>
+            <ul class="modal_video_navigation">
+                
+            </ul>
+        </header>
+    </div>
+    <!-- =============================== -->
+    <!-- End of Modal ================== -->
+    <!-- =============================== -->
+    <br>
     <hr>
     <%- include('../../partials/footer') %>
 

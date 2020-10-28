@@ -52,7 +52,7 @@
                             </div>
                             <div class="hotel_desc_detail_btn">
                                 <a class="hotel_desc_btn" 
-                                    href="/hotel/searched/detail/<%=hotel.id%>?label=<%=hotel.label%>&fullname=<%=hotel.fullName%>&score=<%=hotel._score%>&lat=<%=hotel.location.lat%>&lon=<%=hotel.location.lon%>&locationName=<%=hotel.locationName%>">
+                                    href="/hotel/searched/detail/<%=hotel.id%>?label=<%=hotel.label%>&fullname=<%=hotel.fullName%>&score=<%=hotel._score%>&lat=<%=hotel.location.lat%>&lon=<%=hotel.location.lon%>&locationName=<%=hotel.locationName%>&cityFullName=<%= theHotelData.hoteldata.results.locations[0].fullName %>">
                                     View Detail
                                 </a>
                             </div>

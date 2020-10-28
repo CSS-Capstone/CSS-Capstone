@@ -324,7 +324,6 @@ body {
     justify-content: space-between;
     align-items: center;
     text-align: center;
-    background-color: red;
 }
 
 .hotelDetail_weather_container {
@@ -457,9 +456,41 @@ body {
 }
 
 /* ============================== */
+/* Video ======================== */
+.hotelDetail_tab_panel {
+    position: relative;
+}
+
+.video_buttonContainer {
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    z-index: 1;
+}
+
+.video_show_more_btn {
+    width: 160px;
+    height: 50px;
+    outline: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    border: 1px solid #589fe6;
+    background-color: rgb(245, 245, 245);
+    color: #589fe6;
+    transition: all ease-in-out 0.2s;
+    font-weight: bold;
+}
+
+.video_show_more_btn:hover {
+    border: 1px solid #589fe6;
+    color: #589fe6;
+    background-color: black;
+    font-weight: bold;
+    /* background-color:transparent; */
+}
+/* ============================== */
 /* Currency ===================== */
 .hotelDetail_currency_container {
-    background-color: blue;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -467,7 +498,6 @@ body {
 }
 
 .hotelDetail_currency_left {
-    background-color: yellow;
     flex: 1;
     width: 100%;
     height: 100%;
@@ -478,12 +508,125 @@ body {
     padding: 2rem;
 }
 
-.hotelDetail_currency_right {
-    flex: 2;
+.hotelDetail_curreny_default {
+    color: var(--color-dark-grey);
+    font-weight: bold;
 }
 
+.hotelDetail_currency_default_from {
+    color: #589fe6;
+    font-weight: bold;
+    font-size: 1rem;
+}
 
+.hotelDetail_currency_to {
+    color: #589fe6;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
 
+.hotelDetail_currency_lastUpdated {
+    color: var(--color-mid-grey);
+    color: 0.9rem;
+    font-weight: bold;
+}
+
+/* =============================== */
+/* Currency Right ================ */
+.hotelDetail_currency_right {
+    flex: 1;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hotelDetail_currency_right_header {
+    color: var(--color-dark-grey);
+    font-size: 1.3rem;
+    font-weight: bold;
+    width: 80%;
+    text-align: center;
+    text-decoration: dashed;
+}
+
+.hotelDetail_currency_from_top {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    align-items: center;
+}
+
+.currency_top_default {
+    font-size: 1.2rem;
+    color: var(--color-dark-grey);
+    font-weight: bold;
+}
+
+.currency_top_input_container {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: center;
+}
+
+.fa-dollar-sign {
+    color: #589fe6;
+    width: 10%;
+    height: 100%;
+    align-items: flex-end;
+    align-self: flex-end;
+    font-size: 2rem;
+    border: 1px solid transparent;
+}
+
+.currency_top_amount {
+    outline: none;
+    width: 90%;
+    height: 100%;
+    border: 1px solid #589fe6;
+    border-radius: 2rem;
+    font-size: 1.5rem;
+    padding-left: 1rem;
+}
+
+.currency_middle_divider {
+    width: 100px;
+    height: 100px;
+    margin: 1rem 0rem;
+    align-items: center;
+    text-align: center;
+}
+
+.currency_middle {
+    text-align: center;
+    color: var(--color-mid-grey);
+}
+
+.hotelDetail_currency_to_botton {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    align-items: center;
+}
+
+.currency_bottom_countryCode {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.currency_validation {
+    color: rgb(248, 51, 51);
+}
+
+.current_bottom_result {
+    font-size: 1.5rem;
+    color: #589fe6;
+    font-weight: bold;
+    text-decoration: dashed;
+}
 
 /* ============================== */
 /* ========= Modal CSS ========== */
@@ -498,7 +641,7 @@ body {
     padding-top: 10rem;
     background-color: var(--color-footer-link);
     background-color: rgba(243, 243, 243, 0.9);
-    z-index: 1;
+    z-index: 2;
 }
 
 .close_modal_btn {
@@ -543,4 +686,59 @@ body {
     font-size: 2rem;
     color: var(--color-footer-link);
     cursor: pointer;
+}
+/* ============================= */
+/* Video Modal ================= */
+/* ============================= */
+.video_modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 6rem;
+    background-color: rgba(26, 26, 26, 0.9);
+    z-index: 2;
+}
+.close_video_modal_btn {
+    position: absolute;
+    color: var(--color-light-grey);
+    font-size: 3rem;
+    top: 2rem;
+    left: 4rem;
+    cursor: pointer;
+}
+
+.modal_video_container {
+    margin: 0 auto;
+    width: 90%;
+    align-items: center;
+    text-align: center;
+}
+
+.modal_video {
+    width: 80%;
+    height: 550px;
+    margin: 0 auto;
+}
+
+.modal_video_navigation {
+    position: absolute;
+    bottom: 5%;
+    left: 20%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.modal_video_navigation video {
+    margin: 1rem;
+    cursor: pointer;
+    border-radius: 2rem;
+    transition: all ease-in-out 0.2s;
+    border: 1px solid var(--color-light-grey);
+}
+
+.modal_video_navigation video:hover {
+    width: 210px !important;
 }

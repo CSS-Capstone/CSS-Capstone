@@ -182,6 +182,7 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     const hotelCoordLon = req.query.lon;
     const hotelLocationName = req.query.locationName;
     const hotelCountryName = req.query.countryName;
+    const cityFullName = req.query.cityFullName;
     //console.log(hotelCountryName);
     // Geoendoing
     const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
@@ -209,6 +210,7 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
             ,   hotelLocationName
             ,   hotelCountryName
             ,   GEO_Formatted_Address
+            ,   cityFullName
             };
             res.render('pages/hotel/hotelSearchedDetail', {
                 hotelObj: hotelObj, 
@@ -231,6 +233,20 @@ app.get('/hotel/searched/detail/covid/:country', async (req, res) => {
     const covidAPIData = await covidAPIResponse.json();
     //console.log(covidAPIData);
     res.json(covidAPIData);
+});
+
+// get video for the tab
+app.get('/hotel/searched/detail/video/:locationName', async (req, res) => {
+    const queryData = req.params.locationName;
+    const videoAPIKey = process.env.PUBLIC_ATTRACTION_API_KEY;
+    const videoAPIURL = `https://pixabay.com/api/videos/?key=${videoAPIKey}&q=${queryData}`;
+    try {
+        const videoResponse = await fetch(`${videoAPIURL}`);
+        const videoData = await videoResponse.json();
+        res.json(videoData);
+    } catch (error) {
+        console.log(`Error from Video Searched Hotel ${error}`);
+    }
 });
 
 // get current currency

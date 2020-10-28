@@ -19,6 +19,8 @@ function displayPanel(event, index) {
     }
     if (index == 1) {
         covidControl();
+    } else if (index == 2) {
+        getVideosForCity();
     } else if (index == 3) {
         getCurrency();
     }
@@ -45,6 +47,8 @@ function initialSelect() {
     }
 }
 
+
+// weather and air quality
 function airQualityControl() {
     let air_quality_face = [
         'far fa-laugh-squint'
@@ -74,22 +78,23 @@ function airQualityControl() {
     } else if (airQualityIndex >= 51 && airQualityIndex <= 100) {
         airQualityFaceDOM.className = air_quality_face[1];
         airQualityValueDOM.textContent = air_quality_value[1];
-        airQualityContainer.style.backgroundColor = 'yellow';
+        airQualityContainer.style.color = 'yellow';
     } else if (airQualityIndex >= 101 && airQualityIndex <= 150) {
         airQualityFaceDOM.className = air_quality_face[2];
         airQualityValueDOM.textContent = air_quality_value[2];
-        airQualityContainer.style.backgroundColor = 'orange';
+        airQualityContainer.style.color = 'orange';
     } else if (airQualityIndex >= 151 && airQualityIndex <= 200) {
         airQualityFaceDOM.className = air_quality_face[3];
         airQualityValueDOM.textContent = air_quality_value[3];
-        airQualityContainer.style.backgroundColor = 'red';
+        airQualityContainer.style.color = 'red';
     } else {
         airQualityFaceDOM.className = air_quality_face[4];
         airQualityValueDOM.textContent = air_quality_value[4];
-        airQualityContainer.style.backgroundColor = 'purple';
+        airQualityContainer.style.color = 'purple';
     }
 }
 
+// COVID
 async function covidControl() {
     try {
         // DOM Elements
@@ -155,17 +160,133 @@ async function covidControl() {
     }
 }
 
+// Video
+async function getVideosForCity() {
+    // ============================
+    // DOM Elements ===============
+    const videoFrame = document.querySelector('.hotelDetail_cityVideo_frame');
+    const hotelLocationDOM = document.querySelector('#tab_video');
+    // data before trim
+    const hotelLocationDataNoTrim = hotelLocationDOM.getAttribute('data-hotel-city-fullname');
+    console.log(hotelLocationDataNoTrim);
+    const trimmedCity = trimCitiyNameHelper(hotelLocationDataNoTrim);
+    // api call
+    const videoResponse = await fetch(`/hotel/searched/detail/video/${trimmedCity}`);
+    const videoData = await videoResponse.json();
+    const singleVideo = videoData.hits[0].videos.tiny.url;
+    videoFrame.src = `${singleVideo}`;
+    console.log(videoData);
+    console.log(singleVideo);
+    // ===============================
+    // Modal items ===================
+    // Modal DOM Elements
+    const video_modal_btn = document.querySelector('.video_show_more_btn');
+    const videoModal = document.querySelector('.video_modal');
+    const video_close_btn = document.querySelector('.close_video_modal_btn');
+    const videoForModal = document.querySelector('.modal_video');
+
+    videoFrame.addEventListener('mouseover', (event) => {
+        videoFrame.play();
+    });
+    videoFrame.addEventListener('mouseout', (event) => {
+        videoFrame.pause();
+    });
+
+    // ===============================
+    // Video Modal Event Listener ====
+    video_modal_btn.addEventListener('click', (event) => {
+        videoModal.style.display = 'block';
+        const modal_video_navigation = document.querySelector('.modal_video_navigation');
+        if (videoData.total >= 5) {
+            while (modal_video_navigation.firstChild) {
+                modal_video_navigation.removeChild(modal_video_navigation.firstChild);
+            }
+            for (let i = 0; i < 5; i++) {
+                let imageDOM = document.createElement('video');
+                imageDOM.src = videoData.hits[i].videos.tiny.url;
+                imageDOM.style.width = '180px';
+                imageDOM.style.height = `120px`;
+                modal_video_navigation.appendChild(imageDOM);
+            }
+            // default selection
+            videoForModal.src = videoData.hits[0].videos.tiny.url;
+            console.log(modal_video_navigation.childNodes.length);
+            for (let i = 0; i < modal_video_navigation.childNodes.length; i++) {
+                // console.log(modal_video_navigation.childNodes[i]);
+                // now add event listener
+                modal_video_navigation.childNodes[i].addEventListener('click', (event) => {
+                    videoForModal.src = videoData.hits[i].videos.tiny.url;
+                });
+            }
+        } else {
+            while (modal_video_navigation.firstChild) {
+                modal_video_navigation.removeChild(modal_video_navigation.firstChild);
+            }
+            for (let i = 0; i < videoData.total; i++) {
+                let imageDOM = document.createElement('video');
+                imageDOM.src = videoData.hits[i].videos.tiny.url;
+                imageDOM.style.width = '180px';
+                imageDOM.style.height = `120px`;
+                modal_video_navigation.appendChild(imageDOM);
+            }
+            videoForModal.src = videoData.hits[0].videos.tiny.url;
+            for (let i = 0; i < modal_video_navigation.childNodes.length; i++) {
+                // console.log(modal_video_navigation.childNodes[i]);
+                // now add event listener
+                modal_video_navigation.childNodes[i].addEventListener('click', (event) => {
+                    videoForModal.src = videoData.hits[i].videos.tiny.url;
+                });
+            }
+        }
+    });
+    video_close_btn.addEventListener('click', (event) => {
+        if (videoModal.style.display == 'block') {
+            videoModal.style.display = 'none';
+        }
+    });
+}
+
+function handleVideoModal() {
+    
+
+    
+}
+
+// vidoe helper function
+function trimCitiyNameHelper(locationName) {
+    let trimLocation = locationName;
+    let trimmedLocation = ``;
+    let spliceIndex = -1;
+    for (let i = 0; i < trimLocation.length; i++) {
+        if (trimLocation.charAt(i) === ',') {
+            spliceIndex = i;
+            trimmedLocation = trimLocation.slice(0,i);
+            break;
+        }
+    }
+    console.log("Trimmed Location: ", trimmedLocation);
+    console.log(spliceIndex);
+    return trimmedLocation;
+}
+
+// Currency
 async function getCurrency() {
     // DEFAULT COUNTRY CURRENCY
     const DEFAULT_CURRENCY = `USD`
-    // DOM Elements
+    // ===========================
+    // DOM Elements ==============
+    // LEFT ======================
     const targetCountryCountryCodeDOM = document.querySelector('.hotelDetail_thingstoKnow_title');
     const currencyDefaultDOM = document.querySelector('.hotelDetail_curreny_default');
     const currencyAmountFromDOM = document.querySelector('.hotelDetail_currency_default_from');
     const currencyAmountToDOM = document.querySelector('.hotelDetail_currency_to');
     const currencyLastUpdateDOM = document.querySelector('.hotelDetail_currency_lastUpdated');
     const targetCountryCurrencyCode = targetCountryCountryCodeDOM.getAttribute('data-currency-countryName');
-    console.log(targetCountryCurrencyCode);
+    // RIGHT =====================
+    const currencyTopDefault = document.querySelector('.currency_top_default');
+    const currencyUserTypeAmount = document.querySelector('.currency_top_amount');
+    const currencyBottomTargetCode = document.querySelector('.currency_bottom_countryCode');
+    const currencyBottomResult = document.querySelector('.current_bottom_result');
     // =========================
     // API calls ===============
     // Current Currency
@@ -173,58 +294,38 @@ async function getCurrency() {
     const countryIOData = await countryIOResponse.json();
     const convertedCurrencyResponse = await fetch(`https://api.exchangeratesapi.io/latest?base=${DEFAULT_CURRENCY}`);
     const convertedCurrencyData = await convertedCurrencyResponse.json();
-    // Historical Currency
-    const todaysNewDate = new Date();
-    const todayMonth = '' + (todaysNewDate.getMonth() + 1);
-    const todayDate = '' + (todaysNewDate.getDate());
-    const todayYear = todaysNewDate.getFullYear();
-    // Last week
-    const lastWeek = new Date(todaysNewDate.getTime() - (6 * 24 * 60 * 60 * 1000));
-    const lastWeekMonth = '' + (lastWeek.getMonth() + 1);
-    const lastWeekDate = '' + (lastWeek.getDate());
-    const lastWeekYear = lastWeek.getFullYear();
-    // Modify Date Data
-    if (lastWeekMonth.length < 2) {
-        lastWeekMonth = '0' + lastWeekMonth;
-    }
-    if (lastWeekDate.length < 2) {
-        lastWeekDate = '0' + lastWeekDate;
-    }
-    if (todayMonth.length < 2) {
-        todayMonth = '0' + todayMonth;
-    }
-    if (todayDate.length < 2) {
-        todayDate = '0' + todayDate;
-    }
-    const toDate = `${todayYear}-${todayMonth}-${todayDate}`;
-    const fromDate = `${lastWeekYear}-${lastWeekMonth}-${lastWeekDate}`;
-    console.log("FromDate: ", fromDate);
-    console.log("ToDate: ", toDate);
-    // const GRAPH_CURRENCY_RESPONSE = await fetch(`/hotel/searched/detail/currency/${fromDate}/${toDate}/${countryIOData}`);
-    // const graph_currency_data = await GRAPH_CURRENCY_RESPONSE.json();
-    // const JSON_TARGET = DEFAULT_CURRENCY + '_' + countryIOData;
-    // // console.log(JSON_TARGET);
-    // // console.log(graph_currency_data[JSON_TARGET]);
-    // const graphHistoryCurrencyData = graph_currency_data[JSON_TARGET];
-    // // console.log(graphHistoryCurrencyData);
-    // // console.log(graphHistoryCurrencyData[0]);
-    // // grab the keys
-    // const allDatesCurrencyHistory = [];
-    // const allDataCurrencyHistory = [];
-    // for (let index in graphHistoryCurrencyData) {
-    //     allDatesCurrencyHistory.push(index);
-    //     allDataCurrencyHistory.push(graphHistoryCurrencyData[index]);
-    // }
-    // // console.log(graphHistoryCurrencyData[allDatesCurrencyHistory[0]]);
-    // console.log(allDatesCurrencyHistory);
-    // console.log(allDataCurrencyHistory);
-    // =============================
+    
     // Data Factoring for DOM
     const convertedCurrency = Number(convertedCurrencyData.rates[countryIOData]).toFixed(2);
     // apply data to DOM Elements
+    // LEFT DOM Elements
     currencyDefaultDOM.innerHTML = `Default Currency <i class="fas fa-money-bill-wave"></i> ${DEFAULT_CURRENCY}`;
     currencyAmountFromDOM.textContent = `1 ${DEFAULT_CURRENCY} is equals to`;
     currencyAmountToDOM.textContent = `${convertedCurrency} ${countryIOData}`;
     currencyLastUpdateDOM.innerHTML = `<i class="far fa-edit"></i> Last Updated: ${convertedCurrencyData.date}`;
-    
+    // Right DOM Elements
+    currencyTopDefault.textContent = `${DEFAULT_CURRENCY}`;
+    currencyBottomTargetCode.textContent = `${countryIOData}`;
+    // An Event Listener to Convert the Currency
+    currencyUserTypeAmount.addEventListener('change', (event) => {
+        console.log("hello currency chage");
+        console.log(event.target.value);
+        const currencyValidation = document.querySelector('.currency_validation');
+        if (event.target.value.length === 0) {
+            console.log("This is Empty");
+            currencyValidation.textContent = `Amount cannot be empty`;
+            return false;
+        }
+        else if (isNaN(event.target.value)) {
+            console.log("This is not a Number");
+            currencyValidation.textContent = `You must type number to convert`;
+            return false;
+        }
+        else {
+            currencyValidation.textContent = ``;
+            currencyBottomResult.textContent = `${Number(event.target.value * convertedCurrency).toFixed(2)} ${countryIOData}`;
+            return true;
+        }
+
+    });
 }
