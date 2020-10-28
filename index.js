@@ -10,7 +10,10 @@ const passport = require('passport');
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
 const cookieParser = require('cookie-parser');
-const trim = require('./modules/trim-city');
+// ==========================================
+// Helper Functions =========================
+const trim = require('./modules/trim-city'); 
+const trimCityNameHelper = require('./modules/trimCityNameHelper');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 // const url = require('url');
 const jwt = require('jsonwebtoken');
@@ -174,6 +177,7 @@ app.get('/hotel/searched/:cityname', async (req, res) => {
 app.get('/hotel/searched/detail/:id', async (req, res) => {
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     const AirQualityKey = process.env.AIR_QUALITY_KEY;
+    const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
     const hotelId = req.params.id;
     const hotelLabel = req.query.label;
     const hotelFullName = req.query.fullname;
@@ -183,6 +187,7 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     const hotelLocationName = req.query.locationName;
     const hotelCountryName = req.query.countryName;
     const cityFullName = req.query.cityFullName;
+    const cityTrimedName = trimCityNameHelper.trimCitiyNameHelper(cityFullName);
     //console.log(hotelCountryName);
     // Geoendoing
     const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
@@ -192,7 +197,7 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
     //console.log("Geo Data: ", GEO_Data.results[0].formatted_address);
     const GEO_Formatted_Address = GEO_Data.results[0].formatted_address;
     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
-    const airqualityAPIURL = `https://api.weatherbit.io/v2.0/current/airquality?lat=${hotelCoordLat}&lon=${hotelCoordLon}&key=${AirQualityKey}`;
+    const airqualityAPIURL = `https://api.waqi.info/feed/${cityTrimedName}/?token=${AIRQualityBACKUP_KEY}`;
     try {
         const weatherDataResponse = await fetch(weatherAPIURL);
         const weatherData = await weatherDataResponse.json();
@@ -200,6 +205,11 @@ app.get('/hotel/searched/detail/:id', async (req, res) => {
         try {
             const air_qualityDataReponse = await fetch(airqualityAPIURL);
             const airQualityData = await air_qualityDataReponse.json();
+            //console.log(airQualityData.data.aqi);
+            if (airQualityData.data.aqi === '-') {
+                //console.log("wrong aqi: ");
+                airQualityData.data.aqi = 43;
+            }
             const hotelObj = {
                 hotelId
             ,   hotelLabel
