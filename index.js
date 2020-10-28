@@ -6,19 +6,22 @@ const dotenv = require('dotenv');
 const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const facebookStrategy = require('passport-facebook').Strategy;
+// const facebookStrategy = require('passport-facebook').Strategy;
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
 const cookieParser = require('cookie-parser');
 const trim = require('./modules/trim-city');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
-const url = require('url');
+// const url = require('url');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 require('./passport/passport-google-setup');
 require('./passport/passport-facebook-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -84,7 +87,9 @@ const db = mysql.createConnection({
 // end of database
 
 app.get('/', (req, res) => {
-    res.render('pages/index');
+    res.render('pages/index', {
+        registerMessage: ''
+    });
 });
 
 // index user input to test page
@@ -95,123 +100,6 @@ app.post('/', (req, res) => {
     var locationStr = searchedData.location;
     res.redirect(`/hotel/searched/${locationStr}`);
 });
-
-// ===============================================
-// start of facebook
-// ===============================================
-
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
-
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook/failed' }),
-    function(req, res) {
-        // console.log(req.user);
-
-        // =============
-        // first way to do it
-        // =============
-
-        // res.redirect(url.format({
-        //     pathname: "/good",
-        //     query: req.user
-        // }));
-
-        // =============
-        // second way to do it
-        // =============
-        
-        res.cookie("profile", req.user);
-        //this will be different in locale in the JSON data
-        res.redirect('/facebook/good');
-    });
-
-app.get('/facebook/good', (req, res) => {
-    // console.log(req.user);
-    let data = req.cookies.profile;
-    console.log(data);
-    res.send("Hello, facebook auth works");
-});
-
-app.get('/facebook/failed', (req, res) => {
-    res.send("Hello, facebook auth fails");
-});
-
-app.get('/facebook/logout', (req, res) => {
-    req.session = null;
-    req.logout();
-    res.redirect('/');
-});
-
-// ===============================================
-// end of facebook
-// ===============================================
-
-// ======================================================
-
-// ===============================================
-// start of google
-// ===============================================
-app.get('/google/failed', (req, res) => {
-    res.send('You Failed to log in!');
-});
-
-//need to figure out how to get req.user JSON data
-//from /google/callback get request
-app.get('/google/good', (req, res) => {
-    // =============
-    // first way to do it
-    // =============
-
-    // console.log(req.query);
-
-    // =============
-    // second way to do it
-    // =============
-
-    // console.log(req.cookies);
-    var data = req.cookies.profile;
-    // res.send(`Hello!! Google OAuth is a success!!`);
-    // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
-    res.render('pages/tryGoogle', {
-        username: req.cookies.profile.displayName,
-        picture: req.cookies.profile.photos[0].value,
-        email: req.cookies.profile.emails[0].value
-    })
-});
-
-app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google/failed' }),
-    function(req, res) {
-        // console.log(req.user);
-
-        // =============
-        // first way to do it
-        // =============
-
-        // res.redirect(url.format({
-        //     pathname: "/good",
-        //     query: req.user
-        // }));
-
-        // =============
-        // second way to do it
-        // =============
-
-        res.cookie("profile", req.user);
-        //this will be different in locale in the JSON data
-        res.redirect('/google/good');
-    });
-
-app.get('/google/logout', (req, res) => {
-    req.session = null;
-    req.logout();
-    //delete cookie data from the previous user
-    res.redirect('/');
-})
-
-// ===============================================
-// end of google
-// ===============================================
 
 app.get('/about', (req, res) => {
     res.render('pages/about');
@@ -411,10 +299,168 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
+app.post('/auth/register', (req, res) => {
+    console.log(req.body);
+
+    const username = req.body.username;
+    const email = req.body.email;
+    const newPassword = req.body.newPassword;
+    const confirmPassword = req.body.confirmPassword;
+
+    db.query('SELECT email FROM USER WHERE email = ?', [email], async (error, results) => {
+        if(error) {
+            console.log(error);
+        }
+
+        //make sure that this render to the same page where the modal is opened
+        if (results.length > 0) {
+            return res.render('pages/index', {
+                registerMessage: 'Email has been used'
+            });
+        }
+        else if (newPassword !== confirmPassword) {
+            return res.render('pages/index', {
+                registerMessage: 'Password and Confimr Password do not match'
+            });
+        }   
+
+        let hashedPassword = await bcrypt.hash(newPassword, 8);
+        console.log(hashedPassword);
+
+        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
+            if (error) {
+                console.log(error);
+            } else {
+                return res.render('pages/index', {
+                    registerMessage: 'User Registered'
+                })
+            }
+        })
+    })
+    
+    // res.send("Hello!! You are registered");
+});
+
 app.get('/reset_password', (req, res) => {
     res.render('pages/')
 })
 
+// ===============================================
+// start of facebook
+// ===============================================
+
+app.get('/facebook', passport.authenticate('facebook'));
+
+app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook/failed' }),
+    function(req, res) {
+        // console.log(req.user);
+
+        // =============
+        // first way to do it
+        // =============
+
+        // res.redirect(url.format({
+        //     pathname: "/good",
+        //     query: req.user
+        // }));
+
+        // =============
+        // second way to do it
+        // =============
+        
+        res.cookie("profile", req.user);
+        //this will be different in locale in the JSON data
+        res.redirect('/facebook/good');
+    });
+
+app.get('/facebook/good', (req, res) => {
+    // console.log(req.user);
+    let data = req.cookies.profile;
+    // console.log(data);
+    res.send("Hello, facebook auth works");
+});
+
+app.get('/facebook/failed', (req, res) => {
+    res.send("Hello, facebook auth fails");
+});
+
+app.get('/facebook/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.redirect('/');
+});
+
+// ===============================================
+// end of facebook
+// ===============================================
+
+// ======================================================
+
+// ===============================================
+// start of google
+// ===============================================
+app.get('/google/failed', (req, res) => {
+    res.send('You Failed to log in!');
+});
+
+//need to figure out how to get req.user JSON data
+//from /google/callback get request
+app.get('/google/good', (req, res) => {
+    // =============
+    // first way to do it
+    // =============
+
+    // console.log(req.query);
+
+    // =============
+    // second way to do it
+    // =============
+
+    // console.log(req.cookies);
+    var data = req.cookies.profile;
+    // res.send(`Hello!! Google OAuth is a success!!`);
+    // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
+    res.render('pages/tryGoogle', {
+        username: req.cookies.profile.displayName,
+        picture: req.cookies.profile.photos[0].value,
+        email: req.cookies.profile.emails[0].value
+    })
+});
+
+app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google/failed' }),
+    function(req, res) {
+        // console.log(req.user);
+
+        // =============
+        // first way to do it
+        // =============
+
+        // res.redirect(url.format({
+        //     pathname: "/good",
+        //     query: req.user
+        // }));
+
+        // =============
+        // second way to do it
+        // =============
+
+        res.cookie("profile", req.user);
+        //this will be different in locale in the JSON data
+        res.redirect('/google/good');
+    });
+
+app.get('/google/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    //delete cookie data from the previous user
+    res.redirect('/');
+})
+
+// ===============================================
+// end of google
+// ===============================================
 
 // =============================
 // Basic Hotel CRUD=============

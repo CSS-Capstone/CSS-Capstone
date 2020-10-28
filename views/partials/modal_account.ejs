@@ -9,15 +9,15 @@
         </div>
         <img src="/images/sign_in_icon.png" class="avatar">
         <h1 class = "box_title">Login</h1>
-        <form action="">
+        <form action="" id = "login">
             <p>Email</p>
             <input type="text" name="" placeholder="Enter Email">
             <p>Password</p>
             <input type="password" name="" placeholder="Enter Password">
             <br>
-            <input type="submit" name="" value="Login" id = "input_submit">
+            <input type="submit" name="" value="Login" id = "input_submit_login">
             <a href="/google">Google Sign In</a><br>
-            <a href="/auth/facebook">Facebook Sign In</a><br>
+            <a href="/facebook">Facebook Sign In</a><br>
             <a href="#">Forgot password?</a><br>
             <a href="#" onclick="showRegister()" class = "show_register">Don't have an account?</a>
         </form>
@@ -28,13 +28,17 @@
         </div>
         <img src="/images/register_icon_2.png" class="avatar">
         <h1 class="box_title">Register</h1>
-        <form action="">
+        <!-- action = "where you want to call the post request for register" -->
+        <!-- method = "POST" -->
+        <form action="/auth/register" method = "POST" id = "register" onsubmit="return checkRegisterForm(this);">
+            <p>Username</p>
+            <input type="text" name="username" placeholder="Enter Username">
             <p>Email</p>
-            <input type="text" name="" placeholder="Enter Email">
+            <input type="text" name="email" placeholder="Enter Email">
             <p>Password</p>
-            <input type="password" name="" placeholder="Enter Password">
+            <input type="password" name="newPassword" id = "new_password" placeholder="Enter Password" >
             <p>Confirm Password</p>
-            <input type="password" name="" placeholder="Confirm Password">
+            <input type="password" name="confirmPassword" id = "confirm_password" placeholder="Confirm Password" >
             <!-- Radio button, figure out the appropiate css -->
             <!-- <p>Account Type</p>
             <div class = "radio_button">
@@ -45,17 +49,18 @@
             </div> -->
             
             <!-- ============ -->
-            <input type="submit" name="" value="Make Account" id = "input_submit">
+            <input type="submit" name="" value="Make Account" id = "input_submit_register">
             <span class = "log_in_link">Already have an account? </span><a href="#" onclick = "showLogin()" class = "show_login">Log In</a>
         </form>
+        <span><%= registerMessage %></span>
     </div>
-    <div class = "reset_password_form">
+    <!-- <div class = "reset_password_form">
         <form action="">
             <p>Enter your email</p>
-            <input type="text" name="" placeholder="Enter Email">
+            <input type="text" name="" placeholder="Enter Email"
             <p>The link to reset your password will be sent to your email</p>
             <input type="submit" name="" value="Login" id = "input_submit">
         </form>
-    </div>
+    </div> -->
 </div>
 <script src = "/js/Modal/Modal.js"></script>
