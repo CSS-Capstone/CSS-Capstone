@@ -301,6 +301,16 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
         res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
     });
 });
+
+app.get('/become-host', (req, res) => {
+    res.render('pages/becomeHost/becomeHostPolicy');
+    //res.send('hello host');
+});
+
+app.get('/become-host/postHotel', (req, res) => {
+    res.send('hello hotel post place');
+});
+
 // ====================================
 // End of Park ========================
 // ====================================

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Host</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/becomeHostPolicy.css">
+    <!-- Paritals CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+    <%- include('../../partials/navigation') %>
+    <!-- Terms of Agreement -->
+    <section class="becomeHost_Terms_of_agreement_section">
+        <div class="becomeHost_Terms_of_agreement_background_img_container">
+            <img src="/images/Terms_of_agreement_bg.jpg" alt="terms of agreement background picture">
+        </div>
+        <div class="becomeHost_terms_of_agreement_main">
+            <div class="terms_of_agreement_main_left">
+                <h1 class="becomeHost_terms_of_agreement_main_header">
+                    <span class="becomeHost_terms_of_agreement_important">
+                        <i class="fas fa-exclamation-circle exclamation"></i>
+                    </span>
+                    Important
+                </h1>
+                <h2 class="becomeHost_terms_of_agreement_text">This is not real hotel searching website</h2>
+                <p class="becomeHost_terms_of_agreement_text">Terms of Agreement to be a HOST!</p>
+                <div class="terms_of_agreement_checker">
+                    <small class="becomeHost_terms_of_agreement_descript">I know that this website is not real production website. 
+                        By posting the hotel through this website, 
+                        I know no one will actually book my hotel through this website.
+                    </small><br><br>
+                    <input type="checkbox" id="agree" name="agree">&nbsp; Agree
+                </div>
+            </div>
+            <div class="terms_of_agreement_main_right">
+                <div class="terms_of_agreement_main_right_header">
+                    <h2 class="terms_of_agreement_main_right_header_head">Share your hotel Information</h2>
+                    <small class="terms_of_agreement_main_right_header_text">Boost Your Business</small>
+                </div>
+                <hr>
+                <div class="terms_of_agreement_main_right_main">
+                    <p>To get started, tell us more about your place</p>
+                    <div class="terms_of_agreement_main_right_btn_container">
+                        <button class="terms_of_agreement_main_right_btn">Post My Hotel</button>
+                    </div>
+                </div>
+                <span class="terms_of_agree_validation"></span>
+            </div>
+        </div>
+    </section>
+    <br><br><br><br>
+    <!-- Why Host in Hotel Finder -->
+    <section class="why_host_in_hotel_finder">
+        <div class="why_host_in_hotel_finder_left">
+            <h2>Why post through Hotel Finder</h2>
+            <p>No matter what kind of rooms and hotels you have, 
+                it will not give effect on real world. 
+                So, do not worry and just Post it!
+            </p>
+        </div>
+        <div class="why_host_in_hotel_finder_right">
+            <h2>Is My Posting Data has to be REAL?</h2>
+            <p>
+                No, it is okay not to post a real data.
+                We love dummy data.
+                Some of the hotel Data when you search is real,
+                however those real data is actaully coming from API.
+            </p>
+        </div>
+    </section>
+    <!-- Information we need section -->
+    <hr class="information_we_need_divider">
+    <h2 class="information_we_need_from_you_title">Information You Need to be Ready to Post</h2>
+    <section class="information_we_need_from_you_section">
+        <!-- Information Container 1 -->
+        <div class="information_we_need_container">
+            <div class="information_we_need_icon_container">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div class="information_we_need_desc_container">
+                <h2 class="information_we_need_desc_title">
+                    Hotel Name 
+                </h2>
+                <p>Your Hotel Name will be Store in our Database to display it to User</p>
+            </div>
+        </div>
+        <!-- Information Container 2 -->
+        <div class="information_we_need_container">
+            <div class="information_we_need_icon_container">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div class="information_we_need_desc_container">
+                <h2 class="information_we_need_desc_title">
+                    Hotel Price / Night
+                </h2>
+                <p>
+                    Your Hotel Price Per Night is require to calculate prices based on user stayin dates
+                    <span class="information_we_need_emphasize">(Single Room / Single Guest)</span> data is required
+                </p>
+            </div>
+        </div>
+        <!-- Information Container 3 -->
+        <div class="information_we_need_container">
+            <div class="information_we_need_icon_container">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div class="information_we_need_desc_container">
+                <h2 class="information_we_need_desc_title">
+                    Country
+                </h2>
+                <p>The country information is require because we are displaying relevant information of the country when the user is trying to book the hotel</p>
+            </div>
+        </div>
+        <!-- Information Container 4 -->
+        <div class="information_we_need_container">
+            <div class="information_we_need_icon_container">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div class="information_we_need_desc_container">
+                <h2 class="information_we_need_desc_title">
+                    City
+                </h2>
+                <p>The city information is require because we are displaying relavant information of the city when the user is trying to book the hotel</p>
+            </div>
+        </div>
+        <!-- Information Container 5 -->
+        <div class="information_we_need_container">
+            <div class="information_we_need_icon_container">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div class="information_we_need_desc_container">
+                <h2 class="information_we_need_desc_title">
+                    Address
+                </h2>
+                <p>The address information is require because we are displaying your hotel location through the map so user can estimate or get sort of sense where is the hotel located at.</p>
+            </div>
+        </div>
+    </section>
+    <!-- USER Experience Section -->
+    <section class="user_experienced_on_posting">
+        <div class="user_experienced_on_posting_description">
+            <h2 class="user_experienced_double_quote_description">
+                <span class="user_experienced_double_quote">&ldquo;</span>
+                Posting my hotel through the website is easy enough.
+            </h2>
+            <small class="user_experienced_fact">Although it is not actual production website</small>
+        </div>
+        <div class="user_experienced_on_posting_user_img_container">
+            <img class="user_experienced_on_posting_user_img" src="/images/Terms_of_agreement_user_face.jpg" alt="User's face who had posted the hotel through Hotel Finder">
+            <br><small class="user_experienced_photo_reference">Photo by Lidya Nada on Unsplash</small>
+        </div>
+    </section>
+    <!-- Ready to Host Section -->
+    <section class="ready_to_host_bottom_section">
+        <div class="ready_to_host_image_container">
+            <img src="/images/Terms_of_agreement_bottom.jpg" alt="image background for buttom container for become a host">
+            <div class="ready_to_host_image_text">
+                <h2>Are you ready to post your hotel?</h2>
+            </div>
+        </div>
+        <div class="ready_to_host_button_container">
+            <h3>Let's go and</h3>
+            <h2>Check the Terms of Services</h2>
+            <button class="ready_to_host_bottom_btn">Let's Go</button>
+        </div>
+    </section>
+    <%- include('../../partials/footer') %>
+</body>
+<script src="/js/BecomeHost/becomeHostPolicy.js" defer></script>
+</html>
