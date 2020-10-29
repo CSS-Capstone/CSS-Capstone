@@ -287,7 +287,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     const paymentData = req.body;
     const passingData = req.body.body;
     console.log(passingData);
-    const hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
+    let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
     hotelPrice = Number(hotelPrice);
     console.log(paymentData);
     console.log(`The Price: `, hotelPrice);
