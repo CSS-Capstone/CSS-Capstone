@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/users.css">
     <!-- User Tab Script -->
+    <link rel="stylesheet" type="text/css" href="/css/modalUserPhoto.css">
 
 </head>
 <body>
@@ -44,7 +45,8 @@
             <div class="profile__left__upper">
                 <img class="profile__image"></img>
                 <br>
-                <a href="" id="underline">Update photo</a>
+                <a href="#" id="underline" onclick="openForm()">Update photo</a>
+                <%- include('../partials/modal_user_photo') %>
             </div>
             <div class="profile__left__mid">
                 <i class="far fa-star"></i> 1 review
