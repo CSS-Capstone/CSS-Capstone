@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const fileUpload = require('express-fileupload');
+const uuid = require('uuid');
 const mysql = require("mysql");
 const dotenv = require('dotenv');
 const fetch = require('node-fetch');
@@ -28,6 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(fileUpload());
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(session({secret:"this is your secret key"}));
@@ -503,6 +506,36 @@ app.get('/google/logout', (req, res) => {
 // =============================
 app.get('/users', (req, res) => {
     res.render('pages/users');
+});
+
+app.post('/users/upload', (req, res) => {
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    let file = req.files.imageUpload;
+    console.log(file);
+    
+    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/gif") {
+        var imageName = file.name;
+        var uuidname = uuid.v4(); // this is used for unique file name
+        var imgsrc = uuidname + '_' + imageName;
+        console.log(imgsrc);
+        var insertData = "INSERT INTO users_file(file_src)VALUES(?)";
+        db.connect(function (err) {
+            if (err) {
+                return console.error('error: Connection FAILEDDDD');
+            } else {
+                console.log('Upload image to DB');
+                // db.query(insertData, [imgsrc], (err, result) => {
+                //     if (err) throw err;
+                //     file.mv('public/images/' + uuidname + imageName);
+                //     res.send("Data successfully save");
+                // });
+            }
+        });
+    }
+    res.redirect('/users#');
 });
 
 app.get('/account', (req, res) => {
