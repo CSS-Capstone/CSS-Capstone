@@ -505,6 +505,27 @@ app.get('/google/logout', (req, res) => {
 // Basic Hotel CRUD=============
 // =============================
 app.get('/users', (req, res) => {
+    // Temp code for getting photo
+    // var query = 'SELECT * FROM `USER_PROFILE_IMAGE` WHERE `user_id` = "11"';
+
+    // db.connect(function (err) {
+    //     if (err) {
+    //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
+    //     } else {
+    //         db.query(query, (err, results, fields) => {
+    //             if (err) throw err;
+    //             if (results.length <= 0)
+    //                 console.log("User doesn't exist");
+    //             // console.log(results[0].img_id);
+    //             // console.log(results[0].img)
+    //             console.log(results[0].img);
+    //             //var tempImg = results[0].img;
+    //             //var image = new Buffer(tempImg).toString('base64');
+    //             console.log(image);
+    //             res.render('pages/users', image);
+    //         });
+    //     }
+    // });
     res.render('pages/users');
 });
 
@@ -517,21 +538,22 @@ app.post('/users/upload', (req, res) => {
     console.log(file);
     
     if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/gif") {
+        var tempUserId = 11;
         var imageName = file.name;
         var uuidname = uuid.v4(); // this is used for unique file name
-        var imgsrc = uuidname + '_' + imageName;
-        console.log(imgsrc);
-        var insertData = "INSERT INTO users_file(file_src)VALUES(?)";
+        var fileName = uuidname + '_' + imageName;
+        console.log(fileName);
+        console.log(file.data);
+        var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img`)VALUES('" + tempUserId + "','" + fileName + "','" + file + "')";
         db.connect(function (err) {
             if (err) {
-                return console.error('error: Connection FAILEDDDD');
+                return console.error('error: Connection FAILEDDDD : \n' + err.message);
             } else {
                 console.log('Upload image to DB');
-                // db.query(insertData, [imgsrc], (err, result) => {
-                //     if (err) throw err;
-                //     file.mv('public/images/' + uuidname + imageName);
-                //     res.send("Data successfully save");
-                // });
+                db.query(insertData, (err, result) => {
+                    if (err) throw err;
+                    console.log('Data Saved');
+                });
             }
         });
     }
