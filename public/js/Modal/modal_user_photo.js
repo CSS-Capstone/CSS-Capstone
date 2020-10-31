@@ -19,8 +19,6 @@ async function uploadImage() {
     let imgFile = this.files[0];
     if (imgFile) {
         const formData = new FormData();
-        // let fileName = getTime();
-        // fileName = fileName.concat(imgFile.name);
         formData.append('imageFile', imgFile);
         const response = await fetch('/users/upload', {
             method: 'POST',
