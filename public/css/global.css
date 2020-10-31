@@ -10,9 +10,11 @@
     --color-shadow: #888888;
     --color-blue: #73aace;
     --color-strong-blue: #217cb9;
+    --color-nice-blue: #589fe6;
     --color-black: #000000;
     --color-background-grey: #ebedeb;
     --color-footer-link: #222222;
+    --color-warning: rgb(250, 59, 59);
 
     /* Font size */
     --font-xlarge: 48px;

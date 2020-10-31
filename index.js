@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const fileUpload = require('express-fileupload');
+//const fileUpload = require('express-fileupload');
+const AWS = require('aws-sdk');
+const multer = require('multer');
 const uuid = require('uuid');
 const mysql = require("mysql");
 const dotenv = require('dotenv');
@@ -30,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(fileUpload());
+//app.use(fileUpload());
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(session({secret:"this is your secret key"}));
@@ -51,6 +53,8 @@ const db = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
+
+
 
 // const isLoggedIn = (req, res, next) => {
 //     if (req.user) {
@@ -288,7 +292,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     const paymentData = req.body;
     const passingData = req.body.body;
     console.log(passingData);
-    const hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
+    let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
     hotelPrice = Number(hotelPrice);
     console.log(paymentData);
     console.log(`The Price: `, hotelPrice);
@@ -305,6 +309,16 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
         res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
     });
 });
+
+app.get('/become-host', (req, res) => {
+    res.render('pages/becomeHost/becomeHostPolicy');
+    //res.send('hello host');
+});
+
+app.get('/become-host/postHotel', (req, res) => {
+    res.send('hello hotel post place');
+});
+
 // ====================================
 // End of Park ========================
 // ====================================
@@ -555,37 +569,125 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // Basic Hotel CRUD=============
 // =============================
 app.get('/users', (req, res) => {
+    // Temp code for getting photo
+    // var query = 'SELECT * FROM `USER_PROFILE_IMAGE` WHERE `user_id` = "11"';
+
+    // db.connect(function (err) {
+    //     if (err) {
+    //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
+    //     } else {
+    //         db.query(query, (err, results, fields) => {
+    //             if (err) throw err;
+    //             if (results.length <= 0)
+    //                 console.log("User doesn't exist");
+    //             console.log(results);
+    //             var image = results[0].img;
+    //             console.log(image);
+    //             //console.log(results.img);
+    //             //console.log(typeof results.img);
+    //             //image = new Buffer(results.img).toString('base64');
+    //             //appenedImg.src = 'data:image/png;base64,' + new Buffer(results.img).toString('base64');
+    //             var tmp = new Buffer(results.img).toString('base64')
+    //             res.render('pages/users', {tmp: tmp});
+    //         });
+    //     }
+    // });
     res.render('pages/users');
 });
 
-app.post('/users/upload', (req, res) => {
-    if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send('No files were uploaded.');
-    }
+///////////////////////////////////
+// multer to AWS S3 upload logics
+///////////////////////////////////
 
-    let file = req.files.imageUpload;
-    console.log(file);
-    
-    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/gif") {
-        var imageName = file.name;
-        var uuidname = uuid.v4(); // this is used for unique file name
-        var imgsrc = uuidname + '_' + imageName;
-        console.log(imgsrc);
-        var insertData = "INSERT INTO users_file(file_src)VALUES(?)";
-        db.connect(function (err) {
-            if (err) {
-                return console.error('error: Connection FAILEDDDD');
-            } else {
-                console.log('Upload image to DB');
-                // db.query(insertData, [imgsrc], (err, result) => {
-                //     if (err) throw err;
-                //     file.mv('public/images/' + uuidname + imageName);
-                //     res.send("Data successfully save");
-                // });
-            }
-        });
+const storage = multer.memoryStorage({
+    destination: function(req, file, callback) {
+        callback(null, '');
     }
-    res.redirect('/users#');
+});
+
+// image is a key
+const upload = multer({ storage }).single('imageFile');
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ID,
+    secretAccessKey: process.env.AWS_SECRET
+});
+
+app.post('/users/upload', upload, (req, res) => {
+
+    var tempUserId = 11;
+    var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
+
+    db.connect(function (err) {
+        if (err) {
+            return console.error('error: Connection FAILEDDDD : \n' + err.message);
+        } else {
+            db.query(queryForPhotoCnt, (err, results, fields) => {
+                if (err) throw err;
+                if (results.length <= 0)
+                    console.log("User doesn't exist");
+                console.log(results);
+
+                var image = results[0].img;
+                console.log(image);
+                var tmp = new Buffer(results.img).toString('base64')
+                res.render('pages/users', {tmp: tmp});
+            });
+        }
+    });
+    console.log(req.file);
+
+    let image = req.file.originalname.split(".");
+    const fileType = image[image.length - 1];
+
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${uuid.v4()}.${fileType}`,
+        Body: req.file.buffer
+    };
+
+    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
+        || file.mimetype == "image/gif") {
+
+        s3.upload(params, (error, data) => {
+            if (error) {
+                res.status(500).send(error); 
+            }
+    
+            //console.log(res.status(200).send(data));
+            console.log(data);
+            res.redirect('/users#');
+        });
+
+    } else {
+        res.redirect('/users#', {message: "Unsupported Image Type Error"})
+    }
+    
+    
+    // if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/gif") {
+    //     var tempUserId = 11;
+    //     var imageName = file.name;
+    //     var uuidname = uuid.v4(); // this is used for unique file name
+    //     var fileName = uuidname + '_' + imageName;
+    //     var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img`)VALUES('" + tempUserId + "','" + fileName + "','" + file + "')";
+    //     db.connect(function (err) {
+    //         if (err) {
+    //             return console.error('error: Connection FAILEDDDD : \n' + err.message);
+    //         } else {
+    //             console.log('Upload image to DB');
+    //             // file.mv('public/images'+file.name, (err) => {
+    //             //     if (err) console.log(err);
+    //             //     else console.log('SAVEDDD');
+    //             // });
+    //             db.query(insertData, (err, result) => {
+    //                 if (err) throw err;
+    //                 console.log('Data Saved');
+    //                 console.log(file);
+    //             });
+    //             db.end();
+    //         }
+    //     });
+    // }
 });
 
 app.get('/account', (req, res) => {

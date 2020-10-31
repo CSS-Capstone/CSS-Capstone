@@ -19,9 +19,9 @@ async function uploadImage() {
     let imgFile = this.files[0];
     if (imgFile) {
         const formData = new FormData();
-        let fileName = getTime();
-        fileName = fileName.concat(imgFile.name);
-        formData.append(imageUpload.id, imgFile, fileName);
+        // let fileName = getTime();
+        // fileName = fileName.concat(imgFile.name);
+        formData.append('imageFile', imgFile);
         const response = await fetch('/users/upload', {
             method: 'POST',
             headers: {},
@@ -34,7 +34,7 @@ async function uploadImage() {
 
 function getTime() {
     var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var date = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
     var time = today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds();
     return date + '-' + time + '_';
 }
