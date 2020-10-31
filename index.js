@@ -727,7 +727,7 @@ app.post('/users/upload', upload, (req, res) => {
                 //         });
                 //     }
                 // });
-                res.redirect('/users#', {image: fileLocation});
+                res.redirect('/users#');
             }
         });
 
