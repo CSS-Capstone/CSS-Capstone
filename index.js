@@ -573,32 +573,33 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // Basic Hotel CRUD=============
 // =============================
 app.get('/users', (req, res) => {
-    // Temp code for getting photo
-    // var query = 'SELECT * FROM `USER_PROFILE_IMAGE` WHERE `user_id` = "11"';
-
-    // db.connect(function (err) {
-    //     if (err) {
-    //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
-    //     } else {
-    //         db.query(query, (err, results, fields) => {
-    //             if (err) throw err;
-    //             if (results.length <= 0)
-    //                 console.log("User doesn't exist");
-    //             console.log(results);
-    //             var image = results[0].img;
-    //             console.log(image);
-    //             //console.log(results.img);
-    //             //console.log(typeof results.img);
-    //             //image = new Buffer(results.img).toString('base64');
-    //             //appenedImg.src = 'data:image/png;base64,' + new Buffer(results.img).toString('base64');
-    //             var tmp = new Buffer(results.img).toString('base64')
-    //             res.render('pages/users', {tmp: tmp});
-    //         });
-    //     }
-    // });
     // testing purpose
-    const fileLocation = "https://css-capstone-user-profile-photo-bucket.s3-us-west-2.amazonaws.com/4319367f-5484-5303-8915-712d014451ff.png";
-    res.render('pages/users', {image: fileLocation});
+    // Key is the image_id in MySQL image db
+    // Which should be in user.session
+    var params = { 
+        Bucket: process.env.AWS_BUCKET_NAME, 
+        Key: '4319367f-5484-5303-8915-712d014451ff.png'
+    };
+
+    async function getImage() {
+        const data = s3.getObject(params).promise();
+        return data;
+    };
+
+    getImage().then((img) => {
+        let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
+        res.render('pages/users', { image });
+    }).catch((e)=> {
+        console.log(e);
+    });
+      
+    function encode(data) {
+        let buf = Buffer.from(data);
+        let base64 = buf.toString('base64');
+        return base64;
+    }
+
+    //res.render('pages/users', {image: fileLocation});
 });
 
 ///////////////////////////////////
@@ -646,10 +647,11 @@ app.post('/users/upload', upload, (req, res) => {
         const fileName = uuid.v5(image[0], process.env.SEED_KEY);
         console.log(uuid.v5(image[0], process.env.SEED_KEY));
         console.log(fileName);
+        const fullFileName = fileName + "." + fileType;
 
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `${fileName}.${fileType}`,
+            Key: `${fullFileName}`,
             Body: file.buffer
         };
         
@@ -673,7 +675,7 @@ app.post('/users/upload', upload, (req, res) => {
                 console.log(fileLocation);
 
                 // var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img_url`,`is_main`)VALUES('" 
-                //                 + tempUserId + "','" + fileName + "','" + fileLocation + "','" + isMain + "')";
+                //                 + tempUserId + "','" + fullFileName + "','" + fileLocation + "','" + isMain + "')";
                 // db.connect(function (err) {
                 //     if (err) {
                 //         return console.log('error: Connection FAILEDDDD : \n' + err.message);
