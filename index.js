@@ -342,15 +342,21 @@ app.post('/auth/login', async (req, res) => {
         let email = req.body.email;
         let password = req.body.password;
 
-        if ( !email || !password ) {
-            return res.status(400).render('pages/index', {
-                registerMessage: '',
-                loginMessage: "Email cannot be empty"
-            })
-        }
+        // if ( !email || !password ) {
+        //     return res.status(400).render('pages/index', {
+        //         registerMessage: '',
+        //         loginMessage: "Email cannot be empty"
+        //     })
+        // }
 
         db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
-            console.log(results);
+            // console.log(results);
+
+            // this res.status shows if
+            // the used email is wrong or
+            // the used password is wrond or
+            // there are no such email in the database in the first place
+            // handle this to look more beautiful
             if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
                 return res.status(401).render('pages/index', {
                     registerMessage: '',
@@ -364,7 +370,7 @@ app.post('/auth/login', async (req, res) => {
                     expiresIn: process.env.JWB_EXPIRES_IN
                 })
 
-                console.log("Token: " + token);
+                // console.log("Token: " + token);
 
                 const cookieOptions = {
                     expires: new Date(
@@ -374,12 +380,32 @@ app.post('/auth/login', async (req, res) => {
                 }
                 
                 res.cookie('jwt', token, cookieOptions);
-                console.log(req.cookies);
-                res.status(200).redirect("/");
+                // console.log(req.cookies);
+                
+                //make the data fo the user
+                req.user = results[0];
+                
+                //make the data for the user's session
+                req.session = {
+                    isLoggedIn: false,
+                    user: {}
+                };
+                req.session.isLoggedIn = true;
+                req.session.user = req.user;
+                
+                console.log(req.user);
+                console.log(req.session);
+                
+                res.status(200).render('pages/index', {
+                    loginMessage: '',
+                    registerMessage: ''
+                });
+
+                // res.status(200).redirect('/');
             }
         })
     } catch (error) {
-        
+        console.log(error)
     }
 })
 
@@ -405,15 +431,19 @@ app.post('/auth/register', (req, res) => {
         }
 
         //make sure that this render to the same page where the modal is opened
+        
+        // this checks if there is an email already registered in the DB or not
+
         if (results.length > 0) {
             return res.render('pages/index', {
                 registerMessage: 'Email has been used',
                 loginMessage: ''
             });
         }
+        
         else if (newPassword !== confirmPassword) {
             return res.render('pages/index', {
-                registerMessage: 'Password and Confimr Password do not match',
+                registerMessage: 'Password and Confirm Password do not match',
                 loginMessage: ''
             });
         }   
@@ -437,14 +467,22 @@ app.post('/auth/register', (req, res) => {
 });
 
 app.get('/reset_password', (req, res) => {
-    res.render('pages/')
+    res.render('pages/set_up_new_password');
+})
+
+app.post('/auth/reset_password', (req, res) => {
+    res.send("Reset password successful");
 })
 
 app.get('/logout', (req, res) => {
-    req.session = null;
+    req.session = undefined;
+    req.user = undefined;
+    req.cookies = undefined;
     req.logout();
-    res.clearCookie('profile');
-    res.clearCookie('jwt');
+    // res.clearCookie('profile');
+    // res.clearCookie('jwt');
+    console.log(req.user);
+    console.log(req.session);
     console.log(req.cookies);
     res.redirect('/');
 })

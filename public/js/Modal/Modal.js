@@ -10,7 +10,29 @@ var box = document.querySelector('.popup');
 // registerForm.addEventListener("submit", checkRegisterForm);
 
 function checkLoginForm(form) {
-    alert("connected to login form");
+    //email
+    if (form.email.value === "") {
+        alert("Error! The email cannot be empty");
+        form.email.focus();
+        return false;
+    }
+
+    let reg = /^[0-9?A-z0-9?]+(\.)?[0-9?A-z0-9?]+@[A-z]+\.[A-z]{3}.?[A-z]{0,3}$/;
+    if(!reg.test(form.email.value)) {
+        alert("Error! The email needs to be valid");
+        form.email.focus();
+        return false;
+    }
+
+    //pasword
+    if (form.password.value === "") {
+        alert("Error! The password cannot be empty");
+        form.password.focus();
+        return false;
+    }
+
+    alert("Login successful! If you have more question, feel free to ask about it in our FAQ page.");
+    return true;
     // event.preventDefault();
 }
 
@@ -23,6 +45,7 @@ function checkRegisterForm(form) {
         form.email.focus();
         return false;
     }
+    
     //see if email is valid or not
     let reg = /^[0-9?A-z0-9?]+(\.)?[0-9?A-z0-9?]+@[A-z]+\.[A-z]{3}.?[A-z]{0,3}$/;
     if(!reg.test(form.email.value)) {
@@ -85,7 +108,35 @@ function checkRegisterForm(form) {
 }
 
 function checkResetPasswordForm(form) {
-
+    
+    
+    //see if password length is more than six character
+    if(form.newPassword.value.length < 6) {
+        alert("Error! Password need to have at least 6 characters");
+        form.newPassword.focus();
+        return false;
+    }
+    //see if password contains any number
+    reg = /[0-9]/;
+    if(!reg.test(form.newPassword.value)) {
+        alert("Error! Password need to have at least a digit");
+        form.newPassword.focus();
+        return false;
+    }
+    //see if password contains lowercase letter
+    reg = /[a-z]/;
+    if(!reg.test(form.newPassword.value)) {
+        alert("Error! Password need to contain at least one lowercase letter");
+        form.newPassword.focus();
+        return false;
+    }
+    //see if password contains uppercase letter
+    reg = /[A-Z]/;
+    if(!reg.test(form.newPassword.value)) {
+        alert("Error! Password need to contain at least one uppercase letter");
+        form.newPassword.focus();
+        return false;
+    }
 }
 
 function openForm() {
