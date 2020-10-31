@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-//const fileUpload = require('express-fileupload');
 const AWS = require('aws-sdk');
 const multer = require('multer');
 const uuid = require('uuid');
@@ -32,11 +31,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-//app.use(fileUpload());
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(session({secret:"this is your secret key"}));
 app.use(cookieParser());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 // app.use(cookieSession({
 //     name: 'tuto-session',
 //     keys: ['key1', 'key2']
@@ -630,7 +634,9 @@ app.get('/users', (req, res) => {
     //         });
     //     }
     // });
-    res.render('pages/users');
+    // testing purpose
+    const fileLocation = "https://css-capstone-user-profile-photo-bucket.s3-us-west-2.amazonaws.com/4319367f-5484-5303-8915-712d014451ff.png";
+    res.render('pages/users', {image: fileLocation});
 });
 
 ///////////////////////////////////
@@ -653,79 +659,100 @@ const s3 = new AWS.S3({
 
 app.post('/users/upload', upload, (req, res) => {
 
-    var tempUserId = 11;
-    var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
+    // var tempUserId = 11;
+    // var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
 
-    db.connect(function (err) {
-        if (err) {
-            return console.error('error: Connection FAILEDDDD : \n' + err.message);
-        } else {
-            db.query(queryForPhotoCnt, (err, results, fields) => {
-                if (err) throw err;
-                if (results.length <= 0)
-                    console.log("User doesn't exist");
-                console.log(results);
-
-                var image = results[0].img;
-                console.log(image);
-                var tmp = new Buffer(results.img).toString('base64')
-                res.render('pages/users', {tmp: tmp});
-            });
-        }
-    });
-    console.log(req.file);
-
-    let image = req.file.originalname.split(".");
-    const fileType = image[image.length - 1];
-
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${uuid.v4()}.${fileType}`,
-        Body: req.file.buffer
-    };
+    const file = req.file;
+    console.log("======= File info from client side =======");
+    console.log(file);
 
     if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
         || file.mimetype == "image/gif") {
 
+        // From session check
+        // Check the counts of photo is less than 3? and if there is any matching file ID
+        // if (req.session.user.photos.length? >= 3)
+        // res.redirect('/users#', {message: "Unsupported Image Type Error"});
+        // foreach photos
+        // if (photos.img_id == uuid.v5 of newly uploaded photo)
+        // res.redirect('/users#', {message: "Image already exist"});
+        // else
+
+        let image = file.originalname.split(".");
+        const fileType = image[image.length - 1];
+
+        const fileName = uuid.v5(image[0], process.env.SEED_KEY);
+        console.log(uuid.v5(image[0], process.env.SEED_KEY));
+        console.log(fileName);
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `${fileName}.${fileType}`,
+            Body: file.buffer
+        };
+        
         s3.upload(params, (error, data) => {
             if (error) {
                 res.status(500).send(error); 
             }
     
-            //console.log(res.status(200).send(data));
-            console.log(data);
-            res.redirect('/users#');
+            if (res.statusCode == 200) {
+                console.log("======= AWS S3 Upload Success =======");
+
+                // Will be replaced with req.session.user_id ?
+                const tempUserId = 11;
+                const imgID = data.key;
+                const fileLocation = data.Location;
+                // user.session.photo.isMain? should be used
+                const isMain = false;
+
+                console.log(data);
+                console.log(imgID);
+                console.log(fileLocation);
+
+                // var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img_url`,`is_main`)VALUES('" 
+                //                 + tempUserId + "','" + fileName + "','" + fileLocation + "','" + isMain + "')";
+                // db.connect(function (err) {
+                //     if (err) {
+                //         return console.log('error: Connection FAILEDDDD : \n' + err.message);
+                //     } else {
+                //         console.log("======= Upload image info to MySQL =======");
+                        
+                //         db.query(insertData, (err, result) => {
+                //             if (err) throw err;
+                //             console.log('Data Saved');
+                //             console.log(result);
+                //         });
+                //     }
+                // });
+                res.redirect('/users#', {image: fileLocation});
+            }
         });
 
+        // db.connect(function (err) {
+        //     if (err) {
+        //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
+        //     } else {
+        //         db.query(queryForPhotoCnt, (err, results) => {
+        //             if (err) throw err;
+        //             if (results[0]['COUNT(*)'] <= 0) 
+        //                 console.log("User doesn't exist");
+    
+        //             if (results[0]['COUNT(*)'] == 3) {
+        //                 console.log("Can't post more photos");
+        //                 res.redirect('/users#', {message: "Unsupported Image Type Error"});   
+        //             }
+
+        //             console.log("======= Photo count less than 3 =======");
+        //             console.log(results[0]['COUNT(*)']);
+
+                    
+        //         });
+        //     }
+        // });
     } else {
         res.redirect('/users#', {message: "Unsupported Image Type Error"})
     }
-    
-    
-    // if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/gif") {
-    //     var tempUserId = 11;
-    //     var imageName = file.name;
-    //     var uuidname = uuid.v4(); // this is used for unique file name
-    //     var fileName = uuidname + '_' + imageName;
-    //     var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img`)VALUES('" + tempUserId + "','" + fileName + "','" + file + "')";
-    //     db.connect(function (err) {
-    //         if (err) {
-    //             return console.error('error: Connection FAILEDDDD : \n' + err.message);
-    //         } else {
-    //             console.log('Upload image to DB');
-    //             // file.mv('public/images'+file.name, (err) => {
-    //             //     if (err) console.log(err);
-    //             //     else console.log('SAVEDDD');
-    //             // });
-    //             db.query(insertData, (err, result) => {
-    //                 if (err) throw err;
-    //                 console.log('Data Saved');
-    //                 console.log(file);
-    //             });
-    //             db.end();
-    //         }
-    //     });
-    // }
 });
 
 app.get('/account', (req, res) => {
