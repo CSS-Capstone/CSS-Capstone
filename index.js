@@ -94,7 +94,8 @@ const db = mysql.createConnection({
 
 app.get('/', (req, res) => {
     res.render('pages/index', {
-        registerMessage: ''
+        registerMessage: '',
+        loginMessage: ''
     });
 });
 
@@ -320,12 +321,60 @@ app.get('/hotel/search/:id/book', (req, res) => {
 // =============================
 // Register && Login============
 // =============================
+app.post('/auth/login', async (req, res) => {
+    try{
+        // console.log(req.body);
+
+        let email = req.body.email;
+        let password = req.body.password;
+
+        if ( !email || !password ) {
+            return res.status(400).render('pages/index', {
+                registerMessage: '',
+                loginMessage: "Email cannot be empty"
+            })
+        }
+
+        db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
+            console.log(results);
+            if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
+                return res.status(401).render('pages/index', {
+                    registerMessage: '',
+                    loginMessage: "Email or password is incorrect"
+                })
+            } 
+            else {
+                const id = results[0].user_id;
+
+                const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+                    expiresIn: process.env.JWB_EXPIRES_IN
+                })
+
+                console.log("Token: " + token);
+
+                const cookieOptions = {
+                    expires: new Date(
+                        Date.now() + process.env.JWT_COOKIE_EXPRESS * 24 * 60 * 60 * 1000
+                    ),
+                    httpOnly: true
+                }
+                
+                res.cookie('jwt', token, cookieOptions);
+                console.log(req.cookies);
+                res.status(200).redirect("/");
+            }
+        })
+    } catch (error) {
+        
+    }
+})
+
 app.get('/login', (req, res) => {
     res.render('pages/sign_in');
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register');
+    res.render('pages/,register');
 });
 
 app.post('/auth/register', (req, res) => {
@@ -344,12 +393,14 @@ app.post('/auth/register', (req, res) => {
         //make sure that this render to the same page where the modal is opened
         if (results.length > 0) {
             return res.render('pages/index', {
-                registerMessage: 'Email has been used'
+                registerMessage: 'Email has been used',
+                loginMessage: ''
             });
         }
         else if (newPassword !== confirmPassword) {
             return res.render('pages/index', {
-                registerMessage: 'Password and Confimr Password do not match'
+                registerMessage: 'Password and Confimr Password do not match',
+                loginMessage: ''
             });
         }   
 
@@ -361,7 +412,8 @@ app.post('/auth/register', (req, res) => {
                 console.log(error);
             } else {
                 return res.render('pages/index', {
-                    registerMessage: 'User Registered'
+                    registerMessage: 'User Registered',
+                    loginMessage: ''
                 })
             }
         })
@@ -374,6 +426,14 @@ app.get('/reset_password', (req, res) => {
     res.render('pages/')
 })
 
+app.get('/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.clearCookie('profile');
+    res.clearCookie('jwt');
+    console.log(req.cookies);
+    res.redirect('/');
+})
 // ===============================================
 // start of facebook
 // ===============================================
@@ -413,11 +473,11 @@ app.get('/facebook/failed', (req, res) => {
     res.send("Hello, facebook auth fails");
 });
 
-app.get('/facebook/logout', (req, res) => {
-    req.session = null;
-    req.logout();
-    res.redirect('/');
-});
+// app.get('/facebook/logout', (req, res) => {
+//     req.session = null;
+//     req.logout();
+//     res.redirect('/');
+// });
 
 // ===============================================
 // end of facebook
@@ -445,7 +505,7 @@ app.get('/google/good', (req, res) => {
     // second way to do it
     // =============
 
-    // console.log(req.cookies);
+    console.log(req.cookies);
     var data = req.cookies.profile;
     // res.send(`Hello!! Google OAuth is a success!!`);
     // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
@@ -480,12 +540,12 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
         res.redirect('/google/good');
     });
 
-app.get('/google/logout', (req, res) => {
-    req.session = null;
-    req.logout();
-    //delete cookie data from the previous user
-    res.redirect('/');
-})
+// app.get('/google/logout', (req, res) => {
+//     req.session = null;
+//     req.logout();
+//     //delete cookie data from the previous user
+//     res.redirect('/');
+// })
 
 // ===============================================
 // end of google

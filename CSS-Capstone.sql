@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS `css_capstone`.`USER`;
-DROP TABLE IF EXISTS `css_capstone`.`HOTEL`; 
-DROP TABLE IF EXISTS `css_capstone`.`BOOKING`;
-DROP TABLE IF EXISTS `css_capstone`.`COMMENT`;
+DROP TABLE IF EXISTS `css-capstone`.`USER`;
+DROP TABLE IF EXISTS `css-capstone`.`HOTEL`; 
+DROP TABLE IF EXISTS `css-capstone`.`BOOKING`;
+DROP TABLE IF EXISTS `css-capstone`.`COMMENT`;
 
 CREATE TABLE `css-capstone`.`USER` (
 	`user_id` INT NOT NULL AUTO_INCREMENT UNIQUE,
     `email` VARCHAR(255) NOT NULL UNIQUE,
-    `username` VARCHAR(30) NOT NULL,
+    `username` VARCHAR(30) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
     -- user address? 
 -- 	`country` VARCHAR(30) NOT NULL,

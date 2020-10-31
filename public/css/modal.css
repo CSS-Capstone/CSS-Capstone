@@ -255,4 +255,104 @@ body {
 }
 
 /* reset password */
+.popup .reset_password_form {
+    padding: 0 30px;
+    display: none;
+}
 
+.popup .reset_password_form .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    top: -50px;
+    left: calc(50% - 50px);
+}
+
+.box_title {
+    margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.popup .reset_password_form form p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    /* font-weight: bold;
+    display: block;
+    font-size: 14px;
+    color: #222;
+    margin-bottom: 5px; */
+}
+
+.popup .reset_password_form form input {
+    /* width: 100%;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    outline: none;
+    border: 1px solid #aaa;
+    background: #eee;
+    border-radius: 5px; */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.popup .reset_password_form form input[type="text"], form input[type="password"] {
+    border: none;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+}
+
+.popup .reset_password_form form #input_submit_reset_password {
+    /* margin-top: 5px;
+    width: 100%;
+    padding: 10px 0px;
+    text-transform: uppercase;
+    outline: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #4889da;
+    color: #f5f5f5; */
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #8ea8f5;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.popup .reset_password_form form #input_submit_reset_password:hover {
+    cursor: pointer;
+    background: #426ff5;
+    color: #000;
+}
+
+.popup .reset_password_form form a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 20px;
+    color: rgb(129, 129, 247); 
+} 
+
+.popup .reset_password_form form a:hover {
+   color: rgb(129, 129, 247); 
+   /* change color */
+   text-decoration: underline;
+}
+
+/* message after resetting password */
+
+.popup .message_reset_password {
+    padding: 0 30px;
+    display: none;
+}

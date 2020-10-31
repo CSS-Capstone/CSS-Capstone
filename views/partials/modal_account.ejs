@@ -9,17 +9,18 @@
         </div>
         <img src="/images/sign_in_icon.png" class="avatar">
         <h1 class = "box_title">Login</h1>
-        <form action="" id = "login">
+        <form action="/auth/login" method = "POST" id = "login" onsubmit="return checkLoginForm(this);">
             <p>Email</p>
-            <input type="text" name="" placeholder="Enter Email">
+            <input type="text" name="email" placeholder="Enter Email">
             <p>Password</p>
-            <input type="password" name="" placeholder="Enter Password">
+            <input type="password" name="password" placeholder="Enter Password">
             <br>
             <input type="submit" name="" value="Login" id = "input_submit_login">
             <a href="/google">Google Sign In</a><br>
             <a href="/facebook">Facebook Sign In</a><br>
-            <a href="#">Forgot password?</a><br>
-            <a href="#" onclick="showRegister()" class = "show_register">Don't have an account?</a>
+            <a href="#" onclick = "showResetPassword()">Forgot password?</a><br>
+            <a href="#" onclick = "showRegister()">Don't have an account?</a>
+            <span><%= loginMessage %></span>
         </form>
     </div>
     <div class = "register_form">
@@ -50,17 +51,32 @@
             
             <!-- ============ -->
             <input type="submit" name="" value="Make Account" id = "input_submit_register">
+            <a href="/google">Register with Google</a><br>
+            <a href="/facebook">Register with Facebook</a><br>
             <span class = "log_in_link">Already have an account? </span><a href="#" onclick = "showLogin()" class = "show_login">Log In</a>
         </form>
         <span><%= registerMessage %></span>
     </div>
-    <!-- <div class = "reset_password_form">
+    <div class = "reset_password_form">
+        <div class="popup-close" onclick="closeForm()">
+            &times;
+        </div>
+        <img src="/images/sign_in_icon.png" class="avatar">
+        <h1 class = "box_title">Login</h1>
+        <!-- <form action="/auth/reset_password" method = "POST" id = "reset_password" onsubmit = "return checkResetPasswordForm(this);"> -->
         <form action="">
             <p>Enter your email</p>
-            <input type="text" name="" placeholder="Enter Email"
-            <p>The link to reset your password will be sent to your email</p>
-            <input type="submit" name="" value="Login" id = "input_submit">
+            <input type="text" name="" placeholder="Enter Email">
+            <p>New Password</p>
+            <input type="password" name="newPassword" id = "new_password" placeholder="Enter Password" >
+            <p>Confirm Password</p>
+            <input type="password" name="confirmPassword" id = "confirm_password" placeholder="Confirm Password" >
+            <input type="submit" name="" value="Change My Password" id = "input_submit_reset_password" onclick = "showResetPasswordMessage()">
         </form>
-    </div> -->
+    </div>
+    <div class = "message_reset_password">
+        <p>Your password has been changed. Please check your email for the confirmation.</p>
+        <a href="#" onclick = "closeForm()"> Got it!</a>
+    </div>
 </div>
 <script src = "/js/Modal/Modal.js"></script>
