@@ -350,9 +350,41 @@ body {
    text-decoration: underline;
 }
 
-/* message after resetting password */
+/* message after actions */
+
+.popup .message_login {
+    padding: 0 30px;
+    display: none;
+}
+
+.popup .message_register {
+    padding: 0 30px;
+    display: none;
+}
 
 .popup .message_reset_password {
     padding: 0 30px;
+    display: none;
+}
+
+.error_message {
+    margin: -20px 0 8px 0;
+    color: red;
+    font-size: 10px;
+}
+
+.error_message_login {
+    margin: -20px 0 8px 0;
+    color: red;
+    font-size: 15px;
+}
+
+/* showing the modal after submission in certain cases */
+
+#chosen_login, #chosen_register, #chosen_reset_password {
+    display: block;
+}
+
+#not_chosen_login, #not_chosen_register, #not_chosen_reset_password  {
     display: none;
 }

@@ -16,7 +16,12 @@
     <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
     <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
 </head>
+<%if (modalStyle == '') { %>
 <body>
+<% } else { %>
+<body class = "showForm">
+<% } %>
+<!-- <body> -->
     <div class="index__bg">
         <nav id="navbar">
             <div class="navbar__logo">

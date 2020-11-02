@@ -1,34 +1,70 @@
+<!-- <%if (modalStyle == '') { %>
+    <div class = "popup-overlay"></div>
+<% } else { %>
+    <div class = "popup-overlay" style = "display: block;"></div>
+<% } %> -->
 <div class = "popup-overlay"></div>
-<div class="popup">
+<%if (stayInWhere == 'login') { %>
+<div class = "popup" style = "height: 440px;">
+<% } else if (stayInWhere == 'register') { %>
+<div class = "popup" style = "height: 620px;">
+<% } else if (stayInWhere == 'reset password') { %>
+<div class = "popup" style = "height: 500px;">
+<% } else { %>
+<div class = "popup">
+<% } %>
+<!-- <div class = "popup"> -->
     <!-- <div class="popup-close" onclick="closeForm()">
         &times;
     </div> -->
-    <div class = "login_form">
+    <!-- Login -->
+    <%if (stayInWhere == 'login') { %>
+    <div class = "login_form" id = "chosen_login">
+    <% } else { %>
+    <div class = "login_form" id = "not_chosen_login">
+    <% } %>
+    <!-- <div class = "login_form"> -->
         <div class="popup-close" onclick="closeForm()">
             &times;
         </div>
         <img src="/images/sign_in_icon.png" class="avatar">
         <h1 class = "box_title">Login</h1>
+        <span class = "error_message_login"><%= loginMessage %></span>
         <form action="/auth/login" method = "POST" id = "login" onsubmit="return checkLoginForm(this);">
             <p>Email</p>
             <input type="text" name="email" placeholder="Enter Email">
+            <span class = "error_message" id = "login_error_message_empty" style = "display: none;">The email cannot be empty</span>
+            <span class = "error_message" id = "login_error_message_invalid" style = "display: none;">The email needs to be valid</span>
             <p>Password</p>
             <input type="password" name="password" placeholder="Enter Password">
+            <span class = "error_message" id = "login_error_message_password" style = "display: none;">The password cannot be empty</span>
             <br>
             <input type="submit" name="" value="Login" id = "input_submit_login">
+            <!-- <input type="submit" name="" value="Login" id = "input_submit_login" onclick = "showLoginMessage()"> -->
             <a href="/google">Google Sign In</a><br>
             <a href="/facebook">Facebook Sign In</a><br>
             <a href="#" onclick = "showResetPassword()">Forgot password?</a><br>
             <a href="#" onclick = "showRegister()">Don't have an account?</a>
-            <span><%= loginMessage %></span>
         </form>
     </div>
-    <div class = "register_form">
+    <!-- Make an if statement to show this message -->
+    <div class = "message_login">
+        <p>Your password has been changed. Please check your email for the confirmation.</p>
+        <a href="#" onclick = "closeForm()"> Got it!</a>
+    </div>
+    <!-- Register -->
+    <% if (stayInWhere == 'register') { %>
+    <div class = "register_form" id = "chosen_register">
+    <% } else { %>
+    <div class = "register_form" id = "not_chosen_register">
+    <% } %>
+    <!-- <div class = "register_form"> -->
         <div class="popup-close" onclick="closeForm()">
             &times;
         </div>
         <img src="/images/register_icon_2.png" class="avatar">
         <h1 class="box_title">Register</h1>
+        <span class = "error_message"><%= registerMessage %></span>
         <!-- action = "where you want to call the post request for register" -->
         <!-- method = "POST" -->
         <form action="/auth/register" method = "POST" id = "register" onsubmit="return checkRegisterForm(this);">
@@ -50,30 +86,45 @@
             </div> -->
             
             <!-- ============ -->
+            <!-- <input type="submit" name="" value="Make Account" id = "input_submit_register" onclick = "showRegisterMessage()"> -->
             <input type="submit" name="" value="Make Account" id = "input_submit_register">
             <a href="/google">Register with Google</a><br>
             <a href="/facebook">Register with Facebook</a><br>
             <span class = "log_in_link">Already have an account? </span><a href="#" onclick = "showLogin()" class = "show_login">Log In</a>
         </form>
-        <span><%= registerMessage %></span>
     </div>
-    <div class = "reset_password_form">
+    <!-- Make an if statement to show this message -->
+    <div class = "message_register">
+        <p>Your password has been changed. Please check your email for the confirmation.</p>
+        <a href="#" onclick = "closeForm()"> Got it!</a>
+    </div>
+    <!-- Reset Password -->
+    <%if (stayInWhere == 'reset password') { %>
+    <div class = "reset_password_form" id = "chosen_reset_password">
+    <% } else { %>
+    <div class = "reset_password_form" id = "not_chosen_reset_password">
+    <% } %>
+    <!-- <div class = "reset_password_form"> -->
         <div class="popup-close" onclick="closeForm()">
             &times;
         </div>
-        <img src="/images/sign_in_icon.png" class="avatar">
-        <h1 class = "box_title">Login</h1>
-        <!-- <form action="/auth/reset_password" method = "POST" id = "reset_password" onsubmit = "return checkResetPasswordForm(this);"> -->
-        <form action="">
+        <img src="/images/register_icon_2.png" class="avatar">
+        <h1 class = "box_title">Reset Password</h1>
+        <span class = "error_message"><%= resetPasswordMessage %></span>
+        <form action="/auth/reset_password" method = "POST" id = "reset_password" onsubmit = "return checkResetPasswordForm(this);">
+        <!-- <form action="" id = "reset_password"> -->
             <p>Enter your email</p>
-            <input type="text" name="" placeholder="Enter Email">
+            <input type="text" name="email" placeholder="Enter Email">
             <p>New Password</p>
             <input type="password" name="newPassword" id = "new_password" placeholder="Enter Password" >
             <p>Confirm Password</p>
             <input type="password" name="confirmPassword" id = "confirm_password" placeholder="Confirm Password" >
-            <input type="submit" name="" value="Change My Password" id = "input_submit_reset_password" onclick = "showResetPasswordMessage()">
+            <input type="submit" name="" value="Change My Password" id = "input_submit_reset_password">
+            <!-- <input type="submit" name="" value="Change My Password" id = "input_submit_reset_password" onclick = "showResetPasswordMessage()"> -->
+            <span class = "log_in_link">Already have an account? </span><a href="#" onclick = "showLogin()" class = "show_login">Log In</a>
         </form>
     </div>
+    <!-- Make an if statement to show this message -->
     <div class = "message_reset_password">
         <p>Your password has been changed. Please check your email for the confirmation.</p>
         <a href="#" onclick = "closeForm()"> Got it!</a>

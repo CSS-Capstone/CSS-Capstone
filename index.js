@@ -103,7 +103,10 @@ const db = mysql.createConnection({
 app.get('/', (req, res) => {
     res.render('pages/index', {
         registerMessage: '',
-        loginMessage: ''
+        loginMessage: '',
+        resetPasswordMessage: '',
+        modalStyle: '',
+        stayInWhere: ''
     });
 });
 
@@ -342,17 +345,14 @@ app.get('/hotel/search/:id/book', (req, res) => {
 app.post('/auth/login', async (req, res) => {
     try{
         // console.log(req.body);
-
         let email = req.body.email;
         let password = req.body.password;
-
         // if ( !email || !password ) {
         //     return res.status(400).render('pages/index', {
         //         registerMessage: '',
         //         loginMessage: "Email cannot be empty"
         //     })
         // }
-
         db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
             // console.log(results);
 
@@ -364,50 +364,54 @@ app.post('/auth/login', async (req, res) => {
             if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
                 return res.status(401).render('pages/index', {
                     registerMessage: '',
-                    loginMessage: "Email or password is incorrect"
+                    loginMessage: "Email or password is incorrect",
+                    resetPasswordMessage: '',
+                    modalStyle: "block",
+                    stayInWhere: 'login'
                 })
             } 
             else {
-                const id = results[0].user_id;
-
-                const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+                const userId = results[0].user_id;
+                const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
                     expiresIn: process.env.JWB_EXPIRES_IN
                 })
-
                 // console.log("Token: " + token);
-
                 const cookieOptions = {
                     expires: new Date(
                         Date.now() + process.env.JWT_COOKIE_EXPRESS * 24 * 60 * 60 * 1000
                     ),
                     httpOnly: true
                 }
-                
+                var userPhotos = [];
+                db.query('SELECT * FROM USER_HOTEL_IMAGE WHERE user_id = ?', [userId], async (error, photos) => {
+                    userPhotos = photos;
+                });
                 res.cookie('jwt', token, cookieOptions);
                 // console.log(req.cookies);
-                
                 //make the data fo the user
                 req.user = results[0];
-                
+                req.user.userPhotos = userPhotos;
                 //make the data for the user's session
                 req.session = {
                     isLoggedIn: false,
-                    user: {}
+                    user: {},
+                    userPhotos: {}
                 };
                 req.session.isLoggedIn = true;
                 req.session.user = req.user;
-                
+                req.session.userPhotos = userPhotos;
                 console.log(req.user);
                 console.log(req.session);
-                
                 res.status(200).render('pages/index', {
                     loginMessage: '',
-                    registerMessage: ''
+                    registerMessage: '',
+                    resetPasswordMessage: '',
+                    modalStyle: '',
+                    stayInWhere: ''
                 });
-
                 // res.status(200).redirect('/');
             }
-        })
+        });
     } catch (error) {
         console.log(error)
     }
@@ -422,46 +426,44 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/auth/register', (req, res) => {
-    console.log(req.body);
-
-    const username = req.body.username;
-    const email = req.body.email;
-    const newPassword = req.body.newPassword;
-    const confirmPassword = req.body.confirmPassword;
-
+    // console.log(req.body);
+    let username = req.body.username;
+    let email = req.body.email;
+    let newPassword = req.body.newPassword;
+    let confirmPassword = req.body.confirmPassword;
     db.query('SELECT email FROM USER WHERE email = ?', [email], async (error, results) => {
         if(error) {
             console.log(error);
         }
-
         //make sure that this render to the same page where the modal is opened
-        
         // this checks if there is an email already registered in the DB or not
-
         if (results.length > 0) {
             return res.render('pages/index', {
                 registerMessage: 'Email has been used',
-                loginMessage: ''
+                loginMessage: '',
+                resetPasswordMessage: '',
+                modalStyle: 'block',
+                stayInWhere: 'register'
             });
         }
-        
-        else if (newPassword !== confirmPassword) {
-            return res.render('pages/index', {
-                registerMessage: 'Password and Confirm Password do not match',
-                loginMessage: ''
-            });
-        }   
-
+        // else if (newPassword !== confirmPassword) {
+        //     return res.render('pages/index', {
+        //         registerMessage: 'Password and Confirm Password do not match',
+        //         loginMessage: ''
+        //     });
+        // }  
         let hashedPassword = await bcrypt.hash(newPassword, 8);
-        console.log(hashedPassword);
-
+        // console.log(hashedPassword);
         db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
             if (error) {
                 console.log(error);
             } else {
                 return res.render('pages/index', {
-                    registerMessage: 'User Registered',
-                    loginMessage: ''
+                    registerMessage: '',
+                    loginMessage: '',
+                    resetPasswordMessage: '',
+                    modalStyle: '',
+                    stayInWhere: ''
                 })
             }
         })
@@ -475,7 +477,46 @@ app.get('/reset_password', (req, res) => {
 })
 
 app.post('/auth/reset_password', (req, res) => {
-    res.send("Reset password successful");
+    let email = req.body.email;
+    let newPassword = req.body.newPassword;
+    let confirmPassword = req.body.confirmPassword;
+    
+    db.query('SELECT email, user_id FROM USER WHERE email = ?', [email], async (error, results) => {
+        if(error) {
+            console.log(error);
+        }
+
+        if (results.length === 0) {
+            return res.render('pages/index', {
+                registerMessage: '',
+                loginMessage: '',
+                resetPasswordMessage: 'This email is not registered',
+                modalStyle: 'block',
+                stayInWhere: 'reset password'
+            });
+        }
+
+        let userId = results[0].user_id;
+        let hashedPassword = await bcrypt.hash(newPassword, 8);
+
+        db.query('UPDATE USER SET password = ? WHERE user_id = ?', [hashedPassword, userId], async (error, result) => {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log('Rows affected: ' + result.affectedRows);
+
+                return res.render('pages/index', {
+                    registerMessage: '',
+                    loginMessage: '',
+                    resetPasswordMessage: '',
+                    modalStyle: '',
+                    stayInWhere: ''
+                });
+            }
+        })
+    })
+    // res.send("Reset password successful");
 })
 
 app.get('/logout', (req, res) => {
