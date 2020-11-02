@@ -322,8 +322,57 @@ app.get('/become-host', (req, res) => {
     //res.send('hello host');
 });
 
-app.get('/become-host/postHotel', (req, res) => {
-    res.send('hello hotel post place');
+app.get('/become-host/postHotel/new', (req, res) => {
+    res.render('pages/hostHotel/hotelPost');
+});
+
+app.post('/become-host/postHotel', (req, res) => {
+    let hotelPostData = req.body;
+    console.log(hotelPostData);
+    // ==============================
+    // HOTEL BASIC DATA =============
+    let hotelLabel = hotelPostData.hotelLabel;
+    let hotelPrice = hotelPostData.hotelPrice;
+    let hotelLocation = hotelPostData.hotelLocation;
+    let hotelLocationStreetAddress = hotelPostData.hotel_location_street;
+    let hotelLocationTrimmedForDB = trimCityNameHelper.trimCityNameAndCountryName(hotelLocation);
+
+    // Datas to insert DB after trim by using trim helper functions
+    // ASSUME USER ID is has a USER ID 14
+    let hotelCity = hotelLocationTrimmedForDB[0];
+    let hotelCountry = hotelLocationTrimmedForDB[1];
+    // CONNECTION WILL BE SEPERATE OUT SOON
+    // WILL JUST USE USER ID 14
+    // BASIC DATABASE CONNECTION
+    db.connect((error) => {
+        if (!error) {
+            console.log("Database is Successfully Connected");
+        } else {
+            console.log("DB connection Failed");
+        }
+    });
+    let insertQuery = "INSERT INTO `css-capstone`.HOTEL SET ?";
+    db.query(insertQuery, 
+        {hotel_name: hotelLabel, 
+        hotel_price: hotelPrice, 
+        country: hotelCountry,
+        city: hotelCity,
+        address: hotelLocationStreetAddress,
+        isAPI: false,
+        isDeveloper: true,
+        user_id: 14}, (err, result) => {
+            // callback function
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+            console.log("Hotel Insert Added Successfully into Database");
+            console.log(result);
+        });
+    console.log(hotelCity);
+    console.log(hotelCountry);
+    console.log(hotelLabel);
+    res.end();
 });
 
 // ====================================

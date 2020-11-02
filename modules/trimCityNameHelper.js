@@ -14,4 +14,28 @@ function trimCitiyNameHelper(locationName) {
     return trimmedLocation;
 }
 
-module.exports = { trimCitiyNameHelper };
+function trimCityNameAndCountryName(hotelLocation) {
+    let theHotelCityName = ``;
+    let theHotelCountyName = ``;
+    if (hotelLocation.length === 0) {
+        console.log("You have empty Location");
+        return false;
+    }
+    let trimmedHotelLocation = hotelLocation.trim();
+    for (let i = 0; i < trimmedHotelLocation.length; i++) {
+        if (trimmedHotelLocation.charAt(i) === ',') {
+            theHotelCityName = trimmedHotelLocation.slice(0,i);
+            break;
+        }
+    }
+    for (let i = trimmedHotelLocation.length; i >= 0; i--) {
+        if (trimmedHotelLocation.charAt(i) === ',') {
+            theHotelCountyName = trimmedHotelLocation.slice(i+1);
+            theHotelCountyName = theHotelCountyName.trim();
+            break;
+        }
+    } 
+    return [theHotelCityName, theHotelCountyName];
+}
+
+module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName };
