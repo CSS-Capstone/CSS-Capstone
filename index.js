@@ -454,6 +454,7 @@ app.post('/auth/login', async (req, res) => {
                 
                 //make the data for the user's session
                 req.session.user = req.user;
+                req.session.isLoggedIn = true;
                 // req.session.cookie.user = {
                 //     isLoggedIn: false,
                 //     userDetail: {}
@@ -584,16 +585,22 @@ app.post('/auth/reset_password', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-    req.session = undefined;
-    req.user = undefined;
-    req.cookies = undefined;
-    req.logout();
+    // req.session = undefined;
+    // req.user = undefined;
+    // req.cookies = undefined;
+    req.session.destroy(function (err) {
+        res.clearCookie('profile');
+        res.clearCookie('jwt');
+        req.logout();
+        res.redirect('/');
+    })
+    // req.logout();
     // res.clearCookie('profile');
     // res.clearCookie('jwt');
-    console.log(req.user);
-    console.log(req.session);
-    console.log(req.cookies);
-    res.redirect('/');
+    // console.log(req.user);
+    // console.log(req.session);
+    // console.log(req.cookies);
+    // res.redirect('/');
 })
 // ===============================================
 // start of facebook
