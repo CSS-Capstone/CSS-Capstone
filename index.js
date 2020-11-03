@@ -337,6 +337,7 @@ app.get('/become-host/postHotel/new', (req, res) => {
 });
 
 app.post('/become-host/postHotel', (req, res) => {
+    console.log(req.body);
     let hotelPostData = req.body;
     console.log(hotelPostData);
     // ==============================

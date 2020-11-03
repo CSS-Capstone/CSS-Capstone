@@ -54,3 +54,43 @@
 //         // };
 //     }
 // });
+
+// printoutTheData();
+// function printoutTheData() {
+//     const allTabsDiv = document.querySelectorAll('.tab');
+//     const nextBtn = document.querySelector('#nextBtn');
+//     nextBtn.addEventListener('click', (event) => {
+//         console.log(allTabsDiv);
+//         if (allTabsDiv[1].style.display === 'block') {
+//             let valueInputDOM = document.querySelector('#hotelLabel');
+//             console.log(valueInputDOM);
+//             console.log(allTabsDiv[0]);
+//             console.log(valueInputDOM.value);
+//         }
+//         if (allTabsDiv[2].style.display === 'block') {
+//             let valueInputDOMPrice = document.querySelector('#hotelPrice');
+//             let valueInputDOMLabel = document.querySelector('#hotelLabel');
+//             console.log(valueInputDOMLabel.value);
+//             console.log(valueInputDOMPrice.value);
+//         }
+//         if (allTabsDiv[3].style.display === 'block') {
+//             let valueInputDOMPrice = document.querySelector('#hotelPrice');
+//             let valueInputDOMLabel = document.querySelector('#hotelLabel');
+//             let valueInputDOMLocation = document.querySelector('#hotelLocation');
+//             console.log(valueInputDOMLabel.value);
+//             console.log(valueInputDOMPrice.value);
+//             console.log(valueInputDOMLocation.value);
+//         }
+//         if (allTabsDiv[4].style.display === 'block') {
+//             let valueInputDOMPrice = document.querySelector('#hotelPrice');
+//             let valueInputDOMLabel = document.querySelector('#hotelLabel');
+//             let valueInputDOMLocation = document.querySelector('#hotelLocation');
+//             let valueInputDOM = document.querySelector('#hotel_located_street_address');
+           
+//             console.log(valueInputDOMLabel.value);
+//             console.log(valueInputDOMPrice.value);
+//             console.log(valueInputDOMLocation.value);
+//             console.log(valueInputDOM.value);
+//         }
+//     });
+// }
