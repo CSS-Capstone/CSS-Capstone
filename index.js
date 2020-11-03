@@ -51,6 +51,19 @@ app.use(session({
     resave: true
 }));
 
+// ===============================================
+// =============== MIDDLEWARE ====================
+// check if the user is logged in
+function isLoggedIn(req, res, next) {
+    if (!req.session.user) {
+        console.log("User is not currently logged in");
+        res.redirect('/');
+    } else {
+        next();
+    }
+}
+// ==============================================
+
 // app.use(cookieSession({
 //     name: 'tuto-session',
 //     keys: ['key1', 'key2']
@@ -327,7 +340,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     });
 });
 
-app.get('/become-host', (req, res) => {
+app.get('/become-host', isLoggedIn, (req, res) => {
     res.render('pages/becomeHost/becomeHostPolicy');
     //res.send('hello host');
 });
@@ -337,6 +350,7 @@ app.get('/become-host/postHotel/new', (req, res) => {
 });
 
 app.post('/become-host/postHotel', (req, res) => {
+    console.log(req.body);
     let hotelPostData = req.body;
     console.log(hotelPostData);
     // ==============================
@@ -726,6 +740,12 @@ app.get('/users', (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
+    console.log("req.user");
+    console.log(req.user);
+
+    console.log("req.session.user");
+    console.log(req.session.user);
+
     // var params = { 
     //     Bucket: process.env.AWS_BUCKET_NAME, 
     //     Key: '4319367f-5484-5303-8915-712d014451ff.png'
@@ -736,24 +756,19 @@ app.get('/users', (req, res) => {
     //     return data;
     // };
 
+    // function encode(data) {
+    //     let buf = Buffer.from(data);
+    //     let base64 = buf.toString('base64');
+    //     return base64;
+    // }
+
     // getImage().then((img) => {
     //     let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
     //     res.render('pages/users', { image });
     // }).catch((e)=> {
     //     console.log(e);
     // });
-      
-    // function encode(data) {
-    //     let buf = Buffer.from(data);
-    //     let base64 = buf.toString('base64');
-    //     return base64;
-    // }
-    let user = req.session.user;
-    // console.log(req.user);
-    console.log(req.session.user);
-    console.log(user);
-
-    // res.render('pages/users', {image: fileLocation});
+    //res.render('pages/users', {image: fileLocation});
 });
 
 ///////////////////////////////////
