@@ -28,6 +28,6 @@ function termsOfAgreementValide() {
         agreeCheckBoxValidation.textContent = `You have to check "Agree"`;
         return false;
     }
-    let url = `/become-host/postHotel`;
+    let url = `/become-host/postHotel/new`;
     window.location = url;
 }
