@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const app = express();
 const AWS = require('aws-sdk');
@@ -40,6 +41,12 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true,
+    store: {}
+}));
 
 // app.use(cookieSession({
 //     name: 'tuto-session',
@@ -383,33 +390,35 @@ app.post('/auth/login', async (req, res) => {
                     httpOnly: true
                 }
                 var userPhotos = [];
-                db.query('SELECT * FROM USER_HOTEL_IMAGE WHERE user_id = ?', [userId], async (error, photos) => {
+                db.query('SELECT * FROM USER_PROFILE_IMAGE WHERE user_id = ?', [userId], async (error, photos) => {
                     userPhotos = photos;
                 });
                 res.cookie('jwt', token, cookieOptions);
                 // console.log(req.cookies);
                 //make the data fo the user
+                // let sess = req.session;
                 req.user = results[0];
                 req.user.userPhotos = userPhotos;
+                
                 //make the data for the user's session
-                req.session = {
-                    isLoggedIn: false,
-                    user: {},
-                    userPhotos: {}
-                };
-                req.session.isLoggedIn = true;
-                req.session.user = req.user;
-                req.session.userPhotos = userPhotos;
+                // req.session.cookie.user = {
+                //     isLoggedIn: false,
+                //     userDetail: {}
+                // };
+                // req.session.cookie.user.isLoggedIn = true;
+                // req.session.cookie.user.userDetail = req.user;
+                // req.session.userPhotos = userPhotos;
                 console.log(req.user);
                 console.log(req.session);
-                res.status(200).render('pages/index', {
-                    loginMessage: '',
-                    registerMessage: '',
-                    resetPasswordMessage: '',
-                    modalStyle: '',
-                    stayInWhere: ''
-                });
-                // res.status(200).redirect('/');
+                // console.log(req.session.cookie.user.userDetail);
+                // res.status(200).render('pages/index', {
+                //     loginMessage: '',
+                //     registerMessage: '',
+                //     resetPasswordMessage: '',
+                //     modalStyle: '',
+                //     stayInWhere: ''
+                // });
+                res.status(200).redirect('/');
             }
         });
     } catch (error) {
@@ -458,13 +467,14 @@ app.post('/auth/register', (req, res) => {
             if (error) {
                 console.log(error);
             } else {
-                return res.render('pages/index', {
-                    registerMessage: '',
-                    loginMessage: '',
-                    resetPasswordMessage: '',
-                    modalStyle: '',
-                    stayInWhere: ''
-                })
+                // return res.render('pages/index', {
+                //     registerMessage: '',
+                //     loginMessage: '',
+                //     resetPasswordMessage: '',
+                //     modalStyle: '',
+                //     stayInWhere: ''
+                // })
+                return res.redirect('/');
             }
         })
     })
@@ -506,13 +516,14 @@ app.post('/auth/reset_password', (req, res) => {
             else {
                 console.log('Rows affected: ' + result.affectedRows);
 
-                return res.render('pages/index', {
-                    registerMessage: '',
-                    loginMessage: '',
-                    resetPasswordMessage: '',
-                    modalStyle: '',
-                    stayInWhere: ''
-                });
+                // return res.render('pages/index', {
+                //     registerMessage: '',
+                //     loginMessage: '',
+                //     resetPasswordMessage: '',
+                //     modalStyle: '',
+                //     stayInWhere: ''
+                // });
+                return res.redirect('/');
             }
         })
     })
@@ -655,30 +666,32 @@ app.get('/users', (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
-    var params = { 
-        Bucket: process.env.AWS_BUCKET_NAME, 
-        Key: '4319367f-5484-5303-8915-712d014451ff.png'
-    };
+    // var params = { 
+    //     Bucket: process.env.AWS_BUCKET_NAME, 
+    //     Key: '4319367f-5484-5303-8915-712d014451ff.png'
+    // };
 
-    async function getImage() {
-        const data = s3.getObject(params).promise();
-        return data;
-    };
+    // async function getImage() {
+    //     const data = s3.getObject(params).promise();
+    //     return data;
+    // };
 
-    getImage().then((img) => {
-        let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
-        res.render('pages/users', { image });
-    }).catch((e)=> {
-        console.log(e);
-    });
+    // getImage().then((img) => {
+    //     let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
+    //     res.render('pages/users', { image });
+    // }).catch((e)=> {
+    //     console.log(e);
+    // });
       
-    function encode(data) {
-        let buf = Buffer.from(data);
-        let base64 = buf.toString('base64');
-        return base64;
-    }
+    // function encode(data) {
+    //     let buf = Buffer.from(data);
+    //     let base64 = buf.toString('base64');
+    //     return base64;
+    // }
 
-    //res.render('pages/users', {image: fileLocation});
+    console.log(req.user);
+    console.log(req.session);
+    // res.render('pages/users', {image: fileLocation});
 });
 
 ///////////////////////////////////
