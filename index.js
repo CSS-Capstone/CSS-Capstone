@@ -1,5 +1,8 @@
 const express = require('express');
 const session = require('express-session');
+// const redis = require('redis');
+// const redisStore = require('connect-redis')(session);
+// const client  = redis.createClient();
 const path = require('path');
 const app = express();
 const AWS = require('aws-sdk');
@@ -43,9 +46,9 @@ app.use(function(req, res, next) {
 });
 app.use(session({
     secret: process.env.SESSION_SECRET,
+    // store: new redisStore({ host: 'localhost', port: 8080, client: client,ttl : 260}),
     saveUninitialized: true,
-    resave: true,
-    store: {}
+    resave: true
 }));
 
 // app.use(cookieSession({
@@ -401,6 +404,7 @@ app.post('/auth/login', async (req, res) => {
                 req.user.userPhotos = userPhotos;
                 
                 //make the data for the user's session
+                req.session.user = req.user;
                 // req.session.cookie.user = {
                 //     isLoggedIn: false,
                 //     userDetail: {}
@@ -688,9 +692,11 @@ app.get('/users', (req, res) => {
     //     let base64 = buf.toString('base64');
     //     return base64;
     // }
+    let user = req.session.user;
+    // console.log(req.user);
+    console.log(req.session.user);
+    console.log(user);
 
-    console.log(req.user);
-    console.log(req.session);
     // res.render('pages/users', {image: fileLocation});
 });
 
