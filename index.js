@@ -51,6 +51,19 @@ app.use(session({
     resave: true
 }));
 
+// ===============================================
+// =============== MIDDLEWARE ====================
+// check if the user is logged in
+function isLoggedIn(req, res, next) {
+    if (!req.session.user) {
+        console.log("User is not currently logged in");
+        res.redirect('/');
+    } else {
+        next();
+    }
+}
+// ==============================================
+
 // app.use(cookieSession({
 //     name: 'tuto-session',
 //     keys: ['key1', 'key2']
@@ -327,7 +340,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     });
 });
 
-app.get('/become-host', (req, res) => {
+app.get('/become-host', isLoggedIn, (req, res) => {
     res.render('pages/becomeHost/becomeHostPolicy');
     //res.send('hello host');
 });
