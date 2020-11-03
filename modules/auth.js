@@ -1,9 +1,10 @@
-function loggedIn(req, res, next) {
-    if (req.user) {
-        next();
+function isLoggedIn(req, res, next) {
+    if (!req.session.user) {
+        console.log("User is not currently logged in");
+        res.redirect('/');
     } else {
-        console.log("Login please");
+        next();
     }
 }
 
-module.exports = { loggedIn };
+module.exports = { isLoggedIn };

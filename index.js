@@ -20,6 +20,7 @@ const cookieParser = require('cookie-parser');
 // ==========================================
 // Helper Functions =========================
 const trim = require('./modules/trim-city'); 
+const authMW = require('./modules/auth');
 const trimCityNameHelper = require('./modules/trimCityNameHelper');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 // const url = require('url');
@@ -50,19 +51,6 @@ app.use(session({
     saveUninitialized: true,
     resave: true
 }));
-
-// ===============================================
-// =============== MIDDLEWARE ====================
-// check if the user is logged in
-function isLoggedIn(req, res, next) {
-    if (!req.session.user) {
-        console.log("User is not currently logged in");
-        res.redirect('/');
-    } else {
-        next();
-    }
-}
-// ==============================================
 
 // app.use(cookieSession({
 //     name: 'tuto-session',
@@ -347,7 +335,7 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     });
 });
 
-app.get('/become-host', isLoggedIn, (req, res) => {
+app.get('/become-host', authMW.isLoggedIn, (req, res) => {
     res.render('pages/becomeHost/becomeHostPolicy');
     //res.send('hello host');
 });
@@ -828,7 +816,7 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // =============================
 // Basic Hotel CRUD=============
 // =============================
-app.get('/users', (req, res) => {
+app.get('/users', authMW.isLoggedIn, (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
