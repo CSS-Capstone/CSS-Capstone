@@ -81,8 +81,6 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-
-
 // const isLoggedIn = (req, res, next) => {
 //     if (req.user) {
 //         next();
@@ -124,12 +122,21 @@ const db = mysql.createConnection({
 // end of database
 
 app.get('/', (req, res) => {
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
     res.render('pages/index', {
         registerMessage: '',
         loginMessage: '',
         resetPasswordMessage: '',
         modalStyle: '',
-        stayInWhere: ''
+        stayInWhere: '',
+        formDataLogin: userDetailLogin,
+        formDataRegister: userDetailRegister
     });
 });
 
@@ -420,27 +427,27 @@ app.post('/auth/login', async (req, res) => {
         // console.log(req.body);
         let email = req.body.email;
         let password = req.body.password;
-        // if ( !email || !password ) {
-        //     return res.status(400).render('pages/index', {
-        //         registerMessage: '',
-        //         loginMessage: "Email cannot be empty"
-        //     })
-        // }
+        let userDetailLogin = {
+            email: ''
+        }
+        let userDetailRegister = {
+            email: '',
+            username: ''
+        }
+
         db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
             // console.log(results);
-
-            // this res.status shows if
-            // the used email is wrong or
-            // the used password is wrond or
-            // there are no such email in the database in the first place
-            // handle this to look more beautiful
+            
+            // if email or password is incorrect
             if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
                 return res.status(401).render('pages/index', {
                     registerMessage: '',
                     loginMessage: "Email or password is incorrect",
                     resetPasswordMessage: '',
                     modalStyle: "block",
-                    stayInWhere: 'login'
+                    stayInWhere: 'login',
+                    formDataLogin: userDetailLogin,
+                    formDataRegister: userDetailRegister
                 })
             } 
             else {
@@ -508,6 +515,13 @@ app.post('/auth/register', (req, res) => {
     let email = req.body.email;
     let newPassword = req.body.newPassword;
     let confirmPassword = req.body.confirmPassword;
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
     db.query('SELECT email FROM USER WHERE email = ?', [email], async (error, results) => {
         if(error) {
             console.log(error);
@@ -520,28 +534,18 @@ app.post('/auth/register', (req, res) => {
                 loginMessage: '',
                 resetPasswordMessage: '',
                 modalStyle: 'block',
-                stayInWhere: 'register'
+                stayInWhere: 'register',
+                formDataLogin: userDetail,
+                formDataRegister: userDetailRegister
             });
         }
-        // else if (newPassword !== confirmPassword) {
-        //     return res.render('pages/index', {
-        //         registerMessage: 'Password and Confirm Password do not match',
-        //         loginMessage: ''
-        //     });
-        // }  
+         
         let hashedPassword = await bcrypt.hash(newPassword, 8);
         // console.log(hashedPassword);
         db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
             if (error) {
                 console.log(error);
             } else {
-                // return res.render('pages/index', {
-                //     registerMessage: '',
-                //     loginMessage: '',
-                //     resetPasswordMessage: '',
-                //     modalStyle: '',
-                //     stayInWhere: ''
-                // })
                 return res.redirect('/');
             }
         })
@@ -558,6 +562,13 @@ app.post('/auth/reset_password', (req, res) => {
     let email = req.body.email;
     let newPassword = req.body.newPassword;
     let confirmPassword = req.body.confirmPassword;
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
     
     db.query('SELECT email, user_id FROM USER WHERE email = ?', [email], async (error, results) => {
         if(error) {
@@ -570,7 +581,9 @@ app.post('/auth/reset_password', (req, res) => {
                 loginMessage: '',
                 resetPasswordMessage: 'This email is not registered',
                 modalStyle: 'block',
-                stayInWhere: 'reset password'
+                stayInWhere: 'reset password',
+                formDataLogin: userDetailLogin,
+                formDataRegister: userDetailRegister
             });
         }
 
@@ -582,15 +595,7 @@ app.post('/auth/reset_password', (req, res) => {
                 console.log(error);
             }
             else {
-                console.log('Rows affected: ' + result.affectedRows);
-
-                // return res.render('pages/index', {
-                //     registerMessage: '',
-                //     loginMessage: '',
-                //     resetPasswordMessage: '',
-                //     modalStyle: '',
-                //     stayInWhere: ''
-                // });
+                // console.log('Rows affected: ' + result.affectedRows);
                 return res.redirect('/');
             }
         })
@@ -619,12 +624,23 @@ app.get('/logout', (req, res) => {
 // ===============================================
 // start of facebook
 // ===============================================
+app.get('/facebook/login', (req, res) => {
+    res.cookie("accountAction", 'login');
+    // console.log(req.cookies.accountAction);
+    res.redirect('/facebook');
+})
+
+app.get('/facebook/register', (req, res) => {
+    res.cookie("accountAction", 'register');
+    // console.log(req.cookies.accountAction);
+    res.redirect('/facebook');
+})
 
 app.get('/facebook', passport.authenticate('facebook'));
 
 app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook/failed' }),
     function(req, res) {
-        // console.log(req.user);
+        console.log(req.user);
 
         // =============
         // first way to do it
@@ -645,10 +661,42 @@ app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirec
     });
 
 app.get('/facebook/good', (req, res) => {
-    // console.log(req.user);
-    let data = req.cookies.profile;
+    // console.log(req.cookies);
+    var data = req.cookies.profile;
+    // console.log(data.emails[0]);
+    // console.log(data.displayName);
+    var currAction = req.cookies.accountAction;
+    
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
+
+    if (currAction === 'register') {
+        userDetailRegister = {
+            email: data.emails[0].value,
+            username: data.displayName
+        }
+    }
+    else if (currAction === 'login') {
+        userDetailLogin = {
+            email: data.emails[0].value
+        }
+    }
+    
     // console.log(data);
-    res.send("Hello, facebook auth works");
+    return res.render('pages/index', {
+        registerMessage: '',
+        loginMessage: '',
+        resetPasswordMessage: '',
+        modalStyle: 'block',
+        stayInWhere: currAction,
+        formDataLogin: userDetailLogin,
+        formDataRegister: userDetailRegister
+    });
 });
 
 app.get('/facebook/failed', (req, res) => {
@@ -689,16 +737,59 @@ app.get('/google/good', (req, res) => {
 
     console.log(req.cookies);
     var data = req.cookies.profile;
+    var currAction = req.cookies.accountAction;
+    
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
+
+    if (currAction === 'register') {
+        userDetailRegister = {
+            email: data.email,
+            username: data.displayName
+        }
+    }
+    else if (currAction === 'login') {
+        userDetailLogin = {
+            email: data.email
+        }
+    }
+    
+    // console.log(data);
+    return res.render('pages/index', {
+        registerMessage: '',
+        loginMessage: '',
+        resetPasswordMessage: '',
+        modalStyle: 'block',
+        stayInWhere: currAction,
+        formDataLogin: userDetailLogin,
+        formDataRegister: userDetailRegister
+    });
     // res.send(`Hello!! Google OAuth is a success!!`);
     // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
-    res.render('pages/tryGoogle', {
-        username: req.cookies.profile.displayName,
-        picture: req.cookies.profile.photos[0].value,
-        email: req.cookies.profile.emails[0].value
-    })
+    // res.render('pages/tryGoogle', {
+    //     username: req.cookies.profile.displayName,
+    //     picture: req.cookies.profile.photos[0].value,
+    //     email: req.cookies.profile.emails[0].value
+    // });
 });
 
 app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/google/login', (req, res) => {
+    res.cookie("accountAction", 'login');
+    // console.log(req.cookies.accountAction);
+    res.redirect('/google');
+});
+
+app.get('/google/register', (req, res) => {
+    res.cookie("accountAction", 'register');
+    res.redirect('/google');
+});
 
 app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google/failed' }),
     function(req, res) {
@@ -718,6 +809,7 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
         // =============
 
         res.cookie("profile", req.user);
+
         //this will be different in locale in the JSON data
         res.redirect('/google/good');
     });
