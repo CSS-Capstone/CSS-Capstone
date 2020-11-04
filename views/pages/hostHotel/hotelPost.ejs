@@ -15,7 +15,7 @@
         <!-- USER WELCOME PAGE -->
         <section class="postYourHotel_user_posting_section">
             <header class="postYourHotel_user_posting_header">
-                <h2>Hi __USER__ ! Let's start posting your hotel</h2>
+                <h2>Greeting! <%=loggedInUserData.username%>! <br>Let's start posting your hotel</h2>
             </header>
             <main class="postYourHotel_Questions">
                 <form id="regForm" action="/become-host/postHotel" method="POST">
@@ -336,7 +336,6 @@
 						<span class="step"></span>
 						<span class="step"></span>
 						<span class="step"></span>
-						<span class="step"></span>
 					</div>
                 </form>
                 
@@ -428,8 +427,10 @@
 					console.log("It should not touch here?");
 					hasAddressDOM.textContent = 'We failed to get your location. We will work on it. Sorry about your experience.';
 					address = 'seattle, US'
+				} else {
+					hasAddressDOM.textContent = `Thanks We got your location`;
 				}
-				hasAddressDOM.textContent = `Thanks We got your location`;
+				
 				// apply empty map
 				let map;
 				map = new google.maps.Map(document.getElementById("map"), {

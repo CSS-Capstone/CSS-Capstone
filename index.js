@@ -69,45 +69,24 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-// const isLoggedIn = (req, res, next) => {
-//     if (req.user) {
-//         next();
-//     }
-//     else {
-//         res.sendStatus(401);
-//     }
-// }
+///////////////////////////////////
+// multer to AWS S3 upload logics
+///////////////////////////////////
+const storage = multer.memoryStorage({
+    destination: function(req, file, callback) {
+        callback(null, '');
+    }
+});
 
-// db.connect((err) => {
-//     if (err) {
-//         console.error('Database connection failed!! ' + err.stack);
-//         return;
-//     }
+// single image is a key
+const upload = multer({ storage }).single('imageFile');
+// mulitple
+const upload_multiple = multer({storage:storage}).array('hotelImages');
 
-//     console.log('Connected to database!!');
-// });
-
-// db.end();
-
-// mySQLConnection.connect(async function(err) {
-//     if (err) {
-//         console.log(err);
-//         throw err;
-//     }
-//     console.log("connected to db");
-//     console.log()
-    
-//     // sample insert
-//     // mySQLConnection.query('INSERT INTO people (name, age, address) VALUES (?, ?, ?)', ['Larry', '41', 'California, USA'], async function(error, result) {
-//     //     if (error) {
-//     //         console.log(error);
-//     //         throw error;
-//     //     }
-//     //     console.log("1 record inserted");
-//     // });
-//     mySQLConnection.end();
-// });
-// end of database
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ID,
+    secretAccessKey: process.env.AWS_SECRET
+});
 
 app.get('/', (req, res) => {
     let userDetailLogin = {
@@ -340,14 +319,14 @@ app.get('/become-host', authMW.isLoggedIn, (req, res) => {
     //res.send('hello host');
 });
 
-app.get('/become-host/postHotel/new', (req, res) => {
-    res.render('pages/hostHotel/hotelPost');
+app.get('/become-host/postHotel/new', authMW.isLoggedIn, (req, res) => {
+    let loggedInUserData = req.session.user;
+    res.render('pages/hostHotel/hotelPost', {loggedInUserData:loggedInUserData});
 });
 
-app.post('/become-host/postHotel', (req, res) => {
-    console.log(req.body);
+app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
+    let postedUserID = req.session.user.user_id;
     let hotelPostData = req.body;
-    console.log(hotelPostData);
     // ==============================
     // HOTEL BASIC DATA =============
     let hotelLabel = hotelPostData.hotelLabel;
@@ -355,13 +334,11 @@ app.post('/become-host/postHotel', (req, res) => {
     let hotelLocation = hotelPostData.hotelLocation;
     let hotelLocationStreetAddress = hotelPostData.hotel_location_street;
     let hotelLocationTrimmedForDB = trimCityNameHelper.trimCityNameAndCountryName(hotelLocation);
-
     // Datas to insert DB after trim by using trim helper functions
     // ASSUME USER ID is has a USER ID 14
     let hotelCity = hotelLocationTrimmedForDB[0];
     let hotelCountry = hotelLocationTrimmedForDB[1];
     // CONNECTION WILL BE SEPERATE OUT SOON
-    // WILL JUST USE USER ID 14
     // BASIC DATABASE CONNECTION
     db.connect((error) => {
         if (!error) {
@@ -379,7 +356,7 @@ app.post('/become-host/postHotel', (req, res) => {
         address: hotelLocationStreetAddress,
         isAPI: false,
         isDeveloper: true,
-        user_id: 14}, (err, result) => {
+        user_id: postedUserID}, (err, result) => {
             // callback function
             if (err) {
                 console.log(err);
@@ -388,12 +365,88 @@ app.post('/become-host/postHotel', (req, res) => {
             console.log("Hotel Insert Added Successfully into Database");
             console.log(result);
         });
-    console.log(hotelCity);
-    console.log(hotelCountry);
-    console.log(hotelLabel);
-    res.end();
+    req.session.hotelPostData = hotelPostData;
+    res.redirect('/become/postHotelImage');
 });
 
+app.get('/become/postHotelImage', (req, res) => {
+    let hotelPostData = req.session.hotelPostData;
+    req.session.hotelPostData = null;
+    console.log(`HotelData in Hotel Image: ${hotelPostData}`);
+    console.log(hotelPostData);
+    res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData});
+});
+
+app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
+    // console.log(req.files);
+    let hotelImageData = req.files;
+    // DB CONNECT
+    db.connect((error) => {
+        if (!error) {
+            console.log("Database Connected Successfully");
+        } else {
+            console.log("DB Connection Failed");
+        }
+    });
+    for (let i = 0; i < hotelImageData.length; i++) {
+        let eachImageData = hotelImageData[i];
+        // console.log(eachImageData.mimetype);
+        if (eachImageData.mimetype == 'image/jpg' || eachImageData.mimetype == 'image/jpeg' || eachImageData.mimetype == 'image/png') {
+            console.log("is it here?");
+            // console.log(eachImageData.originalname.split("."));
+            let splitByDataType = eachImageData.originalname.split(".");
+            console.log(splitByDataType[0]);
+            console.log(splitByDataType[1]);
+            let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
+            console.log(fileName);
+            let fullHotelImageName = fileName + '.' + splitByDataType[1];
+            console.log(fullHotelImageName);
+
+            // PARAMETER FOR UPLOAD IN S3 BUCKET
+            let params = {
+                Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+            ,   Key: `${fullHotelImageName}`
+            ,   Body: eachImageData.buffer
+            };
+
+            s3.upload(params, (error, data) => {
+                if (error) {
+                    res.status(500).send(error);
+                }
+                
+                console.log("============== AWS S3 ACCESS ==========");
+                const tempUserId = 18;
+                let hotelImageID = data.key;
+                let fileLocation = data.Location;
+                console.log(hotelImageID);
+                console.log(fileLocation);
+                const insertHotelImageQuery = "INSERT INTO `css-capstone`.USER_HOTEL_IMAGE SET ?";
+                db.query(insertHotelImageQuery, 
+                    {
+                        // this will be change into req.session.user later
+                        user_id: tempUserId
+                    ,   hotel_img_id: fullHotelImageName
+                    ,   hotel_img: fileLocation
+                    }, (err, result) => {
+                        // callback function
+                        if (err) {
+                            console.log(err);
+                            console.log("Error on Hotel Image Database");
+                            throw err;
+                        }
+                        console.log("Successfully added in the Hotel Image Database");
+                    }
+                )
+            });
+            //res.render('pages/hostHotel/hotelPostImage');
+        } else {
+            console.log("It should be here....");
+            
+        }
+        
+    }
+    res.send("hello world");
+});
 // ====================================
 // End of Park ========================
 // ====================================
@@ -849,24 +902,6 @@ app.get('/users', authMW.isLoggedIn, (req, res) => {
     //     console.log(e);
     // });
     //res.render('pages/users', {image: fileLocation});
-});
-
-///////////////////////////////////
-// multer to AWS S3 upload logics
-///////////////////////////////////
-
-const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
-});
-
-// image is a key
-const upload = multer({ storage }).single('imageFile');
-
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ID,
-    secretAccessKey: process.env.AWS_SECRET
 });
 
 app.post('/users/upload', upload, (req, res) => {

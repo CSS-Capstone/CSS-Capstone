@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Hotel Image</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hotelPostImage.css">
+</head>
+<body>
+    <!-- MAIN CONTAINER -->
+    <section class="postHotelImage_container">
+        <div class="postHotelImage_left_container">
+            <h2 class="postHostImage_left_welcome_title">You are almost done.<br>
+                <span>Now, let's insert some images </span>
+            </h2>
+            <p class="image_container_step"></p>
+            <form action="/become-host/postHotelImage" method="POST" enctype="multipart/form-data">
+                <div class="form_group">
+                    <!-- <div class="fileInputDiv" id="input_zone"> -->
+                        <label class="labelForUploadImage" for="hotelImagePost">Upload Image <br> Or Drag them in</label>
+                        <input type="file" id="hotelImagePost" name="hotelImages" multiple accept="image/*">
+                    <!-- </div> -->
+                </div>
+                <input type="submit" class="image_submit_btn">
+            </form><br>
+            <div class="uploaded_image_conatiner">
+                
+            </div>
+        </div>
+        <div class="basicInformation_container">
+            <header class="basicInformation_right_header">
+                <h2>Saved Hotel Posting Information</h2>
+            </header>
+            <main class="basicInformation_right_main">
+                <div id="map" style="width: 100%; height: 300px;">
+
+                </div><br><br>
+                <div class="basicInformation_right_hotel_label">
+                    <h3>Hotel Name: </h3>
+                    <p>Hello World Hotel</p>
+                </div>
+                <div class="basicInformation_right_hotel_price">
+                    <h3>Hotel Price / Night</h3>
+                    <p>23.00</p>
+                </div>
+                <div class="basicInformation_right_hotel_address">
+                    <h3>Stree Address</h3>
+                    <p>123 main st blah blah</p>
+                </div>
+            </main>
+            <small class="basicInformation_right_hotel_dontWorry">
+                Do not worry, the information above is not correct.
+                <br>You can edit your hotel anytime after you post your hotel.
+            </small>
+        </div>
+    </section>
+</body>
+<script>
+    function initMap() {
+        let map;
+		map = new google.maps.Map(document.getElementById("map"), {
+			zoom: 18,
+		});
+		const geocoder = new google.maps.Geocoder();
+		geocoder.geocode({
+			'address': `12040 Aurora Avenue North, Seattle, WA, USA`
+		}, (results, status) => {
+			if(status == google.maps.GeocoderStatus.OK) {
+				console.log("It got in OK Status");
+				console.log("GEO Location: ", results[0].geometry.location);
+				new google.maps.Marker({
+				   position: results[0].geometry.location,
+				   map: map
+				});
+				map.setCenter(results[0].geometry.location);
+			 } else {
+				 console.log("Something is wrong on your map");
+			 }
+		});
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=initMap&libraries=&v=weekly">
+</script>
+<script src="/js/HostHotel/hostPostImage.js"></script>
+</html>
