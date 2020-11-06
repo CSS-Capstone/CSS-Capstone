@@ -100,6 +100,8 @@ const s3 = new AWS.S3({
 });
 
 app.get('/', (req, res) => {
+    let isLoggedIn = req.session.user == null ? false : true;
+
     let userDetailLogin = {
         email: ''
     }
@@ -108,6 +110,7 @@ app.get('/', (req, res) => {
         username: ''
     }
     res.render('pages/index', {
+        isLoggedIn: isLoggedIn,
         registerMessage: '',
         loginMessage: '',
         resetPasswordMessage: '',
