@@ -1,0 +1,43 @@
+@import "global.css";
+
+.dropdown__link {
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  
+  .dropdown__link:hover {
+    border-bottom: 1px solid var(--color-white);
+  }
+  
+  .dropdown {
+    float: right;
+    position: relative;
+    display: inline-block;
+    margin-top: 2rem;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    right: 0;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    text-align: left;
+    display: block;
+  }
+  
+  .dropdown a:hover {background-color: #ddd;}
+  
+  .show {display: block;}
