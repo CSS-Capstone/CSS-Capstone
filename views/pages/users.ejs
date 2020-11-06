@@ -43,11 +43,10 @@
     <section class="profile__wrapper">
         <div class="profile__left">
             <div class="profile__left__upper">
-                <%- image %>
-                <!-- <img class="profile__image"></img> -->
+                <%- user.userPhotos[0]%>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
-                <%- include('../partials/modal_user_photo') %>
+                <%- include('../partials/modal_user_photo', {user: user}) %>
             </div>
             <div class="profile__left__mid">
                 <i class="far fa-star"></i> 1 review
@@ -73,7 +72,7 @@
         </div>
         <div class="profile__right">
             <div class="profile__right__heading">
-                Hi, I'm user name
+                Hi, I'm <%- user.username %>
             </div>
             <div class="profile__right__joined">
                 Joined in 20xx

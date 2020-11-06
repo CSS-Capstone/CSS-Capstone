@@ -62,14 +62,26 @@
 	border-bottom: 1px solid #dce0e0;
 }
 
-.photo__current {
+.photo__main {
     display: inline-block;
     width: 129px;
     height: 129px;
     margin: 1.2rem auto;
-    background-color: yellow;
+    background-color: var(--color-white);
     border-radius: 50%;
     border: 1px solid transparent;
+}
+
+.photo__other__container {
+	display: flex;
+}
+
+.photo__other {
+	background-color: blue;
+	width: 64px;
+	height: 64px;
+	border: 1px solid transparent;
+	margin-left: 0.6rem;
 }
 
 .photo__upload__paragraph {

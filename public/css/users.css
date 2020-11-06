@@ -19,7 +19,7 @@
     width: 129px;
     height: 129px;
     margin: 0 auto;
-    background-color: yellow;
+    background-color: var(--color-white);
     border-radius: 50%;
     border: 1px solid transparent;
 }

@@ -48,9 +48,20 @@ app.use(function(req, res, next) {
 app.use(session({
     secret: process.env.SESSION_SECRET,
     // store: new redisStore({ host: 'localhost', port: 8080, client: client,ttl : 260}),
-    saveUninitialized: true,
-    resave: true
+    saveUninitialized: false,
+    resave: true,
+    cookie: { maxAge: 6000000 }
 }));
+// app.use(session({
+//     //store,
+//     secret: process.env.SESSION_SECRET,
+//     resave: true,
+//     saveUninitialized: true,
+//     cookie: {
+//       secure: process.env.NODE_ENV == "production" ? true : false ,
+//       maxAge: 1000 * 60 * 60 * 24 * 7
+//     }
+//   }));
 
 // app.use(cookieSession({
 //     name: 'tuto-session',
@@ -885,6 +896,16 @@ app.get('/users', authMW.isLoggedIn, (req, res) => {
     console.log("req.session.user");
     console.log(req.session.user);
 
+    var user = req.session.user;
+    const userPhotos = user.userPhotos;
+    const photoHelper = require('./modules/profilePhotoHelper');
+    const image = photoHelper.getProfilePhoto(userPhotos);
+    if (userPhotos.length == 0) {
+        user.userPhotos[0] = image;
+    }
+
+    res.render('pages/users', {user: user});
+
     // var params = { 
     //     Bucket: process.env.AWS_BUCKET_NAME, 
     //     Key: '4319367f-5484-5303-8915-712d014451ff.png'
@@ -910,7 +931,7 @@ app.get('/users', authMW.isLoggedIn, (req, res) => {
     //res.render('pages/users', {image: fileLocation});
 });
 
-app.post('/users/upload', upload, (req, res) => {
+app.post('/users/upload', authMW.isLoggedIn, upload, (req, res) => {
 
     // var tempUserId = 11;
     // var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
@@ -921,8 +942,16 @@ app.post('/users/upload', upload, (req, res) => {
 
     if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
         || file.mimetype == "image/gif") {
-
-        // From session check
+        
+        console.log("INNNN?");
+        console.log(req.session.user);
+        // console.log("req.session : " + req.session);
+        // console.log("req.session.user : " + req.session.user);
+        if (req.session.user.userPhotos.length >= 3) {
+            console.log("You have more than 3 images");
+            //res.send('<script>alert("Message"); window.location.href = "/page_location"; </script>');
+            //res.redirect('/users#');
+        }
         // Check the counts of photo is less than 3? and if there is any matching file ID
         // if (req.session.user.photos.length? >= 3)
         // res.redirect('/users#', {message: "Unsupported Image Type Error"});
@@ -961,8 +990,6 @@ app.post('/users/upload', upload, (req, res) => {
                 const isMain = false;
 
                 console.log(data);
-                console.log(imgID);
-                console.log(fileLocation);
 
                 // var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img_url`,`is_main`)VALUES('" 
                 //                 + tempUserId + "','" + fullFileName + "','" + fileLocation + "','" + isMain + "')";
@@ -979,10 +1006,16 @@ app.post('/users/upload', upload, (req, res) => {
                 //         });
                 //     }
                 // });
-                res.redirect('/users#');
+                console.log('Successful image upload');
+                res.redirect('/users');
             }
         });
-
+        //res.render('pages/users', {user: req.session.user});
+        //s3UploadPromise.then(function() {
+            //console.log('Successful image upload');
+            //res.redirect('/users');
+            //return;
+        
         // db.connect(function (err) {
         //     if (err) {
         //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
@@ -1005,7 +1038,9 @@ app.post('/users/upload', upload, (req, res) => {
         //     }
         // });
     } else {
-        res.redirect('/users#', {message: "Unsupported Image Type Error"})
+        console.log('ㅇㅣㄹ로 가냐?');
+        return;
+        //res.render('/users', {user: req.session.user});
     }
 });
 
