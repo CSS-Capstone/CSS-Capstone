@@ -8,7 +8,6 @@ const app = express();
 const AWS = require('aws-sdk');
 const multer = require('multer');
 const uuid = require('uuid');
-const mysql = require("mysql");
 const dotenv = require('dotenv');
 const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
@@ -52,33 +51,10 @@ app.use(session({
     resave: true,
     cookie: { maxAge: 6000000 }
 }));
-// app.use(session({
-//     //store,
-//     secret: process.env.SESSION_SECRET,
-//     resave: true,
-//     saveUninitialized: true,
-//     cookie: {
-//       secure: process.env.NODE_ENV == "production" ? true : false ,
-//       maxAge: 1000 * 60 * 60 * 24 * 7
-//     }
-//   }));
-
-// app.use(cookieSession({
-//     name: 'tuto-session',
-//     keys: ['key1', 'key2']
-// }));
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
-
-dotenv.config({ path: './.env' });
-
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER, 
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
-});
+const db = require('./db.js');
 
 ///////////////////////////////////
 // multer to AWS S3 upload logics
@@ -301,7 +277,7 @@ app.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => {
 app.get('/hotel/searched/detail/:id/payment', (req, res) => {
     let hotelCookieData = req.cookies.hotelBookingData;
     //res.clearCookie("hotelBookingData");
-    console.log("From GET: ", hotelCookieData);
+    // console.log("From GET: ", hotelCookieData);
     res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
 });
 
@@ -309,11 +285,11 @@ app.post('/hotel/searched/detail/:id/payment', (req, res) => {
     // console.log(res.status());
     const paymentData = req.body;
     const passingData = req.body.body;
-    console.log(passingData);
+    // console.log(passingData);
     let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
     hotelPrice = Number(hotelPrice);
-    console.log(paymentData);
-    console.log(`The Price: `, hotelPrice);
+    // console.log(paymentData);
+    // console.log(`The Price: `, hotelPrice);
     res.cookie('hotelBookingData', paymentData);
     // charge on stripe
     stripe.customers.create({
@@ -352,15 +328,6 @@ app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
     // ASSUME USER ID is has a USER ID 14
     let hotelCity = hotelLocationTrimmedForDB[0];
     let hotelCountry = hotelLocationTrimmedForDB[1];
-    // CONNECTION WILL BE SEPERATE OUT SOON
-    // BASIC DATABASE CONNECTION
-    db.connect((error) => {
-        if (!error) {
-            console.log("Database is Successfully Connected");
-        } else {
-            console.log("DB connection Failed");
-        }
-    });
     let insertQuery = "INSERT INTO `css-capstone`.HOTEL SET ?";
     db.query(insertQuery, 
         {hotel_name: hotelLabel, 
@@ -378,36 +345,35 @@ app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
             }
             console.log("Hotel Insert Added Successfully into Database");
             console.log(result);
+            console.log(result.insertId);
+            req.session.hotelPostData = hotelPostData;
+            req.session.hotelPostId = result.insertId;
+            res.redirect('/become/postHotelImage');
         });
-    req.session.hotelPostData = hotelPostData;
-    res.redirect('/become/postHotelImage');
 });
 
 app.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
     // CHANGE RETRIEVE DATA FROM DB LATER
     let hotelPostData = req.session.hotelPostData;
+    let hotelPostId = req.session.hotelPostId;
+    // console.log(hotelPostId);
     req.session.hotelPostData = null;
-    console.log(hotelPostData);
-    console.log(`HotelData in Hotel Image: ${hotelPostData}`);
-    console.log(hotelPostData);
-    res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData});
+    req.session.hotelPostId = null;
+    // console.log(hotelPostData);
+    // console.log(`HotelData in Hotel Image: ${hotelPostData}`);
+    // console.log(hotelPostData);
+    res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData,  hotelPostId:hotelPostId});
 });
 
 app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
     // console.log(req.files);
+    const postedHotelID = req.body.postedHotelId;
     let currentPostingUser = req.session.user;
     let currentPostingUserID = currentPostingUser.user_id;
     console.log(currentPostingUser);
     let hotelImageData = req.files;
     console.log(hotelImageData);
     // DB CONNECT
-    db.connect((error) => {
-        if (!error) {
-            console.log("Database Connected Successfully");
-        } else {
-            console.log("DB Connection Failed");
-        }
-    });
     for (let i = 0; i < hotelImageData.length; i++) {
         let eachImageData = hotelImageData[i];
         // console.log(eachImageData.mimetype);
@@ -447,6 +413,7 @@ app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
                         user_id: tempUserId
                     ,   hotel_img_id: fullHotelImageName
                     ,   hotel_img: fileLocation
+                    ,   hotel_id: postedHotelID
                     }, (err, result) => {
                         // callback function
                         if (err) {
@@ -465,7 +432,38 @@ app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
         }
         
     }
-    res.send("hello world");
+    req.session.hotelPostId = postedHotelID;
+    res.redirect('/become-host/postHotelThankyou');
+});
+
+app.get('/become-host/postHotelThankyou', (req, res) => {
+    const postedHotelId = req.session.hotelPostId;
+    const tempPostedHotelId = 22;
+    req.session.hotelPostId = null;
+    // Data Variables to pass to render
+    let hotelDataObj = '';
+
+    let hotelInformationQuery = `SELECT * FROM HOTEL H WHERE H.hotel_id = ${tempPostedHotelId}`;
+    // let hotelImageRetrieveQuery = `SELECT hotel_img_id
+    // FROM `css-capstone`.HOTEL AS H
+    //     INNER JOIN `css-capstone`.USER_HOTEL_IMAGE AS HI
+    //     ON HI.hotel_id = H.hotel_id`
+    db.query(hotelInformationQuery, function(err, result) {
+        if (err) {
+            console.log(err);
+            console.log("Error happend during retrieve hotel for thank you page");
+            throw err;
+        } else {
+
+            hotelDataObj = result[0];
+            console.log(hotelDataObj);
+            res.render('pages/hostHotel/hotelPostThankyou', {tempPostedHotelId:tempPostedHotelId,hotelDataObj:hotelDataObj});
+        }
+    });
+
+    // console.log(tempPostedHotelId);
+    // console.log(hotelDataObj);
+    
 });
 // ====================================
 // End of Park ========================
@@ -854,23 +852,7 @@ app.get('/google/register', (req, res) => {
 
 app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/google/failed' }),
     function(req, res) {
-        // console.log(req.user);
-
-        // =============
-        // first way to do it
-        // =============
-
-        // res.redirect(url.format({
-        //     pathname: "/good",
-        //     query: req.user
-        // }));
-
-        // =============
-        // second way to do it
-        // =============
-
         res.cookie("profile", req.user);
-
         //this will be different in locale in the JSON data
         res.redirect('/google/good');
     });
@@ -996,19 +978,12 @@ app.post('/users/upload', authMW.isLoggedIn, upload, (req, res) => {
 
                 // var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img_url`,`is_main`)VALUES('" 
                 //                 + tempUserId + "','" + fullFileName + "','" + fileLocation + "','" + isMain + "')";
-                // db.connect(function (err) {
-                //     if (err) {
-                //         return console.log('error: Connection FAILEDDDD : \n' + err.message);
-                //     } else {
-                //         console.log("======= Upload image info to MySQL =======");
-                        
-                //         db.query(insertData, (err, result) => {
-                //             if (err) throw err;
-                //             console.log('Data Saved');
-                //             console.log(result);
-                //         });
-                //     }
+                // db.query(insertData, (err, result) => {
+                //     if (err) throw err;
+                //     console.log('Data Saved');
+                //     console.log(result);
                 // });
+              
                 console.log('Successful image upload');
                 res.redirect('/users');
             }
@@ -1018,30 +993,7 @@ app.post('/users/upload', authMW.isLoggedIn, upload, (req, res) => {
             //console.log('Successful image upload');
             //res.redirect('/users');
             //return;
-        
-        // db.connect(function (err) {
-        //     if (err) {
-        //         return console.error('error: Connection FAILEDDDD : \n' + err.message);
-        //     } else {
-        //         db.query(queryForPhotoCnt, (err, results) => {
-        //             if (err) throw err;
-        //             if (results[0]['COUNT(*)'] <= 0) 
-        //                 console.log("User doesn't exist");
-    
-        //             if (results[0]['COUNT(*)'] == 3) {
-        //                 console.log("Can't post more photos");
-        //                 res.redirect('/users#', {message: "Unsupported Image Type Error"});   
-        //             }
-
-        //             console.log("======= Photo count less than 3 =======");
-        //             console.log(results[0]['COUNT(*)']);
-
-                    
-        //         });
-        //     }
-        // });
     } else {
-        console.log('ㅇㅣㄹ로 가냐?');
         return;
         //res.render('/users', {user: req.session.user});
     }
