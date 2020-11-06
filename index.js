@@ -55,6 +55,14 @@ app.use(session({
 // ============ Database connection ==============
 // ===============================================
 const db = require('./db.js');
+// ===============================================
+// =============== ROUTER ========================
+// ===============================================
+const HOTEL_ROUTE = require('./router/Hotel/Hotel.js');
+const BECOMEHOST_ROUTE = require('./router/BecomeHost/BecomeHost.js');
+//const ACCOUNT_ROUTE = require('./router/Account/Account.js');
+app.use(HOTEL_ROUTE);
+app.use(BECOMEHOST_ROUTE);
 
 ///////////////////////////////////
 // multer to AWS S3 upload logics
@@ -127,356 +135,356 @@ app.get('/hotel/search', (req, res) => {
 });
 
 
-// ====================================
-// Park ===============================
-// ====================================
-app.get('/hotel/searched/:cityname', async (req, res) => {
-    // API KEY will be hide to env
-    const HOTEL_API_KEY = `297461`;
-    const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
-    // Currently limited to 3
-    const HOTEL_API_URL = `http://engine.hotellook.com/api/v2/lookup.json?query=${req.params.cityname}&lang=en&lookFor=both&limit=5&token=${HOTEL_API_KEY}`
-    try {
-        const response = await fetch(HOTEL_API_URL);
-        const hoteldata = await response.json();
-        if (hoteldata.status !== 'ok') {
-            throw 'API Satus is bad';
-        }
-        // ========== Filter Data ==================
-        // 1. get country name of the location
-        const fullCountryName = hoteldata.results.locations[0].countryName;
-        //console.log(`From Express server: ${fullCountryName}`);
-        // 2. filter hotel data based on the country name 
-        // so all hotel are in united states
-        const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
-        const mapHotelData = filterHotelData.map(filteredHotel => {
-            const filterObj = {
-                id: filteredHotel.id
-            ,   name: filteredHotel.label
-            ,   location: {
-                    lat: filteredHotel.location.lat
-                ,   lon: filteredHotel.location.lon
-                }
-            };
-            return filterObj;
-        });
-        // console.log(mapHotelData);
-        //console.log(mapHotelData);
-        const theHotelData = {
-            hoteldata: hoteldata
-        ,   filterHotelData: filterHotelData
-        ,   mapHotelData: mapHotelData
-        }
+// // ====================================
+// // Park ===============================
+// // ====================================
+// app.get('/hotel/searched/:cityname', async (req, res) => {
+//     // API KEY will be hide to env
+//     const HOTEL_API_KEY = `297461`;
+//     const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
+//     // Currently limited to 3
+//     const HOTEL_API_URL = `http://engine.hotellook.com/api/v2/lookup.json?query=${req.params.cityname}&lang=en&lookFor=both&limit=5&token=${HOTEL_API_KEY}`
+//     try {
+//         const response = await fetch(HOTEL_API_URL);
+//         const hoteldata = await response.json();
+//         if (hoteldata.status !== 'ok') {
+//             throw 'API Satus is bad';
+//         }
+//         // ========== Filter Data ==================
+//         // 1. get country name of the location
+//         const fullCountryName = hoteldata.results.locations[0].countryName;
+//         //console.log(`From Express server: ${fullCountryName}`);
+//         // 2. filter hotel data based on the country name 
+//         // so all hotel are in united states
+//         const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
+//         const mapHotelData = filterHotelData.map(filteredHotel => {
+//             const filterObj = {
+//                 id: filteredHotel.id
+//             ,   name: filteredHotel.label
+//             ,   location: {
+//                     lat: filteredHotel.location.lat
+//                 ,   lon: filteredHotel.location.lon
+//                 }
+//             };
+//             return filterObj;
+//         });
+//         // console.log(mapHotelData);
+//         //console.log(mapHotelData);
+//         const theHotelData = {
+//             hoteldata: hoteldata
+//         ,   filterHotelData: filterHotelData
+//         ,   mapHotelData: mapHotelData
+//         }
         
-        res.render('pages/hotel/hotelSearched', {theHotelData: theHotelData, theKey: theKey});
-    } catch(err) {
-        console.log(err);
-        res.send(err);
-    }
+//         res.render('pages/hotel/hotelSearched', {theHotelData: theHotelData, theKey: theKey});
+//     } catch(err) {
+//         console.log(err);
+//         res.send(err);
+//     }
     
-})
+// })
 
-app.get('/hotel/searched/detail/:id', async (req, res) => {
-    const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
-    const AirQualityKey = process.env.AIR_QUALITY_KEY;
-    const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
-    const hotelId = req.params.id;
-    const hotelLabel = req.query.label;
-    const hotelFullName = req.query.fullname;
-    const hotelScore = req.query.score;
-    const hotelCoordLat = req.query.lat;
-    const hotelCoordLon = req.query.lon;
-    const hotelLocationName = req.query.locationName;
-    const hotelCountryName = req.query.countryName;
-    const cityFullName = req.query.cityFullName;
-    const cityTrimedName = trimCityNameHelper.trimCitiyNameHelper(cityFullName);
-    //console.log(hotelCountryName);
-    // Geoendoing
-    const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
-    const GEOAPIURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hotelCoordLat},${hotelCoordLon}&key=${theKey}`;
-    const GEO_RESPONSE = await fetch(GEOAPIURL);
-    const GEO_Data = await GEO_RESPONSE.json();
-    //console.log("Geo Data: ", GEO_Data.results[0].formatted_address);
-    const GEO_Formatted_Address = GEO_Data.results[0].formatted_address;
-    const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
-    const airqualityAPIURL = `https://api.waqi.info/feed/${cityTrimedName}/?token=${AIRQualityBACKUP_KEY}`;
-    try {
-        const weatherDataResponse = await fetch(weatherAPIURL);
-        const weatherData = await weatherDataResponse.json();
-        //console.log(weatherData);
-        try {
-            const air_qualityDataReponse = await fetch(airqualityAPIURL);
-            const airQualityData = await air_qualityDataReponse.json();
-            //console.log(airQualityData.data.aqi);
-            if (airQualityData.data.aqi === '-') {
-                //console.log("wrong aqi: ");
-                airQualityData.data.aqi = 43;
-            }
-            const hotelObj = {
-                hotelId
-            ,   hotelLabel
-            ,   hotelFullName
-            ,   hotelScore
-            ,   hotelCoordLat
-            ,   hotelCoordLon
-            ,   hotelLocationName
-            ,   hotelCountryName
-            ,   GEO_Formatted_Address
-            ,   cityFullName
-            };
-            res.render('pages/hotel/hotelSearchedDetail', {
-                hotelObj: hotelObj, 
-                StripePublicKey:StripePublicKey, 
-                weatherData:weatherData,
-                airQualityData: airQualityData
-            });
-        } catch(error) {
-            console.log(error);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
+// app.get('/hotel/searched/detail/:id', async (req, res) => {
+//     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+//     const AirQualityKey = process.env.AIR_QUALITY_KEY;
+//     const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
+//     const hotelId = req.params.id;
+//     const hotelLabel = req.query.label;
+//     const hotelFullName = req.query.fullname;
+//     const hotelScore = req.query.score;
+//     const hotelCoordLat = req.query.lat;
+//     const hotelCoordLon = req.query.lon;
+//     const hotelLocationName = req.query.locationName;
+//     const hotelCountryName = req.query.countryName;
+//     const cityFullName = req.query.cityFullName;
+//     const cityTrimedName = trimCityNameHelper.trimCitiyNameHelper(cityFullName);
+//     //console.log(hotelCountryName);
+//     // Geoendoing
+//     const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
+//     const GEOAPIURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hotelCoordLat},${hotelCoordLon}&key=${theKey}`;
+//     const GEO_RESPONSE = await fetch(GEOAPIURL);
+//     const GEO_Data = await GEO_RESPONSE.json();
+//     //console.log("Geo Data: ", GEO_Data.results[0].formatted_address);
+//     const GEO_Formatted_Address = GEO_Data.results[0].formatted_address;
+//     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
+//     const airqualityAPIURL = `https://api.waqi.info/feed/${cityTrimedName}/?token=${AIRQualityBACKUP_KEY}`;
+//     try {
+//         const weatherDataResponse = await fetch(weatherAPIURL);
+//         const weatherData = await weatherDataResponse.json();
+//         //console.log(weatherData);
+//         try {
+//             const air_qualityDataReponse = await fetch(airqualityAPIURL);
+//             const airQualityData = await air_qualityDataReponse.json();
+//             //console.log(airQualityData.data.aqi);
+//             if (airQualityData.data.aqi === '-') {
+//                 //console.log("wrong aqi: ");
+//                 airQualityData.data.aqi = 43;
+//             }
+//             const hotelObj = {
+//                 hotelId
+//             ,   hotelLabel
+//             ,   hotelFullName
+//             ,   hotelScore
+//             ,   hotelCoordLat
+//             ,   hotelCoordLon
+//             ,   hotelLocationName
+//             ,   hotelCountryName
+//             ,   GEO_Formatted_Address
+//             ,   cityFullName
+//             };
+//             res.render('pages/hotel/hotelSearchedDetail', {
+//                 hotelObj: hotelObj, 
+//                 StripePublicKey:StripePublicKey, 
+//                 weatherData:weatherData,
+//                 airQualityData: airQualityData
+//             });
+//         } catch(error) {
+//             console.log(error);
+//         }
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
 
-app.get('/hotel/searched/detail/covid/:country', async (req, res) => {
-    const countryCode = req.params.country;
-    const COVID_API_URL = `https://corona-api.com/countries/${countryCode}`;
-    const covidAPIResponse = await fetch(`${COVID_API_URL}`);
-    const covidAPIData = await covidAPIResponse.json();
-    //console.log(covidAPIData);
-    res.json(covidAPIData);
-});
+// app.get('/hotel/searched/detail/covid/:country', async (req, res) => {
+//     const countryCode = req.params.country;
+//     const COVID_API_URL = `https://corona-api.com/countries/${countryCode}`;
+//     const covidAPIResponse = await fetch(`${COVID_API_URL}`);
+//     const covidAPIData = await covidAPIResponse.json();
+//     //console.log(covidAPIData);
+//     res.json(covidAPIData);
+// });
 
-// get video for the tab
-app.get('/hotel/searched/detail/video/:locationName', async (req, res) => {
-    const queryData = req.params.locationName;
-    const videoAPIKey = process.env.PUBLIC_ATTRACTION_API_KEY;
-    const videoAPIURL = `https://pixabay.com/api/videos/?key=${videoAPIKey}&q=${queryData}`;
-    try {
-        const videoResponse = await fetch(`${videoAPIURL}`);
-        const videoData = await videoResponse.json();
-        res.json(videoData);
-    } catch (error) {
-        console.log(`Error from Video Searched Hotel ${error}`);
-    }
-});
+// // get video for the tab
+// app.get('/hotel/searched/detail/video/:locationName', async (req, res) => {
+//     const queryData = req.params.locationName;
+//     const videoAPIKey = process.env.PUBLIC_ATTRACTION_API_KEY;
+//     const videoAPIURL = `https://pixabay.com/api/videos/?key=${videoAPIKey}&q=${queryData}`;
+//     try {
+//         const videoResponse = await fetch(`${videoAPIURL}`);
+//         const videoData = await videoResponse.json();
+//         res.json(videoData);
+//     } catch (error) {
+//         console.log(`Error from Video Searched Hotel ${error}`);
+//     }
+// });
 
-// get current currency
-app.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => {
-    const targetCurrency = req.params.currencyCode;
-    try {
-        const coutryIOCurrencyRes = await fetch(`http://country.io/currency.json`);
-        const coutryIOCurrencyData = await coutryIOCurrencyRes.json();
-        const currencyTarget = coutryIOCurrencyData[targetCurrency];
-        res.json(currencyTarget);
-    } catch (error) {
-        console.log(error);
-    }
-});
+// // get current currency
+// app.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => {
+//     const targetCurrency = req.params.currencyCode;
+//     try {
+//         const coutryIOCurrencyRes = await fetch(`http://country.io/currency.json`);
+//         const coutryIOCurrencyData = await coutryIOCurrencyRes.json();
+//         const currencyTarget = coutryIOCurrencyData[targetCurrency];
+//         res.json(currencyTarget);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
 
-app.get('/hotel/searched/detail/:id/payment', (req, res) => {
-    let hotelCookieData = req.cookies.hotelBookingData;
-    //res.clearCookie("hotelBookingData");
-    // console.log("From GET: ", hotelCookieData);
-    res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
-});
+// app.get('/hotel/searched/detail/:id/payment', (req, res) => {
+//     let hotelCookieData = req.cookies.hotelBookingData;
+//     //res.clearCookie("hotelBookingData");
+//     // console.log("From GET: ", hotelCookieData);
+//     res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
+// });
 
-app.post('/hotel/searched/detail/:id/payment', (req, res) => {
-    // console.log(res.status());
-    const paymentData = req.body;
-    const passingData = req.body.body;
-    // console.log(passingData);
-    let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
-    hotelPrice = Number(hotelPrice);
-    // console.log(paymentData);
-    // console.log(`The Price: `, hotelPrice);
-    res.cookie('hotelBookingData', paymentData);
-    // charge on stripe
-    stripe.customers.create({
-        email: paymentData.email
-    ,   source: paymentData.token
-    }).then(customer => stripe.charges.create({
-        customer: customer.id
-    ,   currency: 'usd'
-    ,   amount: hotelPrice
-    })).then(function() {
-        res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
-    });
-});
+// app.post('/hotel/searched/detail/:id/payment', (req, res) => {
+//     // console.log(res.status());
+//     const paymentData = req.body;
+//     const passingData = req.body.body;
+//     // console.log(passingData);
+//     let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
+//     hotelPrice = Number(hotelPrice);
+//     // console.log(paymentData);
+//     // console.log(`The Price: `, hotelPrice);
+//     res.cookie('hotelBookingData', paymentData);
+//     // charge on stripe
+//     stripe.customers.create({
+//         email: paymentData.email
+//     ,   source: paymentData.token
+//     }).then(customer => stripe.charges.create({
+//         customer: customer.id
+//     ,   currency: 'usd'
+//     ,   amount: hotelPrice
+//     })).then(function() {
+//         res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
+//     });
+// });
 
-app.get('/become-host', authMW.isLoggedIn, (req, res) => {
-    res.render('pages/becomeHost/becomeHostPolicy');
-    //res.send('hello host');
-});
+// app.get('/become-host', authMW.isLoggedIn, (req, res) => {
+//     res.render('pages/becomeHost/becomeHostPolicy');
+//     //res.send('hello host');
+// });
 
-app.get('/become-host/postHotel/new', authMW.isLoggedIn, (req, res) => {
-    let loggedInUserData = req.session.user;
-    res.render('pages/hostHotel/hotelPost', {loggedInUserData:loggedInUserData});
-});
+// app.get('/become-host/postHotel/new', authMW.isLoggedIn, (req, res) => {
+//     let loggedInUserData = req.session.user;
+//     res.render('pages/hostHotel/hotelPost', {loggedInUserData:loggedInUserData});
+// });
 
-app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
-    let postedUserID = req.session.user.user_id;
-    let hotelPostData = req.body;
-    // ==============================
-    // HOTEL BASIC DATA =============
-    let hotelLabel = hotelPostData.hotelLabel;
-    let hotelPrice = hotelPostData.hotelPrice;
-    let hotelLocation = hotelPostData.hotelLocation;
-    let hotelLocationStreetAddress = hotelPostData.hotel_location_street;
-    let hotelLocationTrimmedForDB = trimCityNameHelper.trimCityNameAndCountryName(hotelLocation);
-    // Datas to insert DB after trim by using trim helper functions
-    // ASSUME USER ID is has a USER ID 14
-    let hotelCity = hotelLocationTrimmedForDB[0];
-    let hotelCountry = hotelLocationTrimmedForDB[1];
-    let insertQuery = "INSERT INTO `css-capstone`.HOTEL SET ?";
-    db.query(insertQuery, 
-        {hotel_name: hotelLabel, 
-        hotel_price: hotelPrice, 
-        country: hotelCountry,
-        city: hotelCity,
-        address: hotelLocationStreetAddress,
-        isAPI: false,
-        isDeveloper: true,
-        user_id: postedUserID}, (err, result) => {
-            // callback function
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-            console.log("Hotel Insert Added Successfully into Database");
-            console.log(result);
-            console.log(result.insertId);
-            req.session.hotelPostData = hotelPostData;
-            req.session.hotelPostId = result.insertId;
-            res.redirect('/become/postHotelImage');
-        });
-});
+// app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
+//     let postedUserID = req.session.user.user_id;
+//     let hotelPostData = req.body;
+//     // ==============================
+//     // HOTEL BASIC DATA =============
+//     let hotelLabel = hotelPostData.hotelLabel;
+//     let hotelPrice = hotelPostData.hotelPrice;
+//     let hotelLocation = hotelPostData.hotelLocation;
+//     let hotelLocationStreetAddress = hotelPostData.hotel_location_street;
+//     let hotelLocationTrimmedForDB = trimCityNameHelper.trimCityNameAndCountryName(hotelLocation);
+//     // Datas to insert DB after trim by using trim helper functions
+//     // ASSUME USER ID is has a USER ID 14
+//     let hotelCity = hotelLocationTrimmedForDB[0];
+//     let hotelCountry = hotelLocationTrimmedForDB[1];
+//     let insertQuery = "INSERT INTO `css-capstone`.HOTEL SET ?";
+//     db.query(insertQuery, 
+//         {hotel_name: hotelLabel, 
+//         hotel_price: hotelPrice, 
+//         country: hotelCountry,
+//         city: hotelCity,
+//         address: hotelLocationStreetAddress,
+//         isAPI: false,
+//         isDeveloper: true,
+//         user_id: postedUserID}, (err, result) => {
+//             // callback function
+//             if (err) {
+//                 console.log(err);
+//                 throw err;
+//             }
+//             console.log("Hotel Insert Added Successfully into Database");
+//             console.log(result);
+//             console.log(result.insertId);
+//             req.session.hotelPostData = hotelPostData;
+//             req.session.hotelPostId = result.insertId;
+//             res.redirect('/become/postHotelImage');
+//         });
+// });
 
-app.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
-    // CHANGE RETRIEVE DATA FROM DB LATER
-    let hotelPostData = req.session.hotelPostData;
-    let hotelPostId = req.session.hotelPostId;
-    // console.log(hotelPostId);
-    req.session.hotelPostData = null;
-    req.session.hotelPostId = null;
-    // console.log(hotelPostData);
-    // console.log(`HotelData in Hotel Image: ${hotelPostData}`);
-    // console.log(hotelPostData);
-    res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData,  hotelPostId:hotelPostId});
-});
+// app.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
+//     // CHANGE RETRIEVE DATA FROM DB LATER
+//     let hotelPostData = req.session.hotelPostData;
+//     let hotelPostId = req.session.hotelPostId;
+//     // console.log(hotelPostId);
+//     req.session.hotelPostData = null;
+//     req.session.hotelPostId = null;
+//     // console.log(hotelPostData);
+//     // console.log(`HotelData in Hotel Image: ${hotelPostData}`);
+//     // console.log(hotelPostData);
+//     res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData,  hotelPostId:hotelPostId});
+// });
 
-app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
-    // console.log(req.files);
-    const postedHotelID = req.body.postedHotelId;
-    let currentPostingUser = req.session.user;
-    let currentPostingUserID = currentPostingUser.user_id;
-    console.log(currentPostingUser);
-    let hotelImageData = req.files;
-    console.log(hotelImageData);
-    // DB CONNECT
-    for (let i = 0; i < hotelImageData.length; i++) {
-        let eachImageData = hotelImageData[i];
-        // console.log(eachImageData.mimetype);
-        if (eachImageData.mimetype == 'image/jpg' || eachImageData.mimetype == 'image/jpeg' || eachImageData.mimetype == 'image/png') {
-            console.log("is it here?");
-            // console.log(eachImageData.originalname.split("."));
-            let splitByDataType = eachImageData.originalname.split(".");
-            console.log(splitByDataType[0]);
-            console.log(splitByDataType[1]);
-            let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
-            console.log(fileName);
-            let fullHotelImageName = currentPostingUserID + '_'  + fileName + '.' + splitByDataType[1];
-            console.log(fullHotelImageName);
+// app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
+//     // console.log(req.files);
+//     const postedHotelID = req.body.postedHotelId;
+//     let currentPostingUser = req.session.user;
+//     let currentPostingUserID = currentPostingUser.user_id;
+//     console.log(currentPostingUser);
+//     let hotelImageData = req.files;
+//     console.log(hotelImageData);
+//     // DB CONNECT
+//     for (let i = 0; i < hotelImageData.length; i++) {
+//         let eachImageData = hotelImageData[i];
+//         // console.log(eachImageData.mimetype);
+//         if (eachImageData.mimetype == 'image/jpg' || eachImageData.mimetype == 'image/jpeg' || eachImageData.mimetype == 'image/png') {
+//             console.log("is it here?");
+//             // console.log(eachImageData.originalname.split("."));
+//             let splitByDataType = eachImageData.originalname.split(".");
+//             console.log(splitByDataType[0]);
+//             console.log(splitByDataType[1]);
+//             let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
+//             console.log(fileName);
+//             let fullHotelImageName = currentPostingUserID + '_'  + fileName + '.' + splitByDataType[1];
+//             console.log(fullHotelImageName);
 
-            // PARAMETER FOR UPLOAD IN S3 BUCKET
-            let params = {
-                Bucket: process.env.AWS_HOTEL_BUCKET_NAME
-            ,   Key: `${fullHotelImageName}`
-            ,   Body: eachImageData.buffer
-            };
+//             // PARAMETER FOR UPLOAD IN S3 BUCKET
+//             let params = {
+//                 Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+//             ,   Key: `${fullHotelImageName}`
+//             ,   Body: eachImageData.buffer
+//             };
 
-            s3.upload(params, (error, data) => {
-                if (error) {
-                    res.status(500).send(error);
-                }
+//             s3.upload(params, (error, data) => {
+//                 if (error) {
+//                     res.status(500).send(error);
+//                 }
                 
-                console.log("============== AWS S3 ACCESS ==========");
-                const tempUserId = currentPostingUser.user_id;
-                let hotelImageID = data.key;
-                let fileLocation = data.Location;
-                console.log(hotelImageID);
-                console.log(fileLocation);
-                const insertHotelImageQuery = "INSERT INTO `css-capstone`.USER_HOTEL_IMAGE SET ?";
-                db.query(insertHotelImageQuery, 
-                    {
-                        // this will be change into req.session.user later
-                        user_id: tempUserId
-                    ,   hotel_img_id: fullHotelImageName
-                    ,   hotel_img: fileLocation
-                    ,   hotel_id: postedHotelID
-                    }, (err, result) => {
-                        // callback function
-                        if (err) {
-                            console.log(err);
-                            console.log("Error on Hotel Image Database");
-                            throw err;
-                        }
-                        console.log("Successfully added in the Hotel Image Database");
-                    }
-                )
-            });
-            //res.render('pages/hostHotel/hotelPostImage');
-        } else {
-            console.log("It should be here....");
+//                 console.log("============== AWS S3 ACCESS ==========");
+//                 const tempUserId = currentPostingUser.user_id;
+//                 let hotelImageID = data.key;
+//                 let fileLocation = data.Location;
+//                 console.log(hotelImageID);
+//                 console.log(fileLocation);
+//                 const insertHotelImageQuery = "INSERT INTO `css-capstone`.USER_HOTEL_IMAGE SET ?";
+//                 db.query(insertHotelImageQuery, 
+//                     {
+//                         // this will be change into req.session.user later
+//                         user_id: tempUserId
+//                     ,   hotel_img_id: fullHotelImageName
+//                     ,   hotel_img: fileLocation
+//                     ,   hotel_id: postedHotelID
+//                     }, (err, result) => {
+//                         // callback function
+//                         if (err) {
+//                             console.log(err);
+//                             console.log("Error on Hotel Image Database");
+//                             throw err;
+//                         }
+//                         console.log("Successfully added in the Hotel Image Database");
+//                     }
+//                 )
+//             });
+//             //res.render('pages/hostHotel/hotelPostImage');
+//         } else {
+//             console.log("It should be here....");
             
-        }
+//         }
         
-    }
-    req.session.hotelPostId = postedHotelID;
-    res.redirect('/become-host/postHotelThankyou');
-});
+//     }
+//     req.session.hotelPostId = postedHotelID;
+//     res.redirect('/become-host/postHotelThankyou');
+// });
 
-app.get('/become-host/postHotelThankyou', (req, res) => {
-    const postedHotelId = req.session.hotelPostId;
-    const tempPostedHotelId = 22;
-    req.session.hotelPostId = null;
-    // Data Variables to pass to render
-    let hotelDataObj = '';
+// app.get('/become-host/postHotelThankyou', (req, res) => {
+//     const postedHotelId = req.session.hotelPostId;
+//     const tempPostedHotelId = 22;
+//     req.session.hotelPostId = null;
+//     // Data Variables to pass to render
+//     let hotelDataObj = '';
 
-    let hotelInformationQuery = `SELECT * FROM HOTEL H WHERE H.hotel_id = ${tempPostedHotelId}`;
-    // let hotelImageRetrieveQuery = `SELECT hotel_img_id
-    // FROM `css-capstone`.HOTEL AS H
-    //     INNER JOIN `css-capstone`.USER_HOTEL_IMAGE AS HI
-    //     ON HI.hotel_id = H.hotel_id`
-    db.query(hotelInformationQuery, function(err, result) {
-        if (err) {
-            console.log(err);
-            console.log("Error happend during retrieve hotel for thank you page");
-            throw err;
-        } else {
+//     let hotelInformationQuery = `SELECT * FROM HOTEL H WHERE H.hotel_id = ${tempPostedHotelId}`;
+//     // let hotelImageRetrieveQuery = `SELECT hotel_img_id
+//     // FROM `css-capstone`.HOTEL AS H
+//     //     INNER JOIN `css-capstone`.USER_HOTEL_IMAGE AS HI
+//     //     ON HI.hotel_id = H.hotel_id`
+//     db.query(hotelInformationQuery, function(err, result) {
+//         if (err) {
+//             console.log(err);
+//             console.log("Error happend during retrieve hotel for thank you page");
+//             throw err;
+//         } else {
 
-            hotelDataObj = result[0];
-            console.log(hotelDataObj);
-            res.render('pages/hostHotel/hotelPostThankyou', {tempPostedHotelId:tempPostedHotelId,hotelDataObj:hotelDataObj});
-        }
-    });
+//             hotelDataObj = result[0];
+//             console.log(hotelDataObj);
+//             res.render('pages/hostHotel/hotelPostThankyou', {tempPostedHotelId:tempPostedHotelId,hotelDataObj:hotelDataObj});
+//         }
+//     });
 
-    // console.log(tempPostedHotelId);
-    // console.log(hotelDataObj);
+//     // console.log(tempPostedHotelId);
+//     // console.log(hotelDataObj);
     
-});
-// ====================================
-// End of Park ========================
-// ====================================
+// });
+// // ====================================
+// // End of Park ========================
+// // ====================================
 
 
-app.get('/hotel/search/:id/book', (req, res) => {
-    res.send('hello: Searched Hotel Booking');
-});
+// app.get('/hotel/search/:id/book', (req, res) => {
+//     res.send('hello: Searched Hotel Booking');
+// });
 
-app.get('/hotel/search/:id/book', (req, res) => {
-    res.send('hello: Searched Hotel Booking Confirmation');
-});
+// app.get('/hotel/search/:id/book', (req, res) => {
+//     res.send('hello: Searched Hotel Booking Confirmation');
+// });
 
 // =============================
 // Register && Login============
