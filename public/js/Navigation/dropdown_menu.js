@@ -16,9 +16,9 @@ window.onclick = function(event) {
 
 function showDropDown() {
     if (isLoggedIn) {
-        console.log('Show logged in drop down');
+        document.getElementById("dropdown__menu__loggedIn").classList.toggle("show");
     } else {
-        console.log('Show logged out drop down');
+        document.getElementById("dropdown__menu__loggedOut").classList.toggle("show");
     }
-    document.getElementById("dropdown__menu").classList.toggle("show");
+    
 }

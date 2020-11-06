@@ -3,7 +3,6 @@
 .dropdown__link {
     color: white;
     padding: 16px;
-    font-size: 16px;
     border: 1px solid transparent;
     cursor: pointer;
   }
@@ -28,14 +27,17 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     right: 0;
     z-index: 1;
+    border-radius: 5%;
   }
   
   .dropdown-content a {
-    color: black;
+    color: var(--color-grey);
     padding: 12px 16px;
     text-decoration: none;
     text-align: left;
     display: block;
+    font-size: var(--font-micro);
+    font-weight: var(--weight-regular);
   }
   
   .dropdown a:hover {background-color: #ddd;}

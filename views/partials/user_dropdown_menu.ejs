@@ -1,13 +1,20 @@
-<!-- Modal Login CSS -->
 <link rel="stylesheet" type="text/css" href="/css/userDropDownMenu.css">
+<link rel="stylesheet" type="text/css" href="/css/modal.css">
+
 <div class="dropdown">
-    <div id="dropdown__menu" class="dropdown-content">
+    <div id="dropdown__menu__loggedIn" class="dropdown-content">
         <a href="/become-host">Host your home</a>
         <a href="/users">Account</a>
         <a href="/logout">Logout</a>
+    </div>
+    <div id="dropdown__menu__loggedOut" class="dropdown-content">
+        <a href="#" onclick="openForm()">Login</a>
+        <a href="#" onclick="showRegister()">Sign up</a>
+        <%- include('./modal_account') %>
     </div>
 </div> 
 <span id='isLoggedIn__hidden' hidden>
     <%= JSON.stringify(isLoggedIn); %>
 </span>
 <script src = "/js/Navigation/dropdown_menu.js"></script>
+<script src = "/js/Modal/Modal.js"></script>
