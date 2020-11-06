@@ -369,9 +369,11 @@ app.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
     res.redirect('/become/postHotelImage');
 });
 
-app.get('/become/postHotelImage', (req, res) => {
+app.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
+    // CHANGE RETRIEVE DATA FROM DB LATER
     let hotelPostData = req.session.hotelPostData;
     req.session.hotelPostData = null;
+    console.log(hotelPostData);
     console.log(`HotelData in Hotel Image: ${hotelPostData}`);
     console.log(hotelPostData);
     res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData});
@@ -379,7 +381,11 @@ app.get('/become/postHotelImage', (req, res) => {
 
 app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
     // console.log(req.files);
+    let currentPostingUser = req.session.user;
+    let currentPostingUserID = currentPostingUser.user_id;
+    console.log(currentPostingUser);
     let hotelImageData = req.files;
+    console.log(hotelImageData);
     // DB CONNECT
     db.connect((error) => {
         if (!error) {
@@ -399,7 +405,7 @@ app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
             console.log(splitByDataType[1]);
             let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
             console.log(fileName);
-            let fullHotelImageName = fileName + '.' + splitByDataType[1];
+            let fullHotelImageName = currentPostingUserID + '_'  + fileName + '.' + splitByDataType[1];
             console.log(fullHotelImageName);
 
             // PARAMETER FOR UPLOAD IN S3 BUCKET
@@ -415,7 +421,7 @@ app.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
                 }
                 
                 console.log("============== AWS S3 ACCESS ==========");
-                const tempUserId = 18;
+                const tempUserId = currentPostingUser.user_id;
                 let hotelImageID = data.key;
                 let fileLocation = data.Location;
                 console.log(hotelImageID);

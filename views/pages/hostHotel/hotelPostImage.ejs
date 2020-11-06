@@ -17,13 +17,17 @@
                 <span>Now, let's insert some images </span>
             </h2>
             <p class="image_container_step"></p>
-            <form action="/become-host/postHotelImage" method="POST" enctype="multipart/form-data">
-                <div class="form_group">
-                    <!-- <div class="fileInputDiv" id="input_zone"> -->
-                        <label class="labelForUploadImage" for="hotelImagePost">Upload Image <br> Or Drag them in</label>
-                        <input type="file" id="hotelImagePost" name="hotelImages" multiple accept="image/*">
-                    <!-- </div> -->
+            <form id="formSubmitTag" action="/become-host/postHotelImage" method="POST" enctype="multipart/form-data">
+                <div class="main_image_container">
+                    <div class="form_group">
+                        <!-- <div class="fileInputDiv" id="input_zone"> -->
+                            <label class="labelForUploadImage" for="hotelImagePost">Click to Upload Image</label>
+                            
+                            <input type="file" id="hotelImagePost" name="hotelImages" accept="image/*">
+                        <!-- </div> -->
+                    </div>
                 </div>
+                <br>
                 <input type="submit" class="image_submit_btn">
             </form><br>
             <div class="uploaded_image_conatiner">
@@ -40,15 +44,15 @@
                 </div><br><br>
                 <div class="basicInformation_right_hotel_label">
                     <h3>Hotel Name: </h3>
-                    <p>Hello World Hotel</p>
+                    <p><%=hotelPostData.hotelLabel%></p>
                 </div>
                 <div class="basicInformation_right_hotel_price">
                     <h3>Hotel Price / Night</h3>
-                    <p>23.00</p>
+                    <p>$<%=hotelPostData.hotelPrice%> / Night</p>
                 </div>
                 <div class="basicInformation_right_hotel_address">
                     <h3>Stree Address</h3>
-                    <p>123 main st blah blah</p>
+                    <p><%=hotelPostData.hotel_location_street%></p>
                 </div>
             </main>
             <small class="basicInformation_right_hotel_dontWorry">
@@ -85,5 +89,6 @@
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=initMap&libraries=&v=weekly">
 </script>
-<script src="/js/HostHotel/hostPostImage.js"></script>
+<!-- <script src="/js/HostHotel/hostPostImage.js"></script> -->
+<script src="/js/HostHotel/hostPostDataManager.js"></script>
 </html>
