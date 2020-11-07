@@ -33,7 +33,7 @@ async function uploadImage() {
     if (imgFile) {
         const formData = new FormData();
         formData.append('imageFile', imgFile);
-        const response = await fetch('/users/upload', {
+        const response = await fetch('/user/upload', {
             method: 'POST',
             headers: {},
             body: formData
