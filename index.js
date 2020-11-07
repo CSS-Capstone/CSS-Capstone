@@ -9,9 +9,9 @@ const passport = require('passport');
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
 const cookieParser = require('cookie-parser');
+const trim = require('./modules/trim-city');
 // ==========================================
 // Helper Functions =========================
-const authMW = require('./modules/auth');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
