@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const multer = require('multer');
-const db = require('../../db.js');
+const db = require('../../utilities/db.js');
 
 ///////////////////////////////////
 // multer to AWS S3 upload logics

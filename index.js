@@ -54,7 +54,7 @@ app.use(session({
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
-const db = require('./db.js');
+const db = require('./utilities/db.js');
 // ===============================================
 // =============== ROUTER ========================
 // ===============================================
@@ -80,10 +80,10 @@ app.use(USER_ROUTE);
 // mulitple
 //const upload_multiple = multer({storage:storage}).array('hotelImages');
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ID,
-    secretAccessKey: process.env.AWS_SECRET
-});
+// const s3 = new AWS.S3({
+//     accessKeyId: process.env.AWS_ID,
+//     secretAccessKey: process.env.AWS_SECRET
+// });
 
 app.get('/', (req, res) => {
     let isLoggedIn = req.session.user == null ? false : true;
