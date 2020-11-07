@@ -3,6 +3,8 @@ const session = require('express-session');
 // const redis = require('redis');
 // const redisStore = require('connect-redis')(session);
 // const client  = redis.createClient();
+const nodemailer = require('nodemailer');
+// const request = require('request');
 const path = require('path');
 const app = express();
 const AWS = require('aws-sdk');
@@ -26,6 +28,23 @@ const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQ
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+//         pass: process.env.EMAIL_HOTELFINDER_PASSWORD
+//     }
+// });
+const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass, // generated ethereal password
+    },
+});
+
 require('./passport/passport-google-setup');
 require('./passport/passport-facebook-setup');
 
@@ -533,20 +552,25 @@ app.post('/auth/login', async (req, res) => {
                 // let sess = req.session;
                 req.user = results[0];
                 req.user.userPhotos = userPhotos;
-                
+                var mailOptions = {
+                    from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                    to: results[0].email,
+                    subject: 'Test sending email',
+                    text: 'That was easy!'
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error){
+                        console.log(error);
+                    }
+                    else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
                 //make the data for the user's session
                 req.session.user = req.user;
                 req.session.isLoggedIn = true;
-                // req.session.cookie.user = {
-                //     isLoggedIn: false,
-                //     userDetail: {}
-                // };
-                // req.session.cookie.user.isLoggedIn = true;
-                // req.session.cookie.user.userDetail = req.user;
-                // req.session.userPhotos = userPhotos;
-                console.log(req.user);
-                console.log(req.session);
-                // console.log(req.session.cookie.user.userDetail);
+                // console.log(req.user);
+                // console.log(req.session);
                 // res.status(200).render('pages/index', {
                 //     loginMessage: '',
                 //     registerMessage: '',
@@ -558,7 +582,7 @@ app.post('/auth/login', async (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 })
 
@@ -607,6 +631,20 @@ app.post('/auth/register', (req, res) => {
             if (error) {
                 console.log(error);
             } else {
+                // var mailOptions = {
+                //     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                //     to: email,
+                //     subject: 'Test sending email',
+                //     text: 'That was easy!'
+                // };
+                // transporter.sendMail(mailOptions, (error, info) => {
+                //     if (error){
+                //         console.log(error);
+                //     }
+                //     else {
+                //         console.log('Email sent: ' + info.response)
+                //     }
+                // })
                 return res.redirect('/');
             }
         })
