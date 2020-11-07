@@ -2,26 +2,24 @@ const express = require('express');
 const router = express.Router();
 const authMW = require('../../modules/auth');
 const trimCityNameHelper = require('../../modules/trimCityNameHelper');
-const multer = require('multer');
+// const multer = require('multer');
 const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
-const db = require('../../db.js');
+const db = require('../../utilities/db.js');
 const uuid = require('uuid');
+const multer = require('../../utilities/multer.js');
 ///////////////////////////////////
 // multer to AWS S3 upload logics
 ///////////////////////////////////
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ID,
-    secretAccessKey: process.env.AWS_SECRET
-});
+const s3 = require('../../utilities/s3');
 
-const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
-});
-// mulitple
-const upload_multiple = multer({storage:storage}).array('hotelImages');
+// const storage = multer.memoryStorage({
+//     destination: function(req, file, callback) {
+//         callback(null, '');
+//     }
+// });
+// // mulitple
+// const upload_multiple = multer({storage:storage}).array('hotelImages');
 
 router.get('/become-host', authMW.isLoggedIn, (req, res) => {
     res.render('pages/becomeHost/becomeHostPolicy');
@@ -84,7 +82,7 @@ router.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
     res.render('pages/hostHotel/hotelPostImage', {hotelPostData:hotelPostData,  hotelPostId:hotelPostId});
 });
 
-router.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
+router.post('/become-host/postHotelImage', multer.upload_multiple, (req, res) => {
     // console.log(req.files);
     const postedHotelID = req.body.postedHotelId;
     let currentPostingUser = req.session.user;
@@ -114,7 +112,7 @@ router.post('/become-host/postHotelImage', upload_multiple, (req, res) => {
             ,   Body: eachImageData.buffer
             };
 
-            s3.upload(params, (error, data) => {
+            s3.s3.upload(params, (error, data) => {
                 if (error) {
                     res.status(500).send(error);
                 }
