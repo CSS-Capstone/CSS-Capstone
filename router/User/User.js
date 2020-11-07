@@ -4,19 +4,9 @@ const authMW = require('../../modules/auth');
 const dotenv = require('dotenv');
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
-const multer = require('multer');
-const db = require('../../db.js');
-
-///////////////////////////////////
-// multer to AWS S3 upload logics
-///////////////////////////////////
-const storage = multer.memoryStorage({
-    destination: function(req, file, callback) {
-        callback(null, '');
-    }
-});
-// single image is a key
-const upload = multer({ storage }).single('imageFile');
+const s3 = require('../../utilities/s3');
+const multer = require('../../utilities/multer');
+const db = require('../../utilities/db.js');
 
 router.get('/user', authMW.isLoggedIn, (req, res) => {
     // testing purpose
@@ -63,7 +53,7 @@ router.get('/user', authMW.isLoggedIn, (req, res) => {
     //res.render('pages/users', {image: fileLocation});
 });
 
-router.post('/user/upload', authMW.isLoggedIn, upload, (req, res) => {
+router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
 
     // var tempUserId = 11;
     // var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
@@ -106,7 +96,7 @@ router.post('/user/upload', authMW.isLoggedIn, upload, (req, res) => {
             Body: file.buffer
         };
         
-        s3.upload(params, (error, data) => {
+        s3.s3.upload(params, (error, data) => {
             if (error) {
                 res.status(500).send(error); 
             }
