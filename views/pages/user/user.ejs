@@ -46,7 +46,7 @@
                 <%- user.userPhotos[0]%>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
-                <%- include('../partials/modal_user_photo', {user: user}) %>
+                <%- include('../../partials/modal_user_photo', {user: user}) %>
             </div>
             <div class="profile__left__mid">
                 <i class="far fa-star"></i> 1 review
@@ -113,7 +113,7 @@
     </section>
     
     <br>
-    <%- include('../partials/user_tab') %>
-    <%- include('../partials/footer') %>
+    <%- include('../../partials/user_tab') %>
+    <%- include('../../partials/footer') %>
 </body>
 </html>

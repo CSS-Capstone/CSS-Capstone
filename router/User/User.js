@@ -18,7 +18,7 @@ const storage = multer.memoryStorage({
 // single image is a key
 const upload = multer({ storage }).single('imageFile');
 
-router.get('/users', authMW.isLoggedIn, (req, res) => {
+router.get('/user', authMW.isLoggedIn, (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
@@ -36,7 +36,7 @@ router.get('/users', authMW.isLoggedIn, (req, res) => {
         user.userPhotos[0] = image;
     }
 
-    res.render('pages/users', {user: user});
+    res.render('pages/user/user', {user: user});
 
     // var params = { 
     //     Bucket: process.env.AWS_BUCKET_NAME, 
@@ -63,7 +63,7 @@ router.get('/users', authMW.isLoggedIn, (req, res) => {
     //res.render('pages/users', {image: fileLocation});
 });
 
-router.post('/users/upload', authMW.isLoggedIn, upload, (req, res) => {
+router.post('/user/upload', authMW.isLoggedIn, upload, (req, res) => {
 
     // var tempUserId = 11;
     // var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
@@ -132,7 +132,7 @@ router.post('/users/upload', authMW.isLoggedIn, upload, (req, res) => {
                 // });
               
                 console.log('Successful image upload');
-                res.redirect('/users');
+                res.redirect('/user');
             }
         });
         //res.render('pages/users', {user: req.session.user});
