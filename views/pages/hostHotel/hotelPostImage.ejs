@@ -18,6 +18,7 @@
             </h2>
             <p class="image_container_step"></p>
             <form id="formSubmitTag" action="/become-host/postHotelImage" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="postedHotelId" value=<%=hotelPostId%>>
                 <div class="main_image_container">
                     <div class="form_group">
                         <!-- <div class="fileInputDiv" id="input_zone"> -->
