@@ -4,7 +4,6 @@ const session = require('express-session');
 // const redisStore = require('connect-redis')(session);
 // const client  = redis.createClient();
 const nodemailer = require('nodemailer');
-const trim = require('./modules/trim-city');
 // const request = require('request');
 const path = require('path');
 const app = express();
@@ -15,27 +14,25 @@ const passport = require('passport');
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
 const cookieParser = require('cookie-parser');
-const trim = require('./modules/trim-city');
 // ==========================================
 // Helper Functions =========================
+const authMW = require('./modules/auth');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'hotmail',
     auth: {
         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
         pass: process.env.EMAIL_HOTELFINDER_PASSWORD
     }
 });
 // const transporter = nodemailer.createTransport({
-//     host: "smtp.ethereal.email",
-//     port: 587,
-//     secure: false, // true for 465, false for other ports
+//     service: "hotmail",
 //     auth: {
-//         user: testAccount.user, // generated ethereal user
-//         pass: testAccount.pass, // generated ethereal password
-//     },
+//       user: "hotelfinder114@outlook.com",
+//       pass: "Hotel0505114"
+//     }
 // });
 
 require('./passport/passport-google-setup');
@@ -118,7 +115,7 @@ app.get('/about', (req, res) => {
 })
 
 app.get('/faq', (req, res) => {
-    res.render('pages/FAQ')
+    res.render('pages/FAQ');
 });
 
 // =============================
@@ -136,6 +133,7 @@ app.post('/auth/login', async (req, res) => {
             email: '',
             username: ''
         }
+        let isLoggedIn = req.session.user == null ? false : true;
 
         db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
             // console.log(results);
@@ -143,6 +141,7 @@ app.post('/auth/login', async (req, res) => {
             // if email or password is incorrect
             if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
                 return res.status(401).render('pages/index', {
+                    isLoggedIn: isLoggedIn,
                     registerMessage: '',
                     loginMessage: "Email or password is incorrect",
                     resetPasswordMessage: '',
@@ -152,19 +151,6 @@ app.post('/auth/login', async (req, res) => {
                     formDataRegister: userDetailRegister
                 })
             } 
-            
-            //if account is not confirmed yet
-            if(results[0].isConfirmed === false) {
-                return res.status(406).render('pages/index', {
-                    registerMessage: '',
-                    loginMessage: "Email or password is incorrect",
-                    resetPasswordMessage: '',
-                    modalStyle: "block",
-                    stayInWhere: 'login',
-                    formDataLogin: userDetailLogin,
-                    formDataRegister: userDetailRegister
-                })
-            }
             else {
                 const userId = results[0].user_id;
                 const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -242,7 +228,8 @@ app.post('/auth/register', (req, res) => {
         email: '',
         username: ''
     }
-    db.query('SELECT email FROM USER WHERE email = ?', [email], async (error, results) => {
+    let isLoggedIn = req.session.user == null ? false : true;
+    db.query('SELECT email FROM USER WHERE email = ? OR username = ?', [email, username], async (error, results) => {
         if(error) {
             console.log(error);
         }
@@ -250,7 +237,8 @@ app.post('/auth/register', (req, res) => {
         // this checks if there is an email already registered in the DB or not
         if (results.length > 0) {
             return res.render('pages/index', {
-                registerMessage: 'Email has been used',
+                isLoggedIn: isLoggedIn,
+                registerMessage: 'Email or username has been used',
                 loginMessage: '',
                 resetPasswordMessage: '',
                 modalStyle: 'block',
@@ -262,37 +250,30 @@ app.post('/auth/register', (req, res) => {
          
         let hashedPassword = await bcrypt.hash(newPassword, 8);
         // console.log(hashedPassword);
-        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true, isConfirmed: false}, (error, results) => {
+        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
             if (error) {
                 console.log(error);
             } else {
-                // send to user the confirmation account ema
-                
                 var mailOptions = {
                     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
                     to: email,
                     subject: 'Test sending email',
                     text: 'That was easy!'
                 };
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error){
-                        console.log(error);
-                    }
-                    else {
-                        console.log('Email sent: ' + info.response)
-                    }
-                })
+                // transporter.sendMail(mailOptions, (error, info) => {
+                //     if (error){
+                //         console.log(error);
+                //     }
+                //     else {
+                //         console.log('Email sent: ' + info.response)
+                //     }
+                // })
                 return res.redirect('/');
             }
         })
     })
     
     // res.send("Hello!! You are registered");
-});
-
-app.get('/register/:user_id/:password', (req, res) => {
-    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ?', [])
-    res.redirect('/');
 });
 
 app.get('/reset_password', (req, res) => {
@@ -310,7 +291,7 @@ app.post('/auth/reset_password', (req, res) => {
         email: '',
         username: ''
     }
-    
+    let isLoggedIn = req.session.user == null ? false : true;
     db.query('SELECT email, user_id FROM USER WHERE email = ?', [email], async (error, results) => {
         if(error) {
             console.log(error);
@@ -318,14 +299,14 @@ app.post('/auth/reset_password', (req, res) => {
 
         if (results.length === 0) {
             return res.render('pages/index', {
+                isLoggedIn: isLoggedIn,
                 registerMessage: '',
                 loginMessage: '',
                 resetPasswordMessage: 'This email is not registered',
                 modalStyle: 'block',
                 stayInWhere: 'reset password',
                 formDataLogin: userDetailLogin,
-                formDataRegister: userDetailRegister,
-                isLoggedIn
+                formDataRegister: userDetailRegister
             });
         }
 
@@ -416,7 +397,7 @@ app.get('/facebook/good', (req, res) => {
         email: '',
         username: ''
     }
-
+    let isLoggedIn = req.session.user == null ? false : true;
     if (currAction === 'register') {
         userDetailRegister = {
             email: data.emails[0].value,
@@ -431,7 +412,7 @@ app.get('/facebook/good', (req, res) => {
     
     // console.log(data);
     return res.render('pages/index', {
-        //isLoggedIn: '',
+        isLoggedIn: isLoggedIn,
         registerMessage: '',
         loginMessage: '',
         resetPasswordMessage: '',
@@ -501,9 +482,10 @@ app.get('/google/good', (req, res) => {
             email: data.email
         }
     }
-    
+    let isLoggedIn = req.session.user == null ? false : true;
     // console.log(data);
     return res.render('pages/index', {
+        isLoggedIn: isLoggedIn,
         registerMessage: '',
         loginMessage: '',
         resetPasswordMessage: '',
