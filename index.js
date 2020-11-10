@@ -4,6 +4,7 @@ const session = require('express-session');
 // const redisStore = require('connect-redis')(session);
 // const client  = redis.createClient();
 const nodemailer = require('nodemailer');
+const trim = require('./modules/trim-city');
 // const request = require('request');
 const path = require('path');
 const app = express();
@@ -20,22 +21,22 @@ const authMW = require('./modules/auth');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// const transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
-//         pass: process.env.EMAIL_HOTELFINDER_PASSWORD
-//     }
-// });
 const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    service: 'gmail',
     auth: {
-        user: testAccount.user, // generated ethereal user
-        pass: testAccount.pass, // generated ethereal password
-    },
+        user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+        pass: process.env.EMAIL_HOTELFINDER_PASSWORD
+    }
 });
+// const transporter = nodemailer.createTransport({
+//     host: "smtp.ethereal.email",
+//     port: 587,
+//     secure: false, // true for 465, false for other ports
+//     auth: {
+//         user: testAccount.user, // generated ethereal user
+//         pass: testAccount.pass, // generated ethereal password
+//     },
+// });
 
 require('./passport/passport-google-setup');
 require('./passport/passport-facebook-setup');
@@ -151,6 +152,19 @@ app.post('/auth/login', async (req, res) => {
                     formDataRegister: userDetailRegister
                 })
             } 
+            
+            //if account is not confirmed yet
+            if(results[0].isConfirmed === false) {
+                return res.status(406).render('pages/index', {
+                    registerMessage: '',
+                    loginMessage: "Email or password is incorrect",
+                    resetPasswordMessage: '',
+                    modalStyle: "block",
+                    stayInWhere: 'login',
+                    formDataLogin: userDetailLogin,
+                    formDataRegister: userDetailRegister
+                })
+            }
             else {
                 const userId = results[0].user_id;
                 const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -248,30 +262,37 @@ app.post('/auth/register', (req, res) => {
          
         let hashedPassword = await bcrypt.hash(newPassword, 8);
         // console.log(hashedPassword);
-        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
+        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true, isConfirmed: false}, (error, results) => {
             if (error) {
                 console.log(error);
             } else {
-                // var mailOptions = {
-                //     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                //     to: email,
-                //     subject: 'Test sending email',
-                //     text: 'That was easy!'
-                // };
-                // transporter.sendMail(mailOptions, (error, info) => {
-                //     if (error){
-                //         console.log(error);
-                //     }
-                //     else {
-                //         console.log('Email sent: ' + info.response)
-                //     }
-                // })
+                // send to user the confirmation account ema
+                
+                var mailOptions = {
+                    from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                    to: email,
+                    subject: 'Test sending email',
+                    text: 'That was easy!'
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error){
+                        console.log(error);
+                    }
+                    else {
+                        console.log('Email sent: ' + info.response)
+                    }
+                })
                 return res.redirect('/');
             }
         })
     })
     
     // res.send("Hello!! You are registered");
+});
+
+app.get('/register/:user_id/:password', (req, res) => {
+    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ?', [])
+    res.redirect('/');
 });
 
 app.get('/reset_password', (req, res) => {
@@ -303,7 +324,8 @@ app.post('/auth/reset_password', (req, res) => {
                 modalStyle: 'block',
                 stayInWhere: 'reset password',
                 formDataLogin: userDetailLogin,
-                formDataRegister: userDetailRegister
+                formDataRegister: userDetailRegister,
+                isLoggedIn
             });
         }
 
@@ -409,6 +431,7 @@ app.get('/facebook/good', (req, res) => {
     
     // console.log(data);
     return res.render('pages/index', {
+        //isLoggedIn: '',
         registerMessage: '',
         loginMessage: '',
         resetPasswordMessage: '',
