@@ -20,20 +20,20 @@ const authMW = require('./modules/auth');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const transporter = nodemailer.createTransport({
-    service: 'hotmail',
-    auth: {
-        user: process.env.EMAIL_HOTELFINDER_ADDRESS,
-        pass: process.env.EMAIL_HOTELFINDER_PASSWORD
-    }
-});
 // const transporter = nodemailer.createTransport({
-//     service: "hotmail",
+//     service: 'hotmail',
 //     auth: {
-//       user: "hotelfinder114@outlook.com",
-//       pass: "Hotel0505114"
+//         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+//         pass: process.env.EMAIL_HOTELFINDER_PASSWORD
 //     }
 // });
+const transporter = nodemailer.createTransport({
+    service: "hotmail",
+    auth: {
+      user: "hotelfinder114@outlook.com",
+      pass: "Hotel0505114"
+    }
+});
 
 require('./passport/passport-google-setup');
 require('./passport/passport-facebook-setup');
@@ -229,6 +229,9 @@ app.post('/auth/register', (req, res) => {
         username: ''
     }
     let isLoggedIn = req.session.user == null ? false : true;
+
+    //make sure that it checks the validity of the username
+    //make sure that it checks the validity of the email
     db.query('SELECT email FROM USER WHERE email = ? OR username = ?', [email, username], async (error, results) => {
         if(error) {
             console.log(error);
@@ -243,7 +246,7 @@ app.post('/auth/register', (req, res) => {
                 resetPasswordMessage: '',
                 modalStyle: 'block',
                 stayInWhere: 'register',
-                formDataLogin: userDetail,
+                formDataLogin: userDetailLogin,
                 formDataRegister: userDetailRegister
             });
         }
@@ -260,14 +263,14 @@ app.post('/auth/register', (req, res) => {
                     subject: 'Test sending email',
                     text: 'That was easy!'
                 };
-                // transporter.sendMail(mailOptions, (error, info) => {
-                //     if (error){
-                //         console.log(error);
-                //     }
-                //     else {
-                //         console.log('Email sent: ' + info.response)
-                //     }
-                // })
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error){
+                        console.log(error);
+                    }
+                    else {
+                        console.log('Email sent: ' + info.response)
+                    }
+                })
                 return res.redirect('/');
             }
         })
@@ -325,6 +328,7 @@ app.post('/auth/reset_password', (req, res) => {
     })
     // res.send("Reset password successful");
 })
+
 
 app.get('/logout', (req, res) => {
     // req.session = undefined;
