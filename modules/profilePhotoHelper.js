@@ -1,10 +1,16 @@
+const dotenv = require('dotenv');
+const s3 = require('../utilities/s3');
 
+const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
 
-function getProfilePhoto(userPhotos) {
-    if(userPhotos.length == 0) {
-        return "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
+async function getProfilePhoto(user) {
+    if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
+        return DEFAULT_PROFILE_PHOTO;
     } else {
-        
+        console.log('You seem to have more than a default photo');
+        const imgData = await getImage(user.profile_img);
+        const convertedImg = encode(imgData.Body);
+        return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
     }
 }
 
@@ -12,9 +18,12 @@ function getSubPhotos(user) {
 
 }
 
-async function getImage() {
-    const data = s3.getObject(params).promise();
-    return data;
+async function getImage(key) {
+    var params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${key}`
+    }
+    return await s3.s3.getObject(params).promise();
 };
 
 function encode(data) {
@@ -23,11 +32,4 @@ function encode(data) {
     return base64;
 }
 
-getImage().then((img) => {
-    let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
-    res.render('pages/users', { image });
-}).catch((e)=> {
-    console.log(e);
-});
-
-module.exports = { encode };
+module.exports = { getProfilePhoto, encode, DEFAULT_PROFILE_PHOTO };

@@ -7,8 +7,9 @@ const AWS = require('aws-sdk');
 const s3 = require('../../utilities/s3');
 const multer = require('../../utilities/multer');
 const db = require('../../utilities/db.js');
+const imageHelper = require('../../modules/profilePhotoHelper');
 
-router.get('/user', authMW.isLoggedIn, (req, res) => {
+router.get('/user', authMW.isLoggedIn, async (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
@@ -17,49 +18,18 @@ router.get('/user', authMW.isLoggedIn, (req, res) => {
     console.log(req.session.user);
 
     var user = req.session.user;
-    const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
-    //const userPhotos = user.userPhotos;
-    //const photoHelper = require('../../modules/profilePhotoHelper');
-    //const image = photoHelper.getProfilePhoto(userPhotos);
-    if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
-        req.session.user.profile_img = DEFAULT_PROFILE_PHOTO;
+    if (user.profile_img == imageHelper.DEFAULT_PROFILE_PHOTO || !user.profile_img) {
+        req.session.user.profile_img = imageHelper.DEFAULT_PROFILE_PHOTO;
         res.render('pages/user/user', {user: user});
     } else {
         console.log('You seem to have more than a default photo');
+        req.session.user.profile_img = await imageHelper.getProfilePhoto(user);
         res.render('pages/user/user', {user: user});
     }
 
-    
-
-    // var params = { 
-    //     Bucket: process.env.AWS_BUCKET_NAME, 
-    //     Key: '4319367f-5484-5303-8915-712d014451ff.png'
-    // };
-
-    // async function getImage() {
-    //     const data = s3.getObject(params).promise();
-    //     return data;
-    // };
-
-    // function encode(data) {
-    //     let buf = Buffer.from(data);
-    //     let base64 = buf.toString('base64');
-    //     return base64;
-    // }
-
-    // getImage().then((img) => {
-    //     let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
-    //     res.render('pages/users', { image });
-    // }).catch((e)=> {
-    //     console.log(e);
-    // });
-    //res.render('pages/users', {image: fileLocation});
 });
 
 router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
-
-    // var tempUserId = 11;
-    // var queryForPhotoCnt = "SELECT COUNT(*) FROM `USER_PROFILE_IMAGE` WHERE `user_id` = '" + tempUserId + "'";
 
     const file = req.file;
     console.log("======= File info from client side =======");
