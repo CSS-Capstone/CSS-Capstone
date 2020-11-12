@@ -1,9 +1,15 @@
+
+
 function getProfilePhoto(userPhotos) {
     if(userPhotos.length == 0) {
         return "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
     } else {
         
     }
+}
+
+function getSubPhotos(user) {
+
 }
 
 async function getImage() {
@@ -24,4 +30,4 @@ getImage().then((img) => {
     console.log(e);
 });
 
-module.exports = { getProfilePhoto };
+module.exports = { encode };

@@ -12,21 +12,24 @@ router.get('/user', authMW.isLoggedIn, (req, res) => {
     // testing purpose
     // Key is the image_id in MySQL image db
     // Which should be in user.session
-    console.log("req.user");
-    console.log(req.user);
 
     console.log("req.session.user");
     console.log(req.session.user);
 
     var user = req.session.user;
-    const userPhotos = user.userPhotos;
-    const photoHelper = require('../../modules/profilePhotoHelper');
-    const image = photoHelper.getProfilePhoto(userPhotos);
-    if (userPhotos.length == 0) {
-        user.userPhotos[0] = image;
+    const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
+    //const userPhotos = user.userPhotos;
+    //const photoHelper = require('../../modules/profilePhotoHelper');
+    //const image = photoHelper.getProfilePhoto(userPhotos);
+    if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
+        req.session.user.profile_img = DEFAULT_PROFILE_PHOTO;
+        res.render('pages/user/user', {user: user});
+    } else {
+        console.log('You seem to have more than a default photo');
+        res.render('pages/user/user', {user: user});
     }
 
-    res.render('pages/user/user', {user: user});
+    
 
     // var params = { 
     //     Bucket: process.env.AWS_BUCKET_NAME, 
@@ -66,29 +69,23 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
         || file.mimetype == "image/gif") {
         
         console.log("INNNN?");
-        console.log(req.session.user);
-        // console.log("req.session : " + req.session);
-        // console.log("req.session.user : " + req.session.user);
-        if (req.session.user.userPhotos.length >= 3) {
-            console.log("You have more than 3 images");
-            //res.send('<script>alert("Message"); window.location.href = "/page_location"; </script>');
-            //res.redirect('/users#');
-        }
-        // Check the counts of photo is less than 3? and if there is any matching file ID
-        // if (req.session.user.photos.length? >= 3)
-        // res.redirect('/users#', {message: "Unsupported Image Type Error"});
-        // foreach photos
-        // if (photos.img_id == uuid.v5 of newly uploaded photo)
-        // res.redirect('/users#', {message: "Image already exist"});
-        // else
+        const user = req.session.user;
+        console.log(user);
+        
+        // if (user.userPhotos.length >= 3) {
+        //     console.log("You have more than 3 images");
+        //     //res.send('<script>alert("Message"); window.location.href = "/page_location"; </script>');
+        //     //res.redirect('/users#');
+        // }
 
+        let userId = user.user_id;
         let image = file.originalname.split(".");
         const fileType = image[image.length - 1];
 
         const fileName = uuid.v5(image[0], process.env.SEED_KEY);
         console.log(uuid.v5(image[0], process.env.SEED_KEY));
         console.log(fileName);
-        const fullFileName = fileName + "." + fileType;
+        const fullFileName = userId + "_" + fileName + "." + fileType;
 
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
@@ -104,32 +101,33 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
             if (res.statusCode == 200) {
                 console.log("======= AWS S3 Upload Success =======");
 
-                // Will be replaced with req.session.user_id ?
-                const tempUserId = 11;
-                const imgID = data.key;
-                const fileLocation = data.Location;
-                // user.session.photo.isMain? should be used
-                const isMain = false;
+                const isMain = true;
 
                 console.log(data);
 
-                // var insertData = "INSERT INTO `USER_PROFILE_IMAGE`(`user_id`,`img_id`,`img_url`,`is_main`)VALUES('" 
-                //                 + tempUserId + "','" + fullFileName + "','" + fileLocation + "','" + isMain + "')";
-                // db.query(insertData, (err, result) => {
-                //     if (err) throw err;
-                //     console.log('Data Saved');
-                //     console.log(result);
-                // });
-              
-                console.log('Successful image upload');
-                res.redirect('/user');
+                let insertPhotoQuery = "INSERT INTO `css-capstone`.USER_PROFILE_IMAGE SET user_id=?, img_id=?, is_main=?";
+                let insertPhotoData = [userId, fullFileName, isMain];
+                db.query(insertPhotoQuery, insertPhotoData, (err, results, fields) => {
+                    if (err) console.log('Failed to upload NEW photo');
+                    else {
+                        console.log('MySQL : Success to upload NEW photo');
+
+                        const isSub = false;
+                        let updatePhotoQuery = "UPDATE `css-capstone`.USER_PROFILE_IMAGE SET `is_main` = ? WHERE `img_id` != ? AND `user_id` = ?";
+                        let updatePhotoData = [isSub, fullFileName, userId];
+                        db.query(updatePhotoQuery, updatePhotoData, (err, results, fields) => {
+                            if (err) console.log('Failed to UPDATE previous photo status');
+                            else {
+                                console.log('MySQL : Success to update previous photo');
+
+                                return;
+                            }
+                        });
+                    }
+                });
+                //res.redirect('/user');
             }
         });
-        //res.render('pages/users', {user: req.session.user});
-        //s3UploadPromise.then(function() {
-            //console.log('Successful image upload');
-            //res.redirect('/users');
-            //return;
     } else {
         return;
         //res.render('/users', {user: req.session.user});
