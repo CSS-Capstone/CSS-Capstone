@@ -14,19 +14,22 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
     // Key is the image_id in MySQL image db
     // Which should be in user.session
 
-    console.log("req.session.user");
-    console.log(req.session.user);
-
+    // console.log("req.session.user");
+    // console.log(req.session.user);
+    
     var user = req.session.user;
+    let userPhotos = await imageHelper.getImageKeys(user);
+    //console.log(userPhotos);
+
     if (user.profile_img == imageHelper.DEFAULT_PROFILE_PHOTO || !user.profile_img) {
         req.session.user.profile_img = imageHelper.DEFAULT_PROFILE_PHOTO;
         res.render('pages/user/user', {user: user});
     } else {
         console.log('You seem to have more than a default photo');
         req.session.user.profile_img = await imageHelper.getProfilePhoto(user);
+        let userPhotos = "";
         res.render('pages/user/user', {user: user});
     }
-
 });
 
 router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
@@ -38,7 +41,6 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, (req, res) => {
     if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
         || file.mimetype == "image/gif") {
         
-        console.log("INNNN?");
         const user = req.session.user;
         console.log(user);
         

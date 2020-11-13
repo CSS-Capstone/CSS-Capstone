@@ -171,7 +171,7 @@ app.post('/auth/login', async (req, res) => {
                     req.user.profile_img = profile_img;
                     req.session.user = req.user;
                     req.session.isLoggedIn = true;
-                    console.log(req.session.user);
+                    // console.log(req.session.user);
                     res.status(200).redirect('/');
                 });
                 

@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const s3 = require('../utilities/s3');
+const db = require('../utilities/db');
 
 const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
 
@@ -7,7 +8,6 @@ async function getProfilePhoto(user) {
     if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
         return DEFAULT_PROFILE_PHOTO;
     } else {
-        console.log('You seem to have more than a default photo');
         const imgData = await getImage(user.profile_img);
         const convertedImg = encode(imgData.Body);
         return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
@@ -15,7 +15,23 @@ async function getProfilePhoto(user) {
 }
 
 function getSubPhotos(user) {
+    
+}
 
+async function getImageKeys(user) {
+    let userPhotos = [];
+    let getSubPhotoQuery = "SELECT * FROM `css-capstone`.USER_PROFILE_IMAGE WHERE `is_main` = ? AND `user_id` = ?";
+    let getSubPhotoData = [false, user.user_id];
+    db.query(getSubPhotoQuery, getSubPhotoData, (err, results, fields) => {
+        if (err) console.log('Failed to get Sub photos');
+        else {
+            var i;
+            for(i = 0; i < results.length; i++) {
+                userPhotos[i] = results[i].img_id;
+            }
+            console.log(userPhotos);
+        }
+    });
 }
 
 async function getImage(key) {
@@ -32,4 +48,4 @@ function encode(data) {
     return base64;
 }
 
-module.exports = { getProfilePhoto, encode, DEFAULT_PROFILE_PHOTO };
+module.exports = { getProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO };
