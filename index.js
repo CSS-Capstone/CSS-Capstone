@@ -21,10 +21,10 @@ const authMW = require('./modules/auth');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 // const transporter = nodemailer.createTransport({
-//     service: 'hotmail',
+//     service: 'gmail',
 //     auth: {
 //         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
-//         pass: process.env.EMAIL_HOTELFINDER_PASSWORD
+//         pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
 //     }
 // });
 const transporter = nodemailer.createTransport({
@@ -151,6 +151,19 @@ app.post('/auth/login', async (req, res) => {
                     formDataRegister: userDetailRegister
                 })
             } 
+
+            if(!results[0].isConfirmed) {
+                return res.status(401).render('pages/index', {
+                    isLoggedIn: isLoggedIn,
+                    registerMessage: '',
+                    loginMessage: "Account is not confirmed yet. Check your email",
+                    resetPasswordMessage: '',
+                    modalStyle: "block",
+                    stayInWhere: 'login',
+                    formDataLogin: userDetailLogin,
+                    formDataRegister: userDetailRegister
+                })
+            }
             else {
                 const userId = results[0].user_id;
                 const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -163,35 +176,40 @@ app.post('/auth/login', async (req, res) => {
                     ),
                     httpOnly: true
                 }
-                var userPhotos = [];
-                db.query('SELECT * FROM USER_PROFILE_IMAGE WHERE user_id = ?', [userId], async (error, photos) => {
-                    userPhotos = photos;
+                
+                db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ? AND is_main = ?`, [userId, true], async (error, photo) => {
+                    let profile_img = (Object.keys(photo).length === 0) ? null : photo[0].img_id;
+                    res.cookie('jwt', token, cookieOptions);
+                    req.user = results[0];
+                    req.user.profile_img = profile_img;
+                    req.session.user = req.user;
+                    req.session.isLoggedIn = true;
+                    // console.log(req.session.user);
+                    res.status(200).redirect('/');
                 });
-                res.cookie('jwt', token, cookieOptions);
+                
                 // console.log(req.cookies);
                 //make the data fo the user
                 // let sess = req.session;
-                req.user = results[0];
-                req.user.userPhotos = userPhotos;
-                var mailOptions = {
-                    from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                    to: results[0].email,
-                    subject: 'Test sending email',
-                    text: 'That was easy!'
-                };
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error){
-                        console.log(error);
-                    }
-                    else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                });
+                
+                // var mailOptions = {
+                //     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                //     to: results[0].email,
+                //     subject: 'Test sending email',
+                //     text: 'That was easy!'
+                // };
+                // transporter.sendMail(mailOptions, (error, info) => {
+                //     if (error){
+                //         console.log(error);
+                //     }
+                //     else {
+                //         console.log('Email sent: ' + info.response);
+                //     }
+                // });
                 //make the data for the user's session
-                req.session.user = req.user;
-                req.session.isLoggedIn = true;
+                
                 // console.log(req.user);
-                // console.log(req.session);
+                console.log(req.session);
                 // res.status(200).render('pages/index', {
                 //     loginMessage: '',
                 //     registerMessage: '',
@@ -199,7 +217,7 @@ app.post('/auth/login', async (req, res) => {
                 //     modalStyle: '',
                 //     stayInWhere: ''
                 // });
-                res.status(200).redirect('/');
+                //res.status(200).redirect('/');
             }
         });
     } catch (error) {
@@ -253,24 +271,42 @@ app.post('/auth/register', (req, res) => {
          
         let hashedPassword = await bcrypt.hash(newPassword, 8);
         // console.log(hashedPassword);
-        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true}, (error, results) => {
+        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true, isConfirmed: false}, async (error, result) => {
             if (error) {
                 console.log(error);
             } else {
-                var mailOptions = {
-                    from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                    to: email,
-                    subject: 'Test sending email',
-                    text: 'That was easy!'
-                };
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error){
+                db.query('SELECT * FROM USER WHERE email = ?', [email], (error, answer) => {
+                    if (error) {
                         console.log(error);
                     }
                     else {
-                        console.log('Email sent: ' + info.response)
+                        var userId = answer[0].user_id;
+                        var userPassword = answer[0].password; 
+                        let transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            auth: {
+                                user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                                pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
+                            }
+                        });
+                        var mailOptions = {
+                            from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                            to: email,
+                            subject: 'Test sending email',
+                            text: 'That was easy!',
+                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="http://localhost:8080/confirm_account/${userId}/${userPassword}">http://localhost:8080/confirm_account/${userId}/${userPassword}</a></div>`
+                        };
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error){
+                                console.log(error);
+                            }
+                            else {
+                                console.log('Email sent: ' + info.response)
+                            }
+                        })
                     }
                 })
+                
                 return res.redirect('/');
             }
         })
@@ -279,9 +315,25 @@ app.post('/auth/register', (req, res) => {
     // res.send("Hello!! You are registered");
 });
 
+// confirm account
+app.get('/confirm_account/:user_id/:password', (req, res) => {
+    let userId = req.params.user_id;
+    let password = req.params.password;
+    let isConfirmed = true;
+    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, password], (error, results) => {
+        if (error) {
+            console.log(error);
+        }
+        else {
+            console.log(results[0]);
+            return res.redirect('/');
+        }
+    });
+});
+
 app.get('/reset_password', (req, res) => {
     res.render('pages/set_up_new_password');
-})
+});
 
 app.post('/auth/reset_password', (req, res) => {
     let email = req.body.email;
@@ -466,7 +518,8 @@ app.get('/google/good', (req, res) => {
     console.log(req.cookies);
     var data = req.cookies.profile;
     var currAction = req.cookies.accountAction;
-    
+    var googleEmail = data.email;
+
     let userDetailLogin = {
         email: ''
     }
@@ -477,17 +530,27 @@ app.get('/google/good', (req, res) => {
 
     if (currAction === 'register') {
         userDetailRegister = {
-            email: data.email,
+            email: googleEmail,
             username: data.displayName
         }
     }
     else if (currAction === 'login') {
         userDetailLogin = {
-            email: data.email
+            email: googleEmail
         }
     }
     let isLoggedIn = req.session.user == null ? false : true;
     // console.log(data);
+    db.query('SELECT * FROM USER WHERE email = ?', [googleEmail], (error, results) => {
+        if (error) {
+            console.log(error);
+        }
+        else {
+            if (results.length < 1) {
+                db.query('SELECT * FROM USER')
+            }
+        }
+    })
     return res.render('pages/index', {
         isLoggedIn: isLoggedIn,
         registerMessage: '',
