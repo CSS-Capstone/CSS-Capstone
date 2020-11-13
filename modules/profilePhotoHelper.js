@@ -1,14 +1,47 @@
-function getProfilePhoto(userPhotos) {
-    if(userPhotos.length == 0) {
-        return "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
+const dotenv = require('dotenv');
+const s3 = require('../utilities/s3');
+const db = require('../utilities/db');
+const uuid = require('uuid');
+const sharp = require('sharp');
+
+const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
+
+async function getProfilePhoto(user) {
+    if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
+        return DEFAULT_PROFILE_PHOTO;
     } else {
-        
+        const imgData = await getImage(user.profile_img);
+        const convertedImg = encode(imgData.Body);
+        return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
     }
 }
 
-async function getImage() {
-    const data = s3.getObject(params).promise();
-    return data;
+function getSubPhotos(user) {
+    
+}
+
+async function getImageKeys(user) {
+    let userPhotos = [];
+    let getSubPhotoQuery = "SELECT * FROM `css-capstone`.USER_PROFILE_IMAGE WHERE `is_main` = ? AND `user_id` = ?";
+    let getSubPhotoData = [false, user.user_id];
+    db.query(getSubPhotoQuery, getSubPhotoData, (err, results, fields) => {
+        if (err) console.log('Failed to get Sub photos');
+        else {
+            var i;
+            for(i = 0; i < results.length; i++) {
+                userPhotos[i] = results[i].img_id;
+            }
+            return userPhotos;
+        }
+    });
+}
+
+async function getImage(key) {
+    var params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${key}`
+    }
+    return await s3.s3.getObject(params).promise();
 };
 
 function encode(data) {
@@ -17,11 +50,54 @@ function encode(data) {
     return base64;
 }
 
-getImage().then((img) => {
-    let image = "<img class='profile__image' src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
-    res.render('pages/users', { image });
-}).catch((e)=> {
-    console.log(e);
-});
+function uploadImage(user, file) {
+    let userId = user.user_id;
+    let image = file.originalname.split(".");
+    const fileType = image[image.length - 1];
 
-module.exports = { getProfilePhoto };
+    const fileName = uuid.v5(image[0], process.env.SEED_KEY);
+    console.log(uuid.v5(image[0], process.env.SEED_KEY));
+    console.log(fileName);
+    const fullFileName = userId + "_" + fileName + "." + fileType;
+
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${fullFileName}`,
+        Body: file.buffer
+    };
+    
+    s3.s3.upload(params, (error, data) => {
+        if (error) {
+            console.log('Failed to upload photo to S3'); 
+        }
+
+        console.log("======= AWS S3 Upload Success =======");
+
+        const isMain = true;
+
+        console.log(data);
+
+        let insertPhotoQuery = "INSERT INTO `css-capstone`.USER_PROFILE_IMAGE SET user_id=?, img_id=?, is_main=?";
+        let insertPhotoData = [userId, fullFileName, isMain];
+        db.query(insertPhotoQuery, insertPhotoData, (err, results, fields) => {
+            if (err) console.log('Failed to upload NEW photo');
+            else {
+                console.log('MySQL : Success to upload NEW photo');
+
+                const isSub = false;
+                let updatePhotoQuery = "UPDATE `css-capstone`.USER_PROFILE_IMAGE SET `is_main` = ? WHERE `img_id` != ? AND `user_id` = ?";
+                let updatePhotoData = [isSub, fullFileName, userId];
+                db.query(updatePhotoQuery, updatePhotoData, (err, results, fields) => {
+                    if (err) console.log('Failed to UPDATE previous photo status');
+                    else {
+                        console.log('MySQL : Success to update previous photo');
+                        return;
+                    }
+                });
+            }
+        });
+        //res.redirect('/user');
+    });
+}
+
+module.exports = { getProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };

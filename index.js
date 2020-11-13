@@ -176,27 +176,38 @@ app.post('/auth/login', async (req, res) => {
                     ),
                     httpOnly: true
                 }
-                var userPhotos = [];
-                db.query('SELECT * FROM USER_PROFILE_IMAGE WHERE user_id = ?', [userId], async (error, photos) => {
-                    userPhotos = photos;
+                
+                db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ? AND is_main = ?`, [userId, true], async (error, photo) => {
+                    let profile_img = (Object.keys(photo).length === 0) ? null : photo[0].img_id;
+                    res.cookie('jwt', token, cookieOptions);
+                    req.user = results[0];
+                    req.user.profile_img = profile_img;
+                    req.session.user = req.user;
+                    req.session.isLoggedIn = true;
+                    // console.log(req.session.user);
+                    res.status(200).redirect('/');
                 });
-                res.cookie('jwt', token, cookieOptions);
+                
                 // console.log(req.cookies);
                 //make the data fo the user
                 // let sess = req.session;
-                req.user = results[0];
-                req.user.userPhotos = userPhotos;
-                console.log(results[0].email);
-                // let transporter = nodemailer.createTransport({
-                //     service: 'gmail',
-                //     auth: {
-                //         user: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                //         pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
+                
+                // var mailOptions = {
+                //     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                //     to: results[0].email,
+                //     subject: 'Test sending email',
+                //     text: 'That was easy!'
+                // };
+                // transporter.sendMail(mailOptions, (error, info) => {
+                //     if (error){
+                //         console.log(error);
+                //     }
+                //     else {
+                //         console.log('Email sent: ' + info.response);
                 //     }
                 // });
                 //make the data for the user's session
-                req.session.user = req.user;
-                req.session.isLoggedIn = true;
+                
                 // console.log(req.user);
                 console.log(req.session);
                 // res.status(200).render('pages/index', {
@@ -206,7 +217,7 @@ app.post('/auth/login', async (req, res) => {
                 //     modalStyle: '',
                 //     stayInWhere: ''
                 // });
-                res.status(200).redirect('/');
+                //res.status(200).redirect('/');
             }
         });
     } catch (error) {
