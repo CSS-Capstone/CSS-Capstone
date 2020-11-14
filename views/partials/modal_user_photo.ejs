@@ -10,7 +10,13 @@
 		<div class="photo__upload__title">
 			Profile Photo
 		</div>
-		<div class="photo__main"><%- user.profile_img%></div>
+		<div class="photo__main">
+			<% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
+				<img class='profile__image' src='images/default_user_profile_img_login.png'/>
+			<% } else { %>
+				<%- user.profile_img%>
+			<% } %>
+		</div>
 		<div class="photo__other__container">
 			<span class="photo__other">
 				SMALL Photo images
