@@ -374,6 +374,7 @@ app.get('/logout', (req, res) => {
         req.logout();
         res.redirect('/');
     })
+
     // req.logout();
     // res.clearCookie('profile');
     // res.clearCookie('jwt');
@@ -422,7 +423,8 @@ app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirec
     });
 
 app.get('/facebook/good', (req, res) => {
-    // console.log(req.cookies);
+    console.log(req.cookies);
+    console.log(req.cookies.profile.emails);
     var data = req.cookies.profile;
     // console.log(data.emails[0]);
     // console.log(data.displayName);
@@ -526,6 +528,7 @@ app.get('/facebook/good', (req, res) => {
             }
         })
     }
+    
     
     // console.log(data);
     // return res.render('pages/index', {
