@@ -15,6 +15,7 @@
 
 </head>
 <body>
+    <!-- Hello world testing hahahah -->
     <!-- <div class="index__bg">
         <nav id="navbar">
             <div class="navbar__logo">
@@ -43,7 +44,11 @@
     <section class="profile__wrapper">
         <div class="profile__left">
             <div class="profile__left__upper">
-                <%- user.profile_img%>
+                <% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
+                    <img class='profile__image' src='images/default_user_profile_img_login.png'/>
+                <% } else { %>
+                    <%- user.profile_img%>
+                <% } %>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
                 <%- include('../../partials/modal_user_photo', {user: user}) %>

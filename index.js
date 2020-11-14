@@ -73,12 +73,12 @@ const db = require('./utilities/db.js');
 // ===============================================
 const HOTEL_ROUTE = require('./router/Hotel/Hotel.js');
 const BECOMEHOST_ROUTE = require('./router/BecomeHost/BecomeHost.js');
-//const ACCOUNT_ROUTE = require('./router/Account/Account.js');
 const USER_ROUTE = require('./router/User/User.js');
-const { encode } = require('./modules/profilePhotoHelper');
+const ACCOUNT_ROUTE = require('./router/Account/Account.js');
 app.use(HOTEL_ROUTE);
 app.use(BECOMEHOST_ROUTE);
 app.use(USER_ROUTE);
+app.use(ACCOUNT_ROUTE);
 
 app.get('/', (req, res) => {
     let isLoggedIn = req.session.user == null ? false : true;
@@ -729,37 +729,6 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // ===============================================
 // end of google
 // ===============================================
-
-app.get('/account', (req, res) => {
-    res.send('hello: user account page where user sees there posts and make actions post, edit, and delete');
-});
-
-app.get('/account/new', (req, res) => {
-    res.send('hello: Posting new Hotel');
-});
-
-app.get('/account/:id', (req, res) => {
-    res.send('hello: detail of the user posted hotel');
-});
-
-app.get('/account/:id/edit', (req, res) => {
-    res.send('hello: render edit page of posted hotel');
-});
-
-// put method after edit the hotel
-app.put('/account/:id', (req, res) => {
-    res.send('hello: I am the put page of after edit (save edited data happends here');
-});
-
-// redner delete hotel page
-app.get('/account/:id/delete', (req, res) => {
-    res.send('hello: I am deleting page for hotel');
-})
-
-// delete action method
-app.delete('/account/', (req, res) => {
-    res.send('hello: I am the action method after user clicked delete');
-});
 
 app.get("*", (req, res) => {
     res.send("hello: make-up link not in our domain");

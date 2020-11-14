@@ -2,22 +2,23 @@ const dotenv = require('dotenv');
 const s3 = require('../utilities/s3');
 const db = require('../utilities/db');
 const uuid = require('uuid');
-const sharp = require('sharp');
-
-const DEFAULT_PROFILE_PHOTO = "<img class='profile__image' src='images/default_user_profile_img_login.png'/>";
+// ahahhahah
+const DEFAULT_PROFILE_PHOTO = "default_profile_img";
 
 async function getProfilePhoto(user) {
-    if (user.profile_img == DEFAULT_PROFILE_PHOTO || !user.profile_img) {
-        return DEFAULT_PROFILE_PHOTO;
-    } else {
-        const imgData = await getImage(user.profile_img);
-        const convertedImg = encode(imgData.Body);
-        return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
-    }
+    const imgData = await getImage(user.profile_img);
+    const convertedImg = encode(imgData.Body);
+    return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
 }
 
 function getSubPhotos(user) {
     
+}
+
+async function refreshProfilePhoto(fileName) {
+    const imgData = await getImage(fileName);
+    const convertedImg = encode(imgData.Body);
+    return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
 }
 
 async function getImageKeys(user) {
@@ -56,8 +57,8 @@ function uploadImage(user, file) {
     const fileType = image[image.length - 1];
 
     const fileName = uuid.v5(image[0], process.env.SEED_KEY);
-    console.log(uuid.v5(image[0], process.env.SEED_KEY));
-    console.log(fileName);
+    // console.log(uuid.v5(image[0], process.env.SEED_KEY));
+    // console.log(fileName);
     const fullFileName = userId + "_" + fileName + "." + fileType;
 
     const params = {
@@ -68,7 +69,7 @@ function uploadImage(user, file) {
     
     s3.s3.upload(params, (error, data) => {
         if (error) {
-            console.log('Failed to upload photo to S3'); 
+            console.log('Failed to upload photo to S3' + error); 
         }
 
         console.log("======= AWS S3 Upload Success =======");
@@ -80,7 +81,7 @@ function uploadImage(user, file) {
         let insertPhotoQuery = "INSERT INTO `css-capstone`.USER_PROFILE_IMAGE SET user_id=?, img_id=?, is_main=?";
         let insertPhotoData = [userId, fullFileName, isMain];
         db.query(insertPhotoQuery, insertPhotoData, (err, results, fields) => {
-            if (err) console.log('Failed to upload NEW photo');
+            if (err) console.log('Failed to upload NEW photo' + err);
             else {
                 console.log('MySQL : Success to upload NEW photo');
 
@@ -88,10 +89,12 @@ function uploadImage(user, file) {
                 let updatePhotoQuery = "UPDATE `css-capstone`.USER_PROFILE_IMAGE SET `is_main` = ? WHERE `img_id` != ? AND `user_id` = ?";
                 let updatePhotoData = [isSub, fullFileName, userId];
                 db.query(updatePhotoQuery, updatePhotoData, (err, results, fields) => {
-                    if (err) console.log('Failed to UPDATE previous photo status');
+                    if (err) console.log('Failed to UPDATE previous photo status' + err);
                     else {
                         console.log('MySQL : Success to update previous photo');
-                        return;
+                        console.log('END OF imageHelper.uploadImage')
+                        console.log(fullFileName);
+                        return fullFileName;
                     }
                 });
             }
@@ -100,4 +103,4 @@ function uploadImage(user, file) {
     });
 }
 
-module.exports = { getProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
+module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };

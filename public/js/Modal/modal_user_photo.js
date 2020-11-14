@@ -18,17 +18,17 @@ function isFileImage(file) {
 async function uploadImage() {
     let imgFile = this.files[0];
 
-    const fileReader = new FileReader();
-        fileReader.readAsDataURL(imgFile);
-        fileReader.onload = (event) => {
-            eachImageContainer.innerHTML = `<img src="${event.target.result}"/>`;
-            let inputArea = fileContainer.querySelector('#hotelImagePost');
-            console.log(inputArea);
-            // inputArea.setAttribute('disabled', 'disabled');
-            deleteIconArea.addEventListener('click', (event) => {
-                removeTheElement(event.target);
-            });
-        };
+    // const fileReader = new FileReader();
+    //     fileReader.readAsDataURL(imgFile);
+    //     fileReader.onload = (event) => {
+    //         eachImageContainer.innerHTML = `<img src="${event.target.result}"/>`;
+    //         let inputArea = fileContainer.querySelector('#hotelImagePost');
+    //         console.log(inputArea);
+    //         // inputArea.setAttribute('disabled', 'disabled');
+    //         deleteIconArea.addEventListener('click', (event) => {
+    //             removeTheElement(event.target);
+    //         });
+    //     };
 
     if (imgFile) {
         const formData = new FormData();
