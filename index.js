@@ -75,6 +75,7 @@ const HOTEL_ROUTE = require('./router/Hotel/Hotel.js');
 const BECOMEHOST_ROUTE = require('./router/BecomeHost/BecomeHost.js');
 //const ACCOUNT_ROUTE = require('./router/Account/Account.js');
 const USER_ROUTE = require('./router/User/User.js');
+const { encode } = require('./modules/profilePhotoHelper');
 app.use(HOTEL_ROUTE);
 app.use(BECOMEHOST_ROUTE);
 app.use(USER_ROUTE);
@@ -188,35 +189,8 @@ app.post('/auth/login', async (req, res) => {
                     res.status(200).redirect('/');
                 });
                 
-                // console.log(req.cookies);
-                //make the data fo the user
-                // let sess = req.session;
-                
-                // var mailOptions = {
-                //     from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                //     to: results[0].email,
-                //     subject: 'Test sending email',
-                //     text: 'That was easy!'
-                // };
-                // transporter.sendMail(mailOptions, (error, info) => {
-                //     if (error){
-                //         console.log(error);
-                //     }
-                //     else {
-                //         console.log('Email sent: ' + info.response);
-                //     }
-                // });
-                //make the data for the user's session
-                
                 // console.log(req.user);
                 console.log(req.session);
-                // res.status(200).render('pages/index', {
-                //     loginMessage: '',
-                //     registerMessage: '',
-                //     resetPasswordMessage: '',
-                //     modalStyle: '',
-                //     stayInWhere: ''
-                // });
                 //res.status(200).redirect('/');
             }
         });
@@ -254,7 +228,7 @@ app.post('/auth/register', (req, res) => {
         if(error) {
             console.log(error);
         }
-        //make sure that this render to the same page where the modal is opened
+        // make sure that this render to the same page where the modal is opened
         // this checks if there is an email already registered in the DB or not
         if (results.length > 0) {
             return res.render('pages/index', {
@@ -281,7 +255,10 @@ app.post('/auth/register', (req, res) => {
                     }
                     else {
                         var userId = answer[0].user_id;
-                        var userPassword = answer[0].password; 
+                        var userPassword = answer[0].password;
+                        // make a loop
+                        // go thru userPassword
+                        // use charAt to detect "/"
                         let transporter = nodemailer.createTransport({
                             service: 'gmail',
                             auth: {
@@ -289,12 +266,15 @@ app.post('/auth/register', (req, res) => {
                                 pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
                             }
                         });
+                        var userPasswordEncoded = encodeURIComponent(userPassword);
+                        console.log(userPassword);
+                        console.log(userPasswordEncoded);
                         var mailOptions = {
                             from: process.env.EMAIL_HOTELFINDER_ADDRESS,
                             to: email,
                             subject: 'Test sending email',
                             text: 'That was easy!',
-                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="http://localhost:8080/confirm_account/${userId}/${userPassword}">http://localhost:8080/confirm_account/${userId}/${userPassword}</a></div>`
+                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}">http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}</a></div>`
                         };
                         transporter.sendMail(mailOptions, (error, info) => {
                             if (error){
@@ -319,8 +299,10 @@ app.post('/auth/register', (req, res) => {
 app.get('/confirm_account/:user_id/:password', (req, res) => {
     let userId = req.params.user_id;
     let password = req.params.password;
+    let passwordDecoded = decodeURI(password);
     let isConfirmed = true;
-    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, password], (error, results) => {
+    console.log(passwordDecoded);
+    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded], (error, results) => {
         if (error) {
             console.log(error);
         }
@@ -419,7 +401,7 @@ app.get('/facebook', passport.authenticate('facebook'));
 
 app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/facebook/failed' }),
     function(req, res) {
-        console.log(req.user);
+        // console.log(req.user);
 
         // =============
         // first way to do it
@@ -445,7 +427,8 @@ app.get('/facebook/good', (req, res) => {
     // console.log(data.emails[0]);
     // console.log(data.displayName);
     var currAction = req.cookies.accountAction;
-    
+    var facebookEmail = data.emails[0].value;
+
     let userDetailLogin = {
         email: ''
     }
@@ -456,27 +439,105 @@ app.get('/facebook/good', (req, res) => {
     let isLoggedIn = req.session.user == null ? false : true;
     if (currAction === 'register') {
         userDetailRegister = {
-            email: data.emails[0].value,
+            email: facebookEmail,
             username: data.displayName
         }
+        return res.render('pages/index', {
+            isLoggedIn: isLoggedIn,
+            registerMessage: '',
+            loginMessage: '',
+            resetPasswordMessage: '',
+            modalStyle: 'block',
+            stayInWhere: currAction,
+            formDataLogin: userDetailLogin,
+            formDataRegister: userDetailRegister
+        });
     }
     else if (currAction === 'login') {
-        userDetailLogin = {
-            email: data.emails[0].value
-        }
+        // userDetailLogin = {
+        //     email: facebookEmail
+        // }
+        db.query('SELECT * FROM USER WHERE email = ?', [facebookEmail], (error, results) => {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                // if user is not registered yet
+                if (results.length < 1) {
+                    currAction = 'register';
+                    userDetailRegister = {
+                        email: facebookEmail,
+                        username: data.displayName
+                    }
+                    return res.render('pages/index', {
+                        isLoggedIn: isLoggedIn,
+                        registerMessage: '',
+                        loginMessage: '',
+                        resetPasswordMessage: '',
+                        modalStyle: 'block',
+                        stayInWhere: currAction,
+                        formDataLogin: userDetailLogin,
+                        formDataRegister: userDetailRegister
+                    });
+                }
+                // if user is already registered
+                if (results.length > 0) {
+                    //check if the account is registered or not yet
+                    userDetailLogin = {
+                        email: facebookEmail
+                    }
+                    if(!results[0].isConfirmed) {
+                        return res.status(401).render('pages/index', {
+                            isLoggedIn: isLoggedIn,
+                            registerMessage: '',
+                            loginMessage: "Account is not confirmed yet. Check your email",
+                            resetPasswordMessage: '',
+                            modalStyle: "block",
+                            stayInWhere: 'login',
+                            formDataLogin: userDetailLogin,
+                            formDataRegister: userDetailRegister
+                        })
+                    }
+                    else {
+                        const userId = results[0].user_id;
+                        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+                            expiresIn: process.env.JWB_EXPIRES_IN
+                        })
+                        // console.log("Token: " + token);
+                        const cookieOptions = {
+                            expires: new Date(
+                                Date.now() + process.env.JWT_COOKIE_EXPRESS * 24 * 60 * 60 * 1000
+                            ),
+                            httpOnly: true
+                        }
+                        db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ? AND is_main = ?`, [userId, true], async (error, photo) => {
+                            let profile_img = (Object.keys(photo).length === 0) ? null : photo[0].img_id;
+                            res.cookie('jwt', token, cookieOptions);
+                            req.user = results[0];
+                            req.user.profile_img = profile_img;
+                            req.session.user = req.user;
+                            req.session.isLoggedIn = true;
+                            // console.log(req.session);
+                            // console.log(req.session.user);
+                            res.status(200).redirect('/');
+                        });
+                    }
+                }
+            }
+        })
     }
     
     // console.log(data);
-    return res.render('pages/index', {
-        isLoggedIn: isLoggedIn,
-        registerMessage: '',
-        loginMessage: '',
-        resetPasswordMessage: '',
-        modalStyle: 'block',
-        stayInWhere: currAction,
-        formDataLogin: userDetailLogin,
-        formDataRegister: userDetailRegister
-    });
+    // return res.render('pages/index', {
+    //     isLoggedIn: isLoggedIn,
+    //     registerMessage: '',
+    //     loginMessage: '',
+    //     resetPasswordMessage: '',
+    //     modalStyle: 'block',
+    //     stayInWhere: currAction,
+    //     formDataLogin: userDetailLogin,
+    //     formDataRegister: userDetailRegister
+    // });
 });
 
 app.get('/facebook/failed', (req, res) => {
@@ -515,7 +576,7 @@ app.get('/google/good', (req, res) => {
     // second way to do it
     // =============
 
-    console.log(req.cookies);
+    // console.log(req.cookies);
     var data = req.cookies.profile;
     var currAction = req.cookies.accountAction;
     var googleEmail = data.email;
@@ -527,40 +588,105 @@ app.get('/google/good', (req, res) => {
         email: '',
         username: ''
     }
-
+    let isLoggedIn = req.session.user == null ? false : true;
+    //this action is taken if using google to register
     if (currAction === 'register') {
         userDetailRegister = {
             email: googleEmail,
             username: data.displayName
         }
+        return res.render('pages/index', {
+            isLoggedIn: isLoggedIn,
+            registerMessage: '',
+            loginMessage: '',
+            resetPasswordMessage: '',
+            modalStyle: 'block',
+            stayInWhere: currAction,
+            formDataLogin: userDetailLogin,
+            formDataRegister: userDetailRegister
+        });
     }
+    //this action is taken if using google to login
     else if (currAction === 'login') {
-        userDetailLogin = {
-            email: googleEmail
-        }
-    }
-    let isLoggedIn = req.session.user == null ? false : true;
-    // console.log(data);
-    db.query('SELECT * FROM USER WHERE email = ?', [googleEmail], (error, results) => {
-        if (error) {
-            console.log(error);
-        }
-        else {
-            if (results.length < 1) {
-                db.query('SELECT * FROM USER')
+        db.query('SELECT * FROM USER WHERE email = ?', [googleEmail], (error, results) => {
+            if (error) {
+                console.log(error);
             }
-        }
-    })
-    return res.render('pages/index', {
-        isLoggedIn: isLoggedIn,
-        registerMessage: '',
-        loginMessage: '',
-        resetPasswordMessage: '',
-        modalStyle: 'block',
-        stayInWhere: currAction,
-        formDataLogin: userDetailLogin,
-        formDataRegister: userDetailRegister
-    });
+            else {
+                // if user is not registered yet
+                if (results.length < 1) {
+                    currAction = 'register';
+                    userDetailRegister = {
+                        email: googleEmail,
+                        username: data.displayName
+                    }
+                    return res.render('pages/index', {
+                        isLoggedIn: isLoggedIn,
+                        registerMessage: '',
+                        loginMessage: '',
+                        resetPasswordMessage: '',
+                        modalStyle: 'block',
+                        stayInWhere: currAction,
+                        formDataLogin: userDetailLogin,
+                        formDataRegister: userDetailRegister
+                    });
+                }
+                // if user is already registered
+                if (results.length > 0) {
+                    //check if the account is registered or not yet
+                    userDetailLogin = {
+                        email: googleEmail
+                    }
+                    if(!results[0].isConfirmed) {
+                        return res.status(401).render('pages/index', {
+                            isLoggedIn: isLoggedIn,
+                            registerMessage: '',
+                            loginMessage: "Account is not confirmed yet. Check your email",
+                            resetPasswordMessage: '',
+                            modalStyle: "block",
+                            stayInWhere: 'login',
+                            formDataLogin: userDetailLogin,
+                            formDataRegister: userDetailRegister
+                        })
+                    }
+                    else {
+                        const userId = results[0].user_id;
+                        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+                            expiresIn: process.env.JWB_EXPIRES_IN
+                        })
+                        // console.log("Token: " + token);
+                        const cookieOptions = {
+                            expires: new Date(
+                                Date.now() + process.env.JWT_COOKIE_EXPRESS * 24 * 60 * 60 * 1000
+                            ),
+                            httpOnly: true
+                        }
+                        db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ? AND is_main = ?`, [userId, true], async (error, photo) => {
+                            let profile_img = (Object.keys(photo).length === 0) ? null : photo[0].img_id;
+                            res.cookie('jwt', token, cookieOptions);
+                            req.user = results[0];
+                            req.user.profile_img = profile_img;
+                            req.session.user = req.user;
+                            req.session.isLoggedIn = true;
+                            // console.log(req.session);
+                            // console.log(req.session.user);
+                            res.status(200).redirect('/');
+                        });
+                    }
+                }
+            }
+        })
+    }
+    // return res.render('pages/index', {
+    //     isLoggedIn: isLoggedIn,
+    //     registerMessage: '',
+    //     loginMessage: '',
+    //     resetPasswordMessage: '',
+    //     modalStyle: 'block',
+    //     stayInWhere: currAction,
+    //     formDataLogin: userDetailLogin,
+    //     formDataRegister: userDetailRegister
+    // });
     // res.send(`Hello!! Google OAuth is a success!!`);
     // res.send(`Hello, ${req.cookies.profile.displayName}!!!`);
     // res.render('pages/tryGoogle', {
