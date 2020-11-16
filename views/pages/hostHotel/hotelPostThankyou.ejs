@@ -4,11 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanks for posting hotel</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hotelPostThankyou.css">
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
 </head>
+
 <body>
-    <h2>Thanks for Posting a hotel through Hotel Finder</h2>
-    <p><%=tempPostedHotelId%></p>
-    <p><%=hotelDataObj.hotel_name%></p>
-    <p><%=hotelDataObj.hotel_price%></p>
+    <div class="loader-wrapper">
+        <span class="loader"><span class="loader-inner"></span></span>
+    </div>
+    <section class="body_element">
+        <!-- Navigation Parital View -->
+        <%- include('../../partials/navigation') %>
+        <section class="thanks_for_posting_header">
+            <h2>Hotel Name: <%=hotelDataObj.hotel_name%> had been posted successfully</h2>
+            <small>Do not worry if the photos are not completed</small>
+            <small>You can always upload more photo through editing section</small>
+        </section>
+        <section class="thanks_for_posting_hotel_thankyou_container">
+            <div class="thanks_for_posting_comment_container">
+                <header class="thanks_for_posting_comment_header">
+                    <h1>Thank you for posting the hotel through Hotel Finder</h1>
+                </header>
+                <div class="congrat_image_hotel_post_container">
+                    <img class="congrat_image_hotel_post" src="/images/successfully_post.jpg" alt="congrat image for successfully post hotel">
+                </div>
+                <main>
+                    <h3 class="thanks_for_posting_email">We have sent 
+                        <span>Thanks you email to your email account</span> 
+                    </h3>
+                </main>
+            </div>
+        </section>    
+        <%- include('../../partials/footer') %>
+    </section>
 </body>
+<script src="/js/HostHotel/hotelPostThankyouLoading.js">
+</script>
 </html>
