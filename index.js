@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const methodOverride = require('method-override');
 // const redis = require('redis');
 // const redisStore = require('connect-redis')(session);
 // const client  = redis.createClient();
@@ -17,6 +18,7 @@ const cookieParser = require('cookie-parser');
 // ==========================================
 // Helper Functions =========================
 const authMW = require('./modules/auth');
+const trim = require('./modules/trim-city');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -45,6 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(methodOverride("_method"));
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(session({secret:"this is your secret key"}));

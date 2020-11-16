@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Finder - Hotel Detail</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="/css/hotelDetail.css">
+    <!-- Partial View CSS -->
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+    <div class="loader-wrapper">
+        <span class="loader"><span class="loader-inner"></span></span>
+    </div>
+    <section class="body_element">
+        <%- include('../../partials/navigation') %>
+        <!-- Header Section -->
+        <section class="hotelDetail_content_container">
+            <section class="hotelDetail_header_section">
+                <div class="hotelDetail_header_intro">
+                    <h1 class="hotelDetail_header_title">Hotel Detail Page</h1>
+                    <small class="hotelDetail_header_small">Selected Hotel Name: <%= hotelDataObj.hotel_name%></small>      
+                </div>
+                <div class="hotelDetail_header_options">
+                    <!-- Place Btn -->
+                    <a class="hotelDetail_header_edit_btn" href="/become-host/hotel/<%=hotelDataObj.hotel_id%>/edit">Edit</a>
+                    <form id="hotelDetail_delete_form" action="/become-host/hotel/<%=hotelDataObj.hotel_id%>?_method=DELETE" method="POST">
+                        <button class="hotelDetail_header_delete_btn">Delete</button>
+                    </form>
+                </div>
+            </section>
+            <!-- Main Section -->
+            <section class="hotelDetail_main_section">
+                 <!-- Image Container Section  -->
+                <section class="hotelDetail_main_image_section">
+                    <div class="hotelDetail_main_image_container">
+                        <div class="hotelDetail_main_image">
+                            <img class="hotelDetail_big_image" src="<%=imageArray[0]%>" alt="hotel main image"/>
+                        </div>
+                        <div class="hotelDetail_sub_image">
+                            <% for (let i = 1; i < 5; i++) { %>
+                                <% if (imageArray[i]) { %>
+                                    <img class="hotelDetail_small_image" src="<%=imageArray[i]%>" alt="hotel sub image"/>
+                                <% } else { %>
+                                    <img class="hotelDetail_small_image" src="/images/userHotelPost.jpg" alt="user not posted default hotel image">
+                                <% } %>
+                            <% } %>
+                            <% if (imageArray.length > 5) { %>
+                                <button class="hotelDetail_more_image_btn">Show More</button>
+                            <% } %>  
+                        </div>
+                    </div>
+                 </section>
+                 <!-- Main Hotel Content Section -->
+                 <section class="hotelDetail_main_content_section">
+                    <div class="hotelDetail_main_content">
+                        <h3>Hotel Name:<span class="hotelDetail_main_content_item"><%=hotelDataObj.hotel_name%></span></h3>
+                        <h3>Hotel Price: <span class="hotelDetail_main_content_item">$<%=hotelDataObj.hotel_price.toFixed(2)%></span></h3>
+                        <h3>Hotel Address: <span class="hotelDetail_main_content_item"><%=hotelDataObj.address%></span></h3>
+                        <h3>Hotel Country: <span class="hotelDetail_main_content_item"><%=hotelDataObj.country%></span></h3>
+                        <h3>Hotel Country: <span class="hotelDetail_main_content_item"><%=hotelDataObj.city%></span></h3>
+                    </div>
+                    <div id="map"style="width: 100%; height: 300px;">
+    
+                    </div>
+                 </section>
+            </section>
+        </section>
+        <!-- =============================== -->
+        <!-- =========Create Modal========== -->
+        <!-- =============================== -->
+        <div class="modal" id="myModal">
+            <header>
+                <span class="close_modal_btn">&times;</span>
+                <p class="modal_img_counter"></p>
+            </header>
+            <i class="fas fa-chevron-circle-left modal-left"></i>
+            <main class="modal_image_container">
+                <% for (let i = 0; i < imageArray.length; i++) { %>
+                    <img class="modal_img" src="<%=imageArray[i]%>" alt="user posted hotel images" images-in-modal="<%=imageArray[i]%>"/>
+                <% } %>
+            </main>
+            <i class="fas fa-chevron-circle-right modal-right"></i>
+        </div>
+        <!-- =============================== -->
+        <!-- End of Modal ================== -->
+        <!-- =============================== -->
+        <br>
+        <hr>
+        <%- include('../../partials/footer') %>
+    </section>
+    
+</body>
+<script async defer 
+    src="/js/HostHotel/hotelPostThankyouLoading.js">
+</script>
+<script async defer>
+    function initMapInThanksForPosting() {
+        let map;
+        let address = <%-JSON.stringify(hotelDataObj.address) %>;
+	    map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 18,
+            draggable:false
+	    });
+	    const geocoder = new google.maps.Geocoder();
+	    geocoder.geocode({
+	    	'address': address
+	    }, (results, status) => {
+	    	if(status == google.maps.GeocoderStatus.OK) {
+	    		console.log("It got in OK Status");
+	    		console.log("GEO Location: ", results[0].geometry.location);
+	    		new google.maps.Marker({
+	    		   position: results[0].geometry.location,
+	    		   map: map
+	    		});
+	    		map.setCenter(results[0].geometry.location);
+	    	 } else {
+	    		 console.log("Something is wrong on your map");
+	    	 }
+	    });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&libraries=geometry,places&callback=initMapInThanksForPosting">
+</script>
+<script async defer
+    src="/js/hostHotel/hotelDetail.js">
+</script>
+<script async defer 
+    src="/js/hostHotel/hotelDetailDelete.js">
+</script>
+</html>
