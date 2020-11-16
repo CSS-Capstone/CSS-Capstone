@@ -234,7 +234,57 @@ router.get('/become-host/hotel/:id', async (req, res) => {
             });
         });
     });
+});
 
+// Render Hotel Edit Page
+router.get('/become-host/hotel/:id/edit', async (req, res) => {
+    let targetHotelId = req.params.id;
+    let hotelDataObj = '';
+    let imageArray = new Map();
+    let findHotelFromDB = `SELECT * FROM HOTEL WHERE hotel_id = ${targetHotelId}`;
+    let findHotelImageFromDB = `SELECT hotel_img_id FROM HOTEL AS H INNER JOIN USER_HOTEL_IMAGE AS HI ON HI.hotel_id = H.hotel_id WHERE HI.hotel_id = ${targetHotelId}`;
+    try {
+        db.query(findHotelFromDB, async (error, result) => {
+            if (error) {
+                console.log(error);
+                console.log("Error happend during retrieve hotel for editing page");
+                throw error;
+            }
+            try {
+                hotelDataObj = result[0];
+                db.query(findHotelImageFromDB, async (err, imageResult) => {
+                    if (err) {
+                        console.log("Error happend during retrieve hotel image for editing page");
+                        throw err;
+                    }
+                    for (let i = 0; i < imageResult.length; i++) {
+                        console.log("got in here");
+                        let params = {
+                            Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                        ,   Key: `${imageResult[i].hotel_img_id}`
+                        };
+                        let eachImageData = await s3.s3.getObject(params).promise();
+                        let imageData = eachImageData.Body;
+                        let buff = Buffer.from(imageData);
+                        let base64data = buff.toString('base64');
+                        let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+                        imageArray.set(imageResult[i].hotel_img_id, imageDOM);
+                    }
+                    res.render('pages/hostHotel/hotelEdit', 
+                    {
+                        targetHotelId:targetHotelId
+                    ,   hotelDataObj:hotelDataObj
+                    ,   imageArray:imageArray
+                });
+                    
+                });
+            } catch (err) {
+                console.err(err);
+            } 
+        });
+    } catch (error) {
+        console.err(error);
+    }
 });
 
 module.exports = router;
