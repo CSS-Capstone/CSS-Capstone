@@ -287,4 +287,128 @@ router.get('/become-host/hotel/:id/edit', async (req, res) => {
     }
 });
 
+// Action method for edit hotel
+router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) => {
+    let userID = req.session.user.user_id;
+    let newHotelImageData = req.files;
+    let newHotelId = req.body.editHotelId;
+    let newHotelLabel = req.body.hotelLabel;
+    let newHotelPrice = req.body.hotelPrice;
+    let newHotelLocation = req.body.hotelLocation;
+    let hotelLocationTrimmedForDB = trimCityNameHelper.trimCityNameAndCountryName(newHotelLocation);
+    // Datas to insert DB after trim by using trim helper functions
+    let newHotelCity = hotelLocationTrimmedForDB[0];
+    let newHotelCountry = hotelLocationTrimmedForDB[1];
+    let newHotelStreetAddress = req.body.hotel_location_street;
+    let parsedImageData = trimCityNameHelper.addSemiToEachImageData(req.body.imageId);
+    // console.log(parsedImageData.toString());
+    // Update Query for plain hotel data
+    let updateHotelDataQuery = `UPDATE HOTEL SET 
+                                hotel_name=?,
+                                hotel_price=?, 
+                                country=?, 
+                                city=?, 
+                                address=? 
+                                where hotel_id=?`;
+    let dataForHotelQuery = [newHotelLabel, newHotelPrice, newHotelCountry, newHotelCity, newHotelStreetAddress, newHotelId];
+    let updateHotelImageDataQuery = `SELECT hotel_img_id 
+                                     FROM USER_HOTEL_IMAGE
+                                     WHERE hotel_img_id
+                                     NOT IN (${parsedImageData.toString()})
+                                     AND hotel_id = ${newHotelId}`;
+    
+    //  Updating hotel data
+    db.query(updateHotelDataQuery, dataForHotelQuery, async (error, results, fields) => {
+        if (error) {
+            console.log("Error on Editing hotel data");
+            throw error;
+        }
+        console.log('Rows for editing hotel data affected:', results.affectedRows);
+        // Update pre-existing image data
+        db.query(updateHotelImageDataQuery, async (error, imageFilterResult) => {
+            if (error) {
+                console.log("Error on retrieving hotel image data");
+                throw error;
+            }
+            // ====================================================
+            // Loop over deleted image and delete the image from DB
+            for (let i = 0; i < imageFilterResult.length; i++) {
+                let targetDeleteImg = `'${imageFilterResult[i].hotel_img_id}'`;
+                console.log(targetDeleteImg);
+                // delete from database
+                let deleteTargetImageDataQuery = `DELETE FROM USER_HOTEL_IMAGE WHERE hotel_img_id = ${targetDeleteImg}`;
+                let params = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                ,   Key: `${imageFilterResult[i].hotel_img_id}`
+                };
+                s3.s3.deleteObject(params, (err, data) => {
+                    if (err) {
+                        console.log("Error on deleting from S3");
+                        console.log(err);
+                        throw err;
+                    }
+                    console.log("Successfully Deleted Image from S3")
+                    db.query(deleteTargetImageDataQuery, async (error, result) => {
+                        if (error) {
+                            console.log("Error on Deleting before editing image");
+                            console.log(error);
+                            throw error;
+                        }
+                        console.log('Rows for editing hotel data affected:', result.affectedRows);
+                    });
+                });
+            }
+            // INSERT NEW IMAGES
+            if (newHotelImageData.length !== 0) {
+                for (let i = 0; i < newHotelImageData.length; i++) {
+                    console.log("Upload new images proceed");
+                    let eachNewImageData = newHotelImageData[i];
+                    console.log(eachNewImageData);
+                    if (eachNewImageData.mimetype === 'image/jpg' || eachNewImageData.mimetype == 'image/jpeg' || eachNewImageData.mimetype == 'image/png') {
+                        console.log("Upload new image Type is valid");
+                    //     console.log(eachNewImageData);
+                        let splitByDataType = eachNewImageData.originalname.split(".");
+                        let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
+                        let fullHotelImageName = newHotelId + '_' + userID + '_'  + fileName + '.' + splitByDataType[1];
+                    //     // PARAMETER FOR UPLOAD IN S3 BUCKET
+                        let uploadImgParams = {
+                            Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                        ,   Key: `${fullHotelImageName}`
+                        ,   Body: eachNewImageData.buffer
+                        };
+                        s3.s3.upload(uploadImgParams, (error, data) => {
+                            if (error) {
+                                console.log("Error on new image upload to S3");
+                                res.status(500).send(error);
+                            }
+                            console.log("=========== AWS S3 Upload Success ==========");
+                            let newUploadHotelImageId = data.key;
+                            let newUploadHotelImageFileLocation = data.Location;
+                            const insertNewHotelImageQuery = "INSERT INTO `css-capstone`.USER_HOTEL_IMAGE SET ?";
+                            db.query(insertNewHotelImageQuery, 
+                                {
+                                    user_id: userID
+                                ,   hotel_img_id: fullHotelImageName
+                                ,   hotel_img: newUploadHotelImageFileLocation
+                                ,   hotel_id: newHotelId
+                                }, (err, newImageUploadResult) => {
+                                    if (err) {
+                                        console.log("DB: Error on upload new images");
+                                        console.log(err);
+                                        throw err;
+                                    }
+                                console.log("Edit: New upload image to database completed successfully");
+                            });
+                        });
+                    } else {
+                        console.log("Your file does not contain image");
+                    }
+                }
+            }
+            // If the length of the image is empty (NO NEW UPLOAD IMAGES)
+            res.redirect('/');
+        });
+    });
+});
+
 module.exports = router;

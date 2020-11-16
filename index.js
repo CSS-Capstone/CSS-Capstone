@@ -46,6 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(methodOverride("_method"));
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(session({secret:"this is your secret key"}));
