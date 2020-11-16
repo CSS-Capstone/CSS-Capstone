@@ -363,7 +363,6 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
                 for (let i = 0; i < newHotelImageData.length; i++) {
                     console.log("Upload new images proceed");
                     let eachNewImageData = newHotelImageData[i];
-                    console.log(eachNewImageData);
                     if (eachNewImageData.mimetype === 'image/jpg' || eachNewImageData.mimetype == 'image/jpeg' || eachNewImageData.mimetype == 'image/png') {
                         console.log("Upload new image Type is valid");
                     //     console.log(eachNewImageData);
@@ -407,6 +406,71 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
             }
             // If the length of the image is empty (NO NEW UPLOAD IMAGES)
             res.redirect('/');
+        });
+    });
+});
+
+// Delete Post Action Method
+router.delete('/become-host/hotel/:id', async (req, res) => {
+    let target_hotel_id = req.params.id;
+    console.log(target_hotel_id);
+    const SELECT_IMAGE_QUERY = `SELECT hotel_img_id
+                                FROM USER_HOTEL_IMAGE
+                                WHERE hotel_id=?`;
+    const DELETE_HOTE_IMAGE_QUERY = `DELETE 
+                                     FROM USER_HOTEL_IMAGE
+                                     WHERE hotel_id=?`;
+    const DELETE_HOTEL_QUERY = `DELETE
+                                FROM HOTEL
+                                WHERE hotel_id=?`;
+    let deleteS3Objects = [];
+    db.query(SELECT_IMAGE_QUERY, target_hotel_id , async (error, selectResults) => {
+        if (error) {
+            console.log("ERROR: SELECT ITEMS TO DELETE");
+            console.log(error);
+            throw error;
+        }
+        // LOOP to generate KEY VALUE for S3 Delete
+        for (let i = 0; i < selectResults.length; i++) {
+            deleteS3Objects.push({Key: `${selectResults[i].hotel_img_id}`})
+        }
+        // console.log(deleteS3Objects);
+        console.log("Start to Delete on S3");
+        let options = {
+            Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+        ,   Delete: {
+                Objects:
+                    deleteS3Objects
+            }
+        };
+        console.log(deleteS3Objects);
+        s3.s3.deleteObjects(options, (errS3, data) => {
+            if (errS3) {
+                console.log("ERROR: S3 Image Delete");
+                console.log(errS3);
+                throw errS3;
+            }
+            console.log("======= AWS S3 Successed ========");
+            console.log("======= Deleted From S3 =========");
+        });
+        // Delete Hotel Image data from DB
+        db.query(DELETE_HOTE_IMAGE_QUERY, target_hotel_id, async(deleteError, deleteReulstRows) => {
+            if (deleteError) {
+                console.log("ERROR: DELETE IMAGES FROM DATABASE");
+                console.log(deleteError);
+                throw deleteError;
+            }
+            console.log('DELETE IMAGES ROWS AFFECTED: ',deleteReulstRows.affectedRows);
+            // Delete the hotel data from DB
+            db.query(DELETE_HOTEL_QUERY, target_hotel_id, async(deleteHotelError, deleteHotelResult) => {
+                if (deleteHotelError) {
+                    console.log("ERROR: DELETE HOTEL FROM DATABASE");
+                    console.log(deleteHotelError);
+                    throw deleteHotelError;
+                }
+                console.log('Affected ROWS for Delete Hotel Data', deleteHotelResult.affectedRows);
+                res.redirect('/');
+            });
         });
     });
 });
