@@ -8,18 +8,18 @@ const dotenv = require('dotenv');
 const db = require('../../utilities/db.js');
 const uuid = require('uuid');
 const multer = require('../../utilities/multer.js');
-const nodemailer = require('nodemailer');
 ///////////////////////////////////
 // multer to AWS S3 upload logics
 ///////////////////////////////////
 const s3 = require('../../utilities/s3');
 ////////////////////////////////////
 /////////// NODE MAILER ////////////
+const nodemailer = require('nodemailer');
 let transporter = nodemailer.createTransport({
-    service: "hotmail",
+    service: "gmail",
     auth: {
-      user: "hotelfinder114@outlook.com",
-      pass: "Hotel0505114"
+      user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+      pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
     }
 });
 
@@ -160,11 +160,12 @@ router.get('/become-host/postHotelThankyou', async (req, res) => {
             throw err;
         } 
         hotelDataObj = resultHotel[0];
+        let targetEmailAccount = req.session.user.email;
         console.log("THANK_YOU: Hotel Data");
         console.log(hotelDataObj);
         let info = await transporter.sendMail({
-            from: "hotelfinder114@outlook.com", // sender address
-            to: "jhpp114nemo@gmail.com", // list of receivers
+            from: process.env.EMAIL_HOTELFINDER_ADDRESS, // sender address
+            to: targetEmailAccount, // list of receivers
             subject:"Hotel Finder - Thank you for Posting ✔", // Subject line
             html: `<div><img width="400" height="400" src="cid:successImage"/> <h2>Thank you for posting Your hotel</h2> <p>Your Hotel,<strong>${hotelDataObj.hotel_name}</strong> located in ${hotelDataObj.address} had been posted! </p></div>` // html body
             ,attachments: [{
