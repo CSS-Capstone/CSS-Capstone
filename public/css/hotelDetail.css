@@ -1,0 +1,271 @@
+@import "global.css";
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.hotelDetail_content_container {
+    width: 85%;
+    margin: 0 auto;
+}
+
+/* ================================== */
+/* Header Section =================== */
+.hotelDetail_header_section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;   
+}
+
+.hotelDetail_header_intro {
+    flex: 1;
+}
+
+.hotelDetail_header_title {
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--color-nice-blue);
+}
+
+.hotelDetail_header_small {
+    color: var(--color-mid-grey);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.hotelDetail_header_options {
+    /* flex: 0.1; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hotelDetail_header_edit_btn {
+    padding: 0.5rem;
+    width: 120px;
+    text-align: center;
+    margin: 0rem 1rem;
+    text-decoration: none;
+    outline: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+    background-color: var(--color-nice-blue);
+    color: var(--color-background-grey);
+    border-radius: 2rem;
+}
+
+.hotelDetail_header_delete_btn {
+    padding: 0.5rem;
+    width: 120px;
+    text-align: center;
+    margin: 0rem 1rem;
+    text-decoration: none;
+    outline: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+    background-color: var(--color-warning);
+    color: var(--color-background-grey);
+    border-radius: 2rem;
+    cursor: pointer;
+}
+/* ==================================== */
+
+/* ==================================== */
+/* IMAGE ============================== */
+.hotelDetail_main_image_container {
+    display: flex;
+    justify-content: center;
+    align-content: space-around;
+    flex-wrap: wrap;
+    /* align-items: center; */
+}
+
+.hotelDetail_big_image {
+    width: 680px;
+    height: 600px;
+    -webkit-box-shadow: 3px 3px 5px 6px rgb(144, 144, 144);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    3px 3px 5px 6px rgb(149, 149, 149);  /* Firefox 3.5 - 3.6 */
+    box-shadow:         3px 3px 5px 6px rgb(143, 143, 143);
+    margin: 1rem;
+    cursor: pointer;
+    transition: all ease-in-out 0.3s;
+}
+
+.hotelDetail_big_image:hover {
+    transform: scale(0.98);
+}
+
+.hotelDetail_sub_image {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    position: relative;
+}
+
+.hotelDetail_small_image {
+    width: 320px;
+    height: 280px;
+    -webkit-box-shadow: 3px 3px 5px 6px rgb(144, 144, 144);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    3px 3px 5px 6px rgb(149, 149, 149);  /* Firefox 3.5 - 3.6 */
+    box-shadow:         3px 3px 5px 6px rgb(143, 143, 143);
+    margin: 1rem;
+    cursor: pointer;
+    transition: all ease-in-out 0.3s;
+}
+
+.hotelDetail_more_image_btn {
+    position: absolute;
+    bottom: 6%;
+    right: 5%;
+    padding: 0.5rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    z-index: 1;
+    background-color: var(--color-nice-blue);
+    font-weight: bold;
+}
+
+.hotelDetail_more_image_btn:hover {
+    color: var(--color-navy);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-navy);
+}
+
+.hotelDetail_small_image:hover {
+    transform: scale(0.98);
+}
+
+.hotelDetail_main_content_section {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.hotelDetail_main_content {
+    flex: 1;
+}
+
+.hotelDetail_main_content h3 {
+    color: var(--color-nice-blue);
+    font-weight: bold;
+    padding: 1rem;
+}
+
+.hotelDetail_main_content_item {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+#map {
+    /* background-color: blue; */
+    flex: 1;
+}
+/* ==================================== */
+/* ==================================== */
+/* MODAL ============================== */
+/* ============================== */
+/* ========= Modal CSS ========== */
+/* ============================== */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 10rem;
+    background-color: var(--color-footer-link);
+    background-color: rgba(243, 243, 243, 0.9);
+    z-index: 2;
+}
+
+.close_modal_btn {
+    position: absolute;
+    color: var(--color-footer-link);
+    font-size: 3rem;
+    top: 5rem;
+    left: 5rem;
+    cursor: pointer;
+}
+
+.close_modal_text {
+    font-size: 1rem;
+}
+.modal_image_container {
+    margin: 0 auto;
+    width: 80%;
+    height: 80%;
+}
+
+.modal_image_container > img {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: 100%;
+    border-radius: 2rem;
+}
+
+.modal-left {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    font-size: 2rem;
+    color: var(--color-footer-link);
+    cursor: pointer;
+}
+
+.modal-right {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    font-size: 2rem;
+    color: var(--color-footer-link);
+    cursor: pointer;
+}
+
+/* ======================================= */
+/* LOADING =============================== */
+.loader-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--color-nice-blue);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    border: 4px solid #Fff;
+    animation: loader 2s infinite ease;
+  }
+  .loader-inner {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
+    animation: loader-inner 2s infinite ease-in;
+  }
+  @keyframes loader {
+    0% { transform: rotate(0deg);}
+    25% { transform: rotate(180deg);}
+    50% { transform: rotate(180deg);}
+    75% { transform: rotate(360deg);}
+    100% { transform: rotate(360deg);}
+  }
+  @keyframes loader-inner {
+    0% { height: 0%;}
+    25% { height: 0%;}
+    50% { height: 100%;}
+    75% { height: 100%;}
+    100% { height: 0%;}
+  }

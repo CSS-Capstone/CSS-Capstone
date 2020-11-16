@@ -182,4 +182,59 @@ router.get('/become-host/postHotelThankyou', async (req, res) => {
     });
 });
 
+// Render Hotel Detail Page
+router.get('/become-host/hotel/:id', async (req, res) => {
+    let hotelId = req.params.id;
+    let hotel_user_id = req.session.user_id;
+    // Query and data set up
+    const findHotelQuery = `SELECT *
+                            FROM HOTEL
+                            WHERE hotel_id = ?`;
+                            
+    const findHotelImageQuery = `SELECT hotel_img_id
+                                 FROM USER_HOTEL_IMAGE
+                                 WHERE hotel_id = ?`;
+    let hotel_id_data = [hotelId];
+    // extra variable to store result data
+    let hotelDataObj = '';
+    let imageArray = [];
+    // retrieve hotel data from db
+    db.query(findHotelQuery, hotel_id_data, (err, hotelResult) => {
+        if (err) {
+            console.log("ERROR: hotel detail data retrieving from DB");
+            console.log(err);
+            throw err;
+        }
+        hotelDataObj = hotelResult[0];
+        console.log(hotelResult);
+        // console.log(`FROM DATABASE HOTEL DATA: ${hotelDataObj}`);
+        // retrieve hotel images from db
+        db.query(findHotelImageQuery, hotel_id_data, async (error, hotelImageResult) => {
+            if (error) {
+                console.log("ERROR: hotel detail image data retrieving from DB");
+                console.log(error);
+                throw new error;
+            }
+            for (let i = 0; i < hotelImageResult.length; i++) {
+                console.log("Detail Image Loop Entered");
+                let hotelDetailS3Param = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                ,   Key: `${hotelImageResult[i].hotel_img_id}`
+                };
+                let each_hotel_image_data = await s3.s3.getObject(hotelDetailS3Param).promise();
+                let each_hotel_image = each_hotel_image_data.Body;
+                let buffer = Buffer.from(each_hotel_image);
+                let base64data = buffer.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,' + base64data;
+                imageArray.push(imageDOM);
+            }
+            res.render('pages/hostHotel/hotelDetail', {
+                imageArray:imageArray
+            ,   hotelDataObj:hotelDataObj
+            });
+        });
+    });
+
+});
+
 module.exports = router;
