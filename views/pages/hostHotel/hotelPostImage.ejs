@@ -66,12 +66,13 @@
 <script>
     function initMap() {
         let map;
+        let address = <%-JSON.stringify(hotelPostData.hotel_location_street) %>;
 		map = new google.maps.Map(document.getElementById("map"), {
 			zoom: 18,
 		});
 		const geocoder = new google.maps.Geocoder();
 		geocoder.geocode({
-			'address': `12040 Aurora Avenue North, Seattle, WA, USA`
+			'address': address
 		}, (results, status) => {
 			if(status == google.maps.GeocoderStatus.OK) {
 				console.log("It got in OK Status");
