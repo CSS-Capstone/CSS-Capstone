@@ -26,7 +26,7 @@ passport.use(new facebookStrategy({
     clientID: process.env.FACEBOOK_CLIENT_ID,
     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-    profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email']
+    profileFields: ['id', 'displayName', 'name', 'email', 'gender', 'picture.type(large)']
 }, function(token, refreshToken, profile, done){
     // console.log(profile);
     return done(null, profile);  
