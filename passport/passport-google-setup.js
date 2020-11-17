@@ -25,7 +25,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://testssl.css-hotelfinder.net/google/callback',
+    callbackURL: 'https://testssl.css-hotelfinder.net/google/callback',
     passReqToCallback: true
 }, function(req, accessToken, refreshToken, profile, done){
     //console.log(profile);
