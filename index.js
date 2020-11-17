@@ -304,13 +304,13 @@ app.get('/confirm_account/:user_id/:password', (req, res) => {
     let password = req.params.password;
     let passwordDecoded = decodeURI(password);
     let isConfirmed = true;
-    console.log(passwordDecoded);
+    // console.log(passwordDecoded);
     db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded], (error, results) => {
         if (error) {
             console.log(error);
         }
         else {
-            console.log(results[0]);
+            // console.log(results[0]);
             return res.redirect('/');
         }
     });

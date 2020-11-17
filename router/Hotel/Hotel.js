@@ -24,6 +24,19 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
         if (hoteldata.status !== 'ok') {
             throw 'API Satus is bad';
         }
+        // if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0)
+        if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
+            console.log("No hotel and location fetched");
+            // query the top 20 or 25 hotel based on rate from DB
+            // query the countries where all the hotels exists in
+            // call pixabay api to get the photos for each country
+
+            // make two variables (decide how many variables needed to be passed in to errorSearchPage.ejs)
+            // 1. contains the hotel 
+            // 2. contains the countries and the photos
+            
+            return res.render('pages/hotel/errorSearchPage');
+        }
         // ========== Filter Data ==================
         // 1. get country name of the location
         const fullCountryName = hoteldata.results.locations[0].countryName;
