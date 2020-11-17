@@ -426,8 +426,8 @@ app.get('/facebook/callback', passport.authenticate('facebook', { failureRedirec
     });
 
 app.get('/facebook/good', (req, res) => {
-    console.log(req.cookies);
-    console.log(req.cookies.profile.emails);
+    // console.log(req.cookies);
+    // console.log(req.cookies.profile.emails);
     var data = req.cookies.profile;
     // console.log(data.emails[0]);
     // console.log(data.displayName);
