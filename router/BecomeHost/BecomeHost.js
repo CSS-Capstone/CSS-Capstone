@@ -301,7 +301,16 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
     let newHotelCity = hotelLocationTrimmedForDB[0];
     let newHotelCountry = hotelLocationTrimmedForDB[1];
     let newHotelStreetAddress = req.body.hotel_location_street;
-    let parsedImageData = trimCityNameHelper.addSemiToEachImageData(req.body.imageId);
+    
+    // imageId Exist Check
+    let isUndefined = true;
+    let parsedImageData = '';
+    console.log(req.body.imageId);
+    if (typeof (req.body.imageId) !== "undefined") {
+        parsedImageData = trimCityNameHelper.addSemiToEachImageData(req.body.imageId);
+        isUndefined = false;
+    }
+    
     // console.log(parsedImageData.toString());
     // Update Query for plain hotel data
     let updateHotelDataQuery = `UPDATE HOTEL SET 
@@ -312,12 +321,20 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
                                 address=? 
                                 where hotel_id=?`;
     let dataForHotelQuery = [newHotelLabel, newHotelPrice, newHotelCountry, newHotelCity, newHotelStreetAddress, newHotelId];
+    let undefineChekerQuery = '';
     let updateHotelImageDataQuery = `SELECT hotel_img_id 
                                      FROM USER_HOTEL_IMAGE
                                      WHERE hotel_img_id
                                      NOT IN (${parsedImageData.toString()})
                                      AND hotel_id = ${newHotelId}`;
-    
+    let deleteAllImageDataQuery = `SELECT hotel_img_id
+                                   FROM USER_HOTEL_IMAGE
+                                   WHERE hotel_id = ${newHotelId}`;
+    if (isUndefined) {
+        undefineChekerQuery = deleteAllImageDataQuery;
+    } else {
+        undefineChekerQuery = updateHotelImageDataQuery;
+    }
     //  Updating hotel data
     db.query(updateHotelDataQuery, dataForHotelQuery, async (error, results, fields) => {
         if (error) {
@@ -326,7 +343,7 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
         }
         console.log('Rows for editing hotel data affected:', results.affectedRows);
         // Update pre-existing image data
-        db.query(updateHotelImageDataQuery, async (error, imageFilterResult) => {
+        db.query(undefineChekerQuery, async (error, imageFilterResult) => {
             if (error) {
                 console.log("Error on retrieving hotel image data");
                 throw error;
