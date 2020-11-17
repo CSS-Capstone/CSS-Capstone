@@ -11,6 +11,8 @@ const passport = require('passport');
 const trimCityNameHelper = require('../../modules/trimCityNameHelper');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 const router = express.Router();
+const authMW = require('../../modules/auth');
+const db = require('../../utilities/db.js');
 
 router.get('/hotel/searched/:cityname', async (req, res) => {
     // API KEY will be hide to env
@@ -203,7 +205,8 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
             let cityName= cityAndCountryName[0];
             let isAPI = true;
             let isDeveloper = false;
-            let hotelInsertDataSet = [hotelName, temporaryHotelPrice, countryName, cityName, hotelCookieData.body.hotelLocation, isAPI, isDeveloper, temporaryUser_id, hotel_API_Id];
+            let hotelDefaultPrice = hotelCookieData.body.hotelDefaultPrice;
+            let hotelInsertDataSet = [hotelName, hotelDefaultPrice, countryName, cityName, hotelCookieData.body.hotelLocation, isAPI, isDeveloper, user_id, hotel_API_Id];
             //  ============== INSERT DATA FOR BOOKING ===================
             let bookingPrice = hotelCookieData.body.totalPrice;
             let bookingDate = new Date();

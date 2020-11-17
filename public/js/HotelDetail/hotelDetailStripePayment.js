@@ -48,6 +48,8 @@ function sendStripeDataForBack_End() {
     const hotelLocation = hotelLocationDOM.getAttribute('data-hotel-location');
     const hotelAddressDOM = document.querySelector('.hotelDetail_address');
     const hotelAddress = hotelAddressDOM.getAttribute('data-hotel-address');
+    const hotelRateAttribute = Number(hotelRateDOMEle.getAttribute('data-rate-value'));
+    const hotelDefaultPrice = grabAllHotelRate(hotelRateAttribute);
     console.log(hotelBookingId);
     console.log(theTotalHotelPriceStripe);
     console.log(hotelName);
@@ -62,6 +64,7 @@ function sendStripeDataForBack_End() {
     ,   hotelName: hotelName
     ,   hotelLocation: hotelLocation
     ,   hotelAddress: hotelAddress
+    ,   hotelDefaultPrice:hotelDefaultPrice
     // ,   tokenId: token.id
     }
     return body;
