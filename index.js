@@ -277,7 +277,7 @@ app.post('/auth/register', (req, res) => {
                             to: email,
                             subject: 'Test sending email',
                             text: 'That was easy!',
-                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}">http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}</a></div>`
+                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="https://testssl.css-hotelfinder.net/confirm_account/${userId}/${userPasswordEncoded}">https://testssl.css-hotelfinder.net/confirm_account/${userId}/${userPasswordEncoded}</a></div>`
                         };
                         transporter.sendMail(mailOptions, (error, info) => {
                             if (error){
