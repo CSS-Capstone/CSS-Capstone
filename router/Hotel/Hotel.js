@@ -71,7 +71,7 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
 });
 
 
-router.get('/hotel/searched/detail/:id', async (req, res) => {
+router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => {
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     const AirQualityKey = process.env.AIR_QUALITY_KEY;
     const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
@@ -168,22 +168,120 @@ router.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => 
     }
 });
 
-router.get('/hotel/searched/detail/:id/payment', (req, res) => {
+router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, res) => {
+    // ============== TEMP DATA ======================
+    const temporaryHotelPrice = 20;
+    const temporaryUser_id = 18;
+    const user_id = req.session.user.user_id;
+    // ===============================================
     let hotelCookieData = req.cookies.hotelBookingData;
-    //res.clearCookie("hotelBookingData");
-    console.log("From GET: ", hotelCookieData);
+    let COUNT_TO_CHECK_HOTEL_EXIST_DB_QUERY = `SELECT * FROM HOTEL WHERE api_hotel_id=?`;
+    let INSERT_API_TO_HOTEL_DB_QUERY = "INSERT INTO HOTEL (hotel_name, hotel_price, country, city, address, isAPI, isDeveloper, user_id, api_hotel_id) VALUES (?,?,?,?,?,?,?,?,?)";
+    let INSERT_BOOKING_DB_QUERY = `INSERT INTO BOOKING (booking_date, booking_price, user_id, hotel_id) VALUES (?,?,?,?)`; 
+    let api_hotel_id = Number(hotelCookieData.body.hotelId);
+    let queryCounter = 1;
+    console.log("HELLO WORLD");
+
+    const queryFinish = () => {
+        res.redirect(`/hotel/searched/detail/${hotelCookieData.body.hotelId}/paymentconfirm`);
+    }
+    db.query(COUNT_TO_CHECK_HOTEL_EXIST_DB_QUERY, api_hotel_id, (countError, countResult) => {
+        if (countError) {
+            console.log("ERROR: Hotel Existence Check");
+            console.log(countError);
+            throw countError;
+        }
+        console.log(countResult.length);
+        let lengthOfCountResult = countResult.length;
+        if (lengthOfCountResult == 0) {
+            console.log("it is zero"); 
+            // =============== INSERT DATA PREPARE ======================
+            let hotelName = hotelCookieData.body.hotelName.toString();
+            let hotel_API_Id = Number(hotelCookieData.body.hotelId);
+            let cityAndCountryName = trimCityNameHelper.trimCityNameAndCountryName(hotelCookieData.body.hotelLocation);
+            let countryName= cityAndCountryName[1];
+            let cityName= cityAndCountryName[0];
+            let isAPI = true;
+            let isDeveloper = false;
+            let hotelInsertDataSet = [hotelName, temporaryHotelPrice, countryName, cityName, hotelCookieData.body.hotelLocation, isAPI, isDeveloper, temporaryUser_id, hotel_API_Id];
+            //  ============== INSERT DATA FOR BOOKING ===================
+            let bookingPrice = hotelCookieData.body.totalPrice;
+            let bookingDate = new Date();
+            // INSERT HOTEL DATA INTO DATABASE
+            db.query(INSERT_API_TO_HOTEL_DB_QUERY, hotelInsertDataSet, (insertError, insertResult) => {
+                if (insertError) {
+                    console.log("ERROR: INSERT HOTEL FROM API TO DB ERROR");
+                    console.log(insertError);
+                    throw insertError;
+                }
+                console.log("AFFECTED DATA: ", insertResult.affectedRows);
+                console.log(insertResult.insertId);
+                let hotelID = insertResult.insertId;
+                let dataForBooking = [bookingDate, bookingPrice, user_id, hotelID];
+                // INSERT BOOKING DATA INTO DATABASE
+                db.query(INSERT_BOOKING_DB_QUERY, dataForBooking, async (errorBooking, resultBooking) => {
+                    if (errorBooking) {
+                        console.log("ERROR: INSERT BOOKING DATA TO DB ERROR");
+                        console.log(errorBooking);
+                        throw new errorBooking;
+                    }
+                    console.log("AFFECTD DATA FOR INSERTING BOOKING", resultBooking.affectedRows);
+                    console.log(resultBooking);
+                    queryCounter-=1;
+                    console.log(queryCounter);
+                    // res.clearCookie("hotelBookingData");
+                    if (queryCounter == 0) {
+                        // console.log("GOT IN TO NOT WORKING");
+                        queryFinish();
+                    }
+                });
+            });
+        } else {
+            console.log("it is not zero");
+            // console.log("SETTING UP DATA FOR NOT ZERO");
+            console.log(countResult[0].hotel_id);
+            let bookingPrice = hotelCookieData.body.totalPrice;
+            let bookingDate = new Date();
+            
+            let dataForBookingToExistingHotel = [bookingDate, bookingPrice, user_id, countResult[0].hotel_id];
+            db.query(INSERT_BOOKING_DB_QUERY, dataForBookingToExistingHotel, async (errorExistBooking, resultExistBooking) => {
+                if (errorExistBooking) {
+                    console.log("ERROR: ERROR ON EXISTING HOTEL BOOKING");
+                    console.log(errorExistBooking);
+                    throw errorExistBooking;
+                }
+                queryCounter-=1;
+                
+                console.log("Affected Existing Booking ROW: ", resultExistBooking.affectedRows);
+                console.log(queryCounter);
+                // res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
+                if (queryCounter == 0) {
+                    // console.log("GOT IN TO ALREADY EXISTING");
+                    queryFinish();
+                }
+            });
+        }
+    });
+});
+
+router.get('/hotel/searched/detail/:id/paymentconfirm', async (req, res) => {
+    let hotelCookieData = req.cookies.hotelBookingData;
+    let hotel_APi_data = req.params.id;
+    console.log(hotel_APi_data);
+    // res.clearCookie("hotelBookingData");
+    console.log(hotelCookieData);
     res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
 });
 
 router.post('/hotel/searched/detail/:id/payment', (req, res) => {
-    // console.log(res.status());
     const paymentData = req.body;
     const passingData = req.body.body;
+    // 
     console.log(passingData);
     let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
     hotelPrice = Number(hotelPrice);
-    console.log(paymentData);
-    console.log(`The Price: `, hotelPrice);
+    // console.log(paymentData);
+    // console.log(`The Price: `, hotelPrice);
     res.cookie('hotelBookingData', paymentData);
     // charge on stripe
     stripe.customers.create({
