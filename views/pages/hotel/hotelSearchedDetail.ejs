@@ -13,6 +13,46 @@
     <link rel="stylesheet" href="/css/footer.css">
     <!-- Stripe -->
     <!-- End of Stripe -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $( function() {
+                var dateFormat = "mm/dd/yy",
+                  from = $( "#from" )
+                    .datepicker({
+                      defaultDate: "+1w",
+                      changeMonth: true,
+                      numberOfMonths: 1,
+                      minDate: 0
+                    })
+                    .on( "change", function() {
+                      to.datepicker( "option", "minDate", getDate( this ) );
+                    }),
+                  to = $( "#to" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 1,
+                    minDate: 1
+                  })
+                  .on( "change", function() {
+                    from.datepicker( "option", "maxDate", getDate( this ) );
+                  });
+             
+                function getDate( element ) {
+                  var date;
+                  try {
+                    date = $.datepicker.parseDate( dateFormat, element.value );
+                  } catch( error ) {
+                    date = null;
+                  }
+             
+                  return date;
+                }
+              } );
+        } );
+    </script>
 </head>
 <body>
     <!-- Parital Navigation -->
@@ -77,35 +117,14 @@
                     </div>
                     <div class="hotelDetail_userinfo">
                         <div class="hotelDetail_address" data-hotel-address="<%=hotelObj.GEO_Formatted_Address%>">
-                            <h2>Hotel Address</h2>
-                            <p><%=hotelObj.GEO_Formatted_Address%></p>
-                            <h2>City Full Name</h2>
-                            <p><%=hotelObj.cityFullName%></p>
-                        </div>
-                        <div class="form_group">
-                            <label for="userFirstName">First Name: </label>
-                            <input type="text" id="userFirstName" placeholder="first name"/>
-                            <small class="validationUserFirstName"></small>
-                        </div>
-                        <div class="form_group">
-                            <label for="userLastName">Last Name: </label>
-                            <input type="text" id="userLastName" placeholder="last name"/>
-                            <span class="validationUserLastName"></span>
-                        </div>
-                        <div class="form_group">
-                            <label for="userEmail">Email: </label>
-                            <input type="email" id="userEmail" placeholder="email address"/>
-                            <span class="validation"></span>
-                        </div>
-                        <div class="form_group">
-                            <label for="userPhone">Phone: (xxx-xxx-xxxx): </label>
-                            <input 
-                                type="text" 
-                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}"
-                                placeholder="123-123-1234"
-                                id="userPhone"
-                            />
-                            <span class="validation"></span>
+                            <div class="hotel_address_info_conatiner">
+                                <h2>Hotel Address</h2>
+                                <p><%=hotelObj.GEO_Formatted_Address%></p>
+                            </div>
+                            <div class="hotel_city_info_container">
+                                <h2>City Full Name</h2>
+                                <p><%=hotelObj.cityFullName%></p>
+                            </div>
                         </div>
                         <div class="hotel_form_group">
                             <section class="hotelInfo_room_section">
@@ -138,6 +157,24 @@
                                     </select>
                                 </div>
                             </section>
+                        </div><br><br>
+                        <!-- DATE -->
+                        <div class="checkin_out_and_map_container">
+                            <div class="date_container">
+                                <div class="date_container_from">
+                                    <label for="from">From</label><br>
+                                    <input readonly type="text" id="from" name="from"><br><br>
+                                    <span class="checkDateValidation"></span>
+                                </div>
+                                <div class="date_container_to">
+                                    <label for="to">to</label><br>
+                                    <input readonly type="text" id="to" name="to"><br><br>
+                                    <span class="checkDateValidation"></span>
+                                </div>
+                            </div>
+                            <div id="map" style="width: 100%; height: 300px;">
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -296,4 +333,33 @@
 <script src="/js/HotelDetail/hotelDetailTabController.js" defer></script>
 <!-- Chart js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0" defer></script>
+<!-- MAP API -->
+<script>
+    function initMap() {
+        let map;
+        let address = "<%=hotelObj.GEO_Formatted_Address%>";
+	    map = new google.maps.Map(document.getElementById("map"), {
+	    	zoom: 14,
+	    });
+	    const geocoder = new google.maps.Geocoder();
+	    geocoder.geocode({
+	    	'address': address
+	    }, (results, status) => {
+	    	if(status == google.maps.GeocoderStatus.OK) {
+	    		console.log("It got in OK Status");
+	    		console.log("GEO Location: ", results[0].geometry.location);
+	    		new google.maps.Marker({
+	    		   position: results[0].geometry.location,
+	    		   map: map
+	    		});
+	    		map.setCenter(results[0].geometry.location);
+	    	 } else {
+	    		 console.log("Something is wrong on your map");
+	    	 }
+	    });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=initMap&libraries=&v=weekly">
+</script>
 </html>

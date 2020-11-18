@@ -125,6 +125,7 @@ body {
 
 .hotelDetail_main_booking_container {
     display: flex;
+    justify-content: space-between;
     width: 90%;
     height: 90%;
     margin: 0rem auto;
@@ -200,31 +201,32 @@ body {
     width: 70%;
     border-radius: 1rem;
     background-color: rgb(250, 250, 250);
+    margin-left: 2rem;
+    padding-bottom: 2rem;
 }
 
-.form_group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+.hotelDetail_address {
+    width: 90%;
+    margin: 0.5rem auto;
 }
 
-.form_group > label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    width: 25%;
+.hotel_address_info_conatiner h2 {
+    color: var(--color-nice-blue);
     font-weight: bold;
-    color: rgb(24, 111, 197);
 }
 
-.form_group > input {
-    padding: 0.5rem;
-    width: 40%;
-    border-radius: 2rem;
-    outline: none;
-    border: 2px solid rgb(24, 111, 197);
+.hotel_address_info_conatiner p {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+}
+
+.hotel_city_info_container h2 {
+    color: var(--color-nice-blue);
+    font-weight: bold;
+}
+
+.hotel_city_info_container p {
+    color: var(--color-dark-grey);
     font-weight: bold;
 }
 
@@ -282,6 +284,50 @@ body {
     border-radius: 0.5rem;
     outline: none;
     cursor: pointer;
+}
+
+.checkin_out_and_map_container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date_container {
+    flex: 1;
+}
+#map {
+    flex: 1;
+}
+.date_container_from > label {
+    color: var(--color-nice-blue);
+    font-weight: bold;
+}
+
+.date_container_from > input {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    width: 60%;
+    border: 1px solid var(--color-nice-blue);
+    outline: none;
+}
+
+.date_container_to > label {
+    color: var(--color-nice-blue);
+    font-weight: bold;
+}
+
+.date_container_to > input {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    width: 60%;
+    border: 1px solid var(--color-nice-blue);
+    outline: none;
+}
+
+.checkDateValidation {
+    color: var(--color-warning);
 }
 
 /* ====================== */

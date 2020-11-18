@@ -177,12 +177,22 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
     const user_id = req.session.user.user_id;
     // ===============================================
     let hotelCookieData = req.cookies.hotelBookingData;
+    // console.log("HOTEL PRICE");
+    // console.log(hotelCookieData.body.hotelDefaultPrice);
+    let hotelCheckInDateString = hotelCookieData.body.hotelCheckInDate;
+    let hotelCheckOutDateString = hotelCookieData.body.hotelCheckOutDate;
+    // console.log("Check in Date");
+    let hotelCheckInDate = new Date(hotelCheckInDateString);
+    let hotelCheckOutDate = new Date(hotelCheckOutDateString);
+    // console.log(hotelCheckInDate);
+    // console.log(typeof (hotelCheckInDate));
+
     let COUNT_TO_CHECK_HOTEL_EXIST_DB_QUERY = `SELECT * FROM HOTEL WHERE api_hotel_id=?`;
     let INSERT_API_TO_HOTEL_DB_QUERY = "INSERT INTO HOTEL (hotel_name, hotel_price, country, city, address, isAPI, isDeveloper, user_id, api_hotel_id) VALUES (?,?,?,?,?,?,?,?,?)";
-    let INSERT_BOOKING_DB_QUERY = `INSERT INTO BOOKING (booking_date, booking_price, user_id, hotel_id) VALUES (?,?,?,?)`; 
+    let INSERT_BOOKING_DB_QUERY = `INSERT INTO BOOKING (booking_date, booking_price, user_id, hotel_id, check_in_date, check_out_date) VALUES (?,?,?,?,?,?)`; 
     let api_hotel_id = Number(hotelCookieData.body.hotelId);
     let queryCounter = 1;
-    console.log("HELLO WORLD");
+    // console.log("HELLO WORLD");
 
     const queryFinish = () => {
         res.redirect(`/hotel/searched/detail/${hotelCookieData.body.hotelId}/paymentconfirm`);
@@ -193,7 +203,7 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
             console.log(countError);
             throw countError;
         }
-        console.log(countResult.length);
+        // console.log(countResult.length);
         let lengthOfCountResult = countResult.length;
         if (lengthOfCountResult == 0) {
             console.log("it is zero"); 
@@ -246,7 +256,7 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
             let bookingPrice = hotelCookieData.body.totalPrice;
             let bookingDate = new Date();
             
-            let dataForBookingToExistingHotel = [bookingDate, bookingPrice, user_id, countResult[0].hotel_id];
+            let dataForBookingToExistingHotel = [bookingDate, bookingPrice, user_id, countResult[0].hotel_id, hotelCheckInDate, hotelCheckOutDate];
             db.query(INSERT_BOOKING_DB_QUERY, dataForBookingToExistingHotel, async (errorExistBooking, resultExistBooking) => {
                 if (errorExistBooking) {
                     console.log("ERROR: ERROR ON EXISTING HOTEL BOOKING");
