@@ -4,8 +4,9 @@ const authMW = require('../../modules/auth');
 const dotenv = require('dotenv');
 const multer = require('../../utilities/multer');
 const imageHelper = require('../../modules/profilePhotoHelper');
-const hotelRetrieveHelper = require('../../modules/hotelRetrieveHelper');
+const hotelImgHelper = require('../../modules/hotelRetrieveHelper');
 const db = require('../../utilities/db');
+const s3 = require('../../utilities/s3');
 
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
@@ -53,8 +54,10 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
 
     if (!user.is_host) {
         return;
+    } else if (user.userPostHotels) { 
+        res.json(req.session.user);
     } else {
-        db.query(getHotelInfoQuery, (err, results, fields) => {
+        db.query(getHotelInfoQuery, async (err, results, fields) => {
             if (err) console.log('Failed to retrieve hotel info from user : ' + err);
             else {
                 var i;
@@ -80,6 +83,20 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
                         }
                     }
                 }
+
+                await Promise.all(userHotelPostArr.map(async function (item, index) {
+                    let params = {
+                        Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                    ,   Key: `${item.hotel_images[0]}`
+                    };
+                    let eachImageData = await s3.s3.getObject(params).promise();
+                    let imageData = eachImageData.Body;
+                    let buff = Buffer.from(imageData);
+                    let base64data = buff.toString('base64');
+                    let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+                    item.hotel_images[0] = imageDOM;
+                }, userHotelPostArr));
+
                 req.session.user.userPostHotels = userHotelPostArr;
                 res.json(req.session.user);
             }

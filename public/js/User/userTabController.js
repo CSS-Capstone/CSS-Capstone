@@ -68,10 +68,13 @@ async function getHotelPosts() {
     var hotelPostPanel = document.getElementById("hotel_posts");
     for (var i = 1; i < hotelPosts.length; i++){
         var rowContainer = document.createElement('div');
+        var hotelId = new String(hotelPosts[i].hotel_id);
         rowContainer.setAttribute('class', 'hotel__postings__row');
+        rowContainer.setAttribute('onclick', "location.href='/become-host/hotel/" + `${hotelId}` + "'");
 
-        var img = document.createElement('div');
+        var img = document.createElement('img');
         img.setAttribute('class', 'hotel__postings__image');
+        img.setAttribute('src', `${hotelPosts[i].hotel_images[0]}`);
 
         var hotelInfoContainer = document.createElement('div');
         hotelInfoContainer.setAttribute('class', 'hotel__info__container');
@@ -86,7 +89,7 @@ async function getHotelPosts() {
 
         var hotelPrice = document.createElement('div');
         hotelPrice.setAttribute('class', 'hotel__info__price');
-        hotelPrice.innerHTML = `${hotelPosts[i].hotel_price}`;
+        hotelPrice.innerHTML = "$" + `${hotelPosts[i].hotel_price}`;
 
         hotelInfoContainer.appendChild(hotelName);
         hotelInfoContainer.appendChild(hotelAddr);
