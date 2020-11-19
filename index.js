@@ -22,6 +22,7 @@ const trim = require('./modules/trim-city');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const logger = require('./modules/logger');
 // const transporter = nodemailer.createTransport({
 //     service: 'gmail',
 //     auth: {
@@ -42,6 +43,7 @@ require('./passport/passport-facebook-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
+app.use(logger.logger);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
