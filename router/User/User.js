@@ -5,16 +5,12 @@ const dotenv = require('dotenv');
 const multer = require('../../utilities/multer');
 const imageHelper = require('../../modules/profilePhotoHelper');
 const hotelRetrieveHelper = require('../../modules/hotelRetrieveHelper');
+const db = require('../../utilities/db');
 
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
-    var user = req.session.user;
-    // let userPhotos = await imageHelper.getImageKeys(user);
-    // req.session.user.userPhotos = userPhotos;
+    let user = req.session.user;
     
-    // let getHotelPosts = await hotelRetrieveHelper.getUserHotelPostInfo(user);
-    // req.sesssion.user.hotelPosts = getHotelPosts;
-
     if (user.profile_img == imageHelper.DEFAULT_PROFILE_PHOTO || !user.profile_img) {
         req.session.user.profile_img = imageHelper.DEFAULT_PROFILE_PHOTO;
         res.render('pages/user/user', {user: user});
@@ -29,12 +25,66 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
     }
 });
 
-router.post('/user/viewComments', () => {
-
+router.get('/user/viewComments', async (req, res) => {
+    
 });
 
-router.post('/user/viewHotelPosts', () => {
+router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
+    console.log('Got the fetch request from the front-end');
 
+    let user = req.session.user;
+    // Will be moved to different section
+    var userHotelPostArr = [];
+    let userHotelPostImgArr = [];
+    let getHotelInfoQuery = `SELECT hotel.hotel_id, hotel.user_id,hotel_name, hotel_price, country, city, address, hotel_img_id 
+                            FROM HOTEL hotel 
+                            INNER JOIN USER_HOTEL_IMAGE hotel_Image
+                            ON (hotel.hotel_id = hotel_Image.hotel_id AND hotel.user_id = hotel_Image.user_id)`;
+
+    function isHotelIdExist(arr, toPush) {
+        var indexToReturn = -1;
+        arr.forEach(function (item, index) {
+            if(item.hotel_id === toPush.hotel_id) {
+                indexToReturn = index;
+            }
+        });
+        return indexToReturn;
+    }
+
+    if (!user.is_host) {
+        return;
+    } else {
+        db.query(getHotelInfoQuery, (err, results, fields) => {
+            if (err) console.log('Failed to retrieve hotel info from user : ' + err);
+            else {
+                var i;
+                for (i = 0; i < results.length; i++) {
+                    var hotel = { 
+                        hotel_id: results[i].hotel_id,
+                        user_id: results[i].user_id,
+                        hotel_name: results[i].hotel_name,
+                        hotel_price: results[i].hotel_price,
+                        country: results[i].country,
+                        city: results[i].city,
+                        address: results[i].address,
+                        hotel_images: [results[i].hotel_img_id]
+                    };
+                    if (i == 0) {
+                        userHotelPostArr.push(hotel);
+                    } else {
+                        var doesExistIndex = isHotelIdExist(userHotelPostArr, hotel);
+                        if (doesExistIndex === -1) {
+                            userHotelPostArr.push(hotel);
+                        } else {
+                            userHotelPostArr[doesExistIndex].hotel_images.push(hotel.hotel_images[0]);
+                        }
+                    }
+                }
+                req.session.user.userPostHotels = userHotelPostArr;
+                res.json(req.session.user);
+            }
+        });
+    }
 });
 
 router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) => {
