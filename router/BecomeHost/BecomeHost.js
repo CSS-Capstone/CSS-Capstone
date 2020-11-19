@@ -84,6 +84,7 @@ router.get('/become/postHotelImage', authMW.isLoggedIn, (req, res) => {
 });
 
 router.post('/become-host/postHotelImage', multer.upload_multiple, (req, res) => {
+    let duplicateNumber = 0;
     let postedHotelID = req.body.postedHotelId;
     let currentPostingUser = req.session.user;
     let currentPostingUserID = currentPostingUser.user_id;
@@ -102,7 +103,9 @@ router.post('/become-host/postHotelImage', multer.upload_multiple, (req, res) =>
                 // console.log(eachImageData.originalname.split("."));
                 let splitByDataType = eachImageData.originalname.split(".");
                 let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
-                let fullHotelImageName = postedHotelID + '_' + currentPostingUserID + '_'  + fileName + '.' + splitByDataType[1];    
+                let fullHotelImageName = (duplicateNumber++) + '_' + postedHotelID + '_' + currentPostingUserID + '_'  + fileName + '.' + splitByDataType[1];    
+                // Check Duplicate
+                
                 // PARAMETER FOR UPLOAD IN S3 BUCKET
                 let params = {
                     Bucket: process.env.AWS_HOTEL_BUCKET_NAME
@@ -118,22 +121,70 @@ router.post('/become-host/postHotelImage', multer.upload_multiple, (req, res) =>
                     let hotelImageID = data.key;
                     let fileLocation = data.Location;
                     const insertHotelImageQuery = "INSERT INTO `css-capstone`.USER_HOTEL_IMAGE SET ?";
-                    db.query(insertHotelImageQuery, 
-                        {
-                            // this will be change into req.session.user later
-                            user_id: tempUserId
-                        ,   hotel_img_id: fullHotelImageName
-                        ,   hotel_img: fileLocation
-                        ,   hotel_id: postedHotelID
-                        }, (err, result) => {
-                            // callback function
-                            if (err) {
-                                console.log(err);
-                                console.log("Error on Hotel Image Database");
-                                throw err;
-                            }
-                            console.log("Successfully added in the Hotel Image Database");
+                    // Check if the image exist in the hotel
+                    const checkDuplicateQuery = "SELECT hotel_img_id FROM USER_HOTEL_IMAGE WHERE hotel_img_id=?";
+                    const updateTheDuplicateQuery = `DELETE FROM USER_HOTEL_IMAGE WHERE hotel_img_id = ${fullHotelImageName}`;
+                    let dataToCheckDup = [fullHotelImageName];
+                    // let dataToDeletePreExistDUP = [fullHotelImageName];
+                    db.query(checkDuplicateQuery, dataToCheckDup, (checkDupError, checkDupResult) => {
+                        if (checkDupError) {
+                            console.log("ERROR: CHECKING ON DUPLICATE IMAGE");
+                            console.log(checkDupError);
+                            throw checkDupError;
+                        }
+                        console.log("DUPLICATE IMAGE");
+                        console.log(checkDupResult);
+                        console.log("Length of duplicate");
+                        console.log(checkDupResult.length);
+                        if (checkDupResult.length > 0) {
+                            console.log("DID IT GET HERE (CHECK DUPLICATE)");
+                            db.query(updateTheDuplicateQuery, (errorDeleteDup, deleteDupResult) => {
+                                if (errorDeleteDup) {
+                                    console.log("ERROR: DELETING DUPLICATE IMAGE");
+                                    console.log(errorDeleteDup);
+                                    throw errorDeleteDup;
+                                }
+                                console.log("DELETED DUPLICATE DATA");
+                                console.log("AFFETED ROWS FOR DELETE DUPLICATE DATA: ", deleteDupResult.affectedRows);
+                                // INSERT HOTEL IMAGES
+                                db.query(insertHotelImageQuery, 
+                                    {
+                                        // this will be change into req.session.user later
+                                        user_id: tempUserId
+                                    ,   hotel_img_id: fullHotelImageName
+                                    ,   hotel_img: fileLocation
+                                    ,   hotel_id: postedHotelID
+                                    }, (err, result) => {
+                                        // callback function
+                                        if (err) {
+                                            console.log(err);
+                                            console.log("Error on Hotel Image Database");
+                                            throw err;
+                                        }
+                                        console.log("Successfully added in the Hotel Image Database");
+                                });
+                            });
+                        } else {
+                            // INSERT HOTEL IMAGES
+                            db.query(insertHotelImageQuery, 
+                                {
+                                    // this will be change into req.session.user later
+                                    user_id: tempUserId
+                                ,   hotel_img_id: fullHotelImageName
+                                ,   hotel_img: fileLocation
+                                ,   hotel_id: postedHotelID
+                                }, (err, result) => {
+                                    // callback function
+                                    if (err) {
+                                        console.log(err);
+                                        console.log("Error on Hotel Image Database");
+                                        throw err;
+                                    }
+                                    console.log("Successfully added in the Hotel Image Database");
+                            });
+                        }
                     });
+                    
                 });
                 //res.render('pages/hostHotel/hotelPostImage');
             } else {
@@ -290,6 +341,7 @@ router.get('/become-host/hotel/:id/edit', async (req, res) => {
 
 // Action method for edit hotel
 router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) => {
+    let duplicateNumber = 16;
     let userID = req.session.user.user_id;
     let newHotelImageData = req.files;
     let newHotelId = req.body.editHotelId;
@@ -386,7 +438,7 @@ router.put('/become-host/hotel/:id', multer.upload_multiple, async (req, res) =>
                     //     console.log(eachNewImageData);
                         let splitByDataType = eachNewImageData.originalname.split(".");
                         let fileName = uuid.v5(splitByDataType[0], process.env.SEED_KEY);
-                        let fullHotelImageName = newHotelId + '_' + userID + '_'  + fileName + '.' + splitByDataType[1];
+                        let fullHotelImageName = (duplicateNumber++) + '_' + newHotelId + '_' + userID + '_'  + fileName + '.' + splitByDataType[1];
                     //     // PARAMETER FOR UPLOAD IN S3 BUCKET
                         let uploadImgParams = {
                             Bucket: process.env.AWS_HOTEL_BUCKET_NAME
