@@ -14,7 +14,8 @@
     <section class="postHotelImage_container">
         <div class="postHotelImage_left_container">
             <h2 class="postHostImage_left_welcome_title">You are almost done.<br>
-                <span>Now, let's insert some images </span>
+                <span>Now, let's insert some images </span><br>
+                <span class="postHostImage_max_number_image">Maximum number of image you can insert is 10</span>
             </h2>
             <p class="image_container_step"></p>
             <form id="formSubmitTag" action="/become-host/postHotelImage" method="POST" enctype="multipart/form-data">
@@ -24,7 +25,7 @@
                         <!-- <div class="fileInputDiv" id="input_zone"> -->
                             <label class="labelForUploadImage" for="hotelImagePost">Click to Upload Image</label>
                             
-                            <input type="file" id="hotelImagePost" name="hotelImages" accept="image/*">
+                            <input type="file" id="hotelImagePost" name="hotelImages" accept=".png, .jpg, .jpeg">
                         <!-- </div> -->
                     </div>
                 </div>
@@ -60,6 +61,7 @@
                 Do not worry, the information above is not correct.
                 <br>You can edit your hotel anytime after you post your hotel.
             </small>
+            <h3 class="postHostImage_max_validation"></h3>
         </div>
     </section>
 </body>

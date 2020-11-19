@@ -41,6 +41,16 @@
     font-weight: bold;
 }
 
+.editImageValidationMin {
+    color: var(--color-warning);
+    font-weight: bold;
+}
+
+.editImageValidationMax {
+    color: var(--color-warning);
+    font-weight: bold;
+}
+
 .hotelEdit_cancel_button {
     background-color: var(--color-warning);
     padding: 0.8rem;
@@ -180,14 +190,18 @@
 
 /* ========================= */
 /* IMAGES ================== */
+.postYourHotel_Questions_Step6 {
+    overflow: auto;
+}
 .main_image_container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    /* overflow: scroll; */
 }
 
 .form_group_submitted {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     border: 1px dashed var(--color-nice-blue);
     border-radius: 2rem;
     display: flex;
@@ -202,8 +216,8 @@
 }
 
 .form_group {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     border: 1px dashed var(--color-nice-blue);
     border-radius: 2rem;
     display: flex;
@@ -234,8 +248,8 @@ input[type="file"] {
 }
 
 .form_group_submitted img {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     border: 1px solid var(--color-nice-blue);
     border-radius: 2rem;
 }
