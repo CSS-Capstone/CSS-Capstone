@@ -13,8 +13,46 @@
     <!-- Modal Login CSS -->
     <link rel="stylesheet" type="text/css" href="/css/modal.css">
     <!-- Datepicker -->
-    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
-    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $( function() {
+                var dateFormat = "mm/dd/yy",
+                  from = $( "#checkin__date" )
+                    .datepicker({
+                      defaultDate: "+1w",
+                      changeMonth: true,
+                      numberOfMonths: 1,
+                      minDate: 0
+                    })
+                    .on( "change", function() {
+                      to.datepicker( "option", "minDate", getDate( this ) );
+                    }),
+                  to = $( "#checkout__date" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 1,
+                    minDate: 1
+                  })
+                  .on( "change", function() {
+                    from.datepicker( "option", "maxDate", getDate( this ) );
+                  });
+             
+                function getDate( element ) {
+                  var date;
+                  try {
+                    date = $.datepicker.parseDate( dateFormat, element.value );
+                  } catch( error ) {
+                    date = null;
+                  }
+             
+                  return date;
+                }
+              } );
+        } );
+    </script>
 </head>
 <%if (modalStyle == '') { %>
 <body>
@@ -62,34 +100,13 @@
                                 placeholder="Where are you going?"/>
                         </div>
                         <div class="searchbar__item" id="checkin">
-                            <label for="searchbar__checkin">
-                                Check in
-                            </label><br>
-                            <input 
-                                id="checkin__date" 
-                                name="chkin"
-                                type="text" placeholder="Add dates"/>
-                            <script>
-                                var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
-                                checkinDate.appendTo('#checkin__date');
-                            </script>
+                            <label for="checkin__date">Check in (option)</label><br>
+                            <input readonly type="text" id="checkin__date" name="checkin__date" placeholder="Select Check-in date(Optional)"/>
                         </div>
-                        <div class="searchbar__item" id="checkout">
-                            <label for="searchbar__checkout">
-                                Check out
-                            </label><br>
-                            <input 
-                                id="checkout__date"
-                                name="chkout"
-                                type="text" placeholder="Add dates"/>
-                            <script>
-                                var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
-                                checkinDate.appendTo('#checkout__date');
-                            </script>
+                        <div class="date_container_to searchbar__item" id="checkout">
+                            <label for="checkout__date">Check out (option)</label><br>
+                            <input readonly type="text" id="checkout__date" name="checkout__date" placeholder="Select Check-out date(Optional)"/>
                         </div>
-                        <!-- <div class="searchbar__item" id="guests">
-                            Guests
-                        </div> -->
                         <div class="searchbar__item" id="searchbtn">
                             <button class="submitBtn" type="submit">
                                 <i class="fas fa-search-location"></i>

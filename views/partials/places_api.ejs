@@ -1,7 +1,10 @@
 <script>
     function activatePlacesSearch(){
         var input = document.getElementById('location__searchterm');
-        var autocomplete = new google.maps.places.Autocomplete(input);
+        let option = {
+            types: ['(cities)']
+        };
+        var autocomplete = new google.maps.places.Autocomplete(input, option);
     }
 </script>
 <!-- Google API -->
