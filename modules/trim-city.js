@@ -1,5 +1,9 @@
 function trimCity(str) {
-    if(str.length === 2) {
+    if (typeof str === 'undefined') {
+        console.log("We got undefined data", str);
+        str = "seattle";
+    }
+    else if(str.length === 2) {
         str = "seattle";
     }
     str = str.toLowerCase();
