@@ -28,10 +28,11 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
             throw 'API Satus is bad';
         }
         console.log("===============");
-        console.log(hoteldata.results.location);
-        console.log(typeof (hoteldata.results.location));
+        console.log(hoteldata.results.locations[0]);
+        console.log(typeof (hoteldata.results.locations[0]));
+        //
         // if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0)
-        if (typeof (hoteldata.results.location) === 'undefined' || hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
+        if (typeof (hoteldata.results.locations[0]) === 'undefined' || hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
             console.log("No hotel and location fetched");
             // query the top 20 or 25 hotel based on rate from DB
             // query the countries where all the hotels exists in
