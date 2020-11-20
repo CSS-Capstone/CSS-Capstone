@@ -13,6 +13,7 @@ const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQ
 const router = express.Router();
 const authMW = require('../../modules/auth');
 const db = require('../../utilities/db.js');
+// const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
 
 router.get('/hotel/searched/:cityname', async (req, res) => {
     // API KEY will be hide to env
@@ -74,6 +75,15 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
 
 
 router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => {
+    let dateObj = req.cookies.hotelBookingDateData;
+    console.log(dateObj);
+    let dateObjCheckInDate = req.cookies.hotelBookingDateData.checkin__date;
+    let dateObjCheckOutDate = req.cookies.hotelBookingDateData.checkout__date;
+    let dateObjectInAndOut = trimCityNameHelper.validateCheckInAndOutDate(dateObjCheckInDate, dateObjCheckOutDate);
+    let preSelected_CheckInDate = dateObjectInAndOut[0];
+    let preSelected_CehckOutDate =  dateObjectInAndOut[1];
+    console.log(dateObjectInAndOut[0]);
+    console.log(dateObjectInAndOut[1]);
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     const AirQualityKey = process.env.AIR_QUALITY_KEY;
     const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
@@ -120,6 +130,8 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
             ,   hotelCountryName
             ,   GEO_Formatted_Address
             ,   cityFullName
+            ,   preSelected_CheckInDate
+            ,   preSelected_CehckOutDate
             };
             res.render('pages/hotel/hotelSearchedDetail', {
                 hotelObj: hotelObj, 
@@ -171,9 +183,6 @@ router.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => 
 });
 
 router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, res) => {
-    // ============== TEMP DATA ======================
-    const temporaryHotelPrice = 20;
-    const temporaryUser_id = 18;
     const user_id = req.session.user.user_id;
     // ===============================================
     let hotelCookieData = req.cookies.hotelBookingData;
@@ -181,6 +190,9 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
     // console.log(hotelCookieData.body.hotelDefaultPrice);
     let hotelCheckInDateString = hotelCookieData.body.hotelCheckInDate;
     let hotelCheckOutDateString = hotelCookieData.body.hotelCheckOutDate;
+    console.log("============LOOK================");
+    console.log(hotelCheckInDateString);
+    console.log(hotelCheckOutDateString);
     // console.log("Check in Date");
     let hotelCheckInDate = new Date(hotelCheckInDateString);
     let hotelCheckOutDate = new Date(hotelCheckOutDateString);
