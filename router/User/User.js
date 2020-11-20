@@ -11,6 +11,10 @@ const s3 = require('../../utilities/s3');
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
+
+    // Adding a line for re push to git
+    // WORKKKK
+    
     // let userPhotos = await imageHelper.getImageKeys(user);
     // req.session.user.userPhotos = userPhotos;
     
