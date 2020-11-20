@@ -93,7 +93,7 @@ async function getHotelPosts() {
 
         hotelInfoContainer.appendChild(hotelName);
         hotelInfoContainer.appendChild(hotelAddr);
-        hotelInfoContainer.appendChild(hotelAddr);
+        hotelInfoContainer.appendChild(hotelPrice);
         rowContainer.appendChild(img);
         rowContainer.appendChild(hotelInfoContainer);
         hotelPostPanel.appendChild(rowContainer);
