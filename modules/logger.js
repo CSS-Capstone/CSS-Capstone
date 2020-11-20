@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const dotenv = require('dotenv');
 
 function logger(req, res, next) {
-    let current_datetime = new Date();
+    let current_datetime = new Date(Date.now());
     let ip = req.connection.remoteAddress;
     let formatted_date =
         "[ip : " + ip + "] " + 
