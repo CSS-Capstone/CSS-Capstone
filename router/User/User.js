@@ -12,6 +12,8 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     let user = req.session.user;
     
+    imageHelper.getUserPhotoCount(user);
+
     if (user.profile_img == imageHelper.DEFAULT_PROFILE_PHOTO || !user.profile_img) {
         req.session.user.profile_img = imageHelper.DEFAULT_PROFILE_PHOTO;
         res.render('pages/user/user', {user: user});
@@ -114,30 +116,39 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
         || file.mimetype == "image/gif") {
         
         const user = req.session.user; 
-       
-        const fileName = imageHelper.uploadImage(user, file);
-        console.log(fileName);
-
-        // let promiseA = new Promise(function(resolve, reject) {
-        //     resolve(imageHelper.uploadImage(user,file)),
-        //     reject(console.log('Failed in new Promise'));
-        // });
-        // let thenProm = promiseA.then(value => {console.log("after promA : " + value)});
-
-        // const promiseA = new Promise(imageHelper.uploadImage(user, file));
-        // const promiseB = promiseA.then(imageHelper.refreshProfilePhoto(promiseA), console.log('rejected'));
-
-        // console.log("맡애 콘솔로그 promiseA : " + promiseA);
-        // console.log("밑에 thenProm : " + thenProm);
-
-        //const fileName = await imageHelper.uploadImage(user, file);
-        // new Promise(imageHelper.uploadImage(user, file)).then((fileName) => {
-        //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
-        // });
-        //console.log(fileName);
-            
         
-        //res.render('pages/user/user.ejs', {user: user});
+        //new Promise(imageHelper.getUserPhotoCount(user))
+        
+        // if (imgCnt >= 3) {
+        //     console.log ('NO MORE PHOTOS FOR YOU BROO');
+        //     res.json(req.session.user);
+        // } else if (imgCnt == 0) {
+        //     console.log("JUST FOR FUUUN DO YOU COME HERE?");
+        // } else {
+        //     //const fileName = imageHelper.uploadImage(user, file);
+        //     console.log("Will upload a file ");
+
+        //     // let promiseA = new Promise(function(resolve, reject) {
+        //     //     resolve(imageHelper.uploadImage(user,file)),
+        //     //     reject(console.log('Failed in new Promise'));
+        //     // });
+        //     // let thenProm = promiseA.then(value => {console.log("after promA : " + value)});
+
+        //     // const promiseA = new Promise(imageHelper.uploadImage(user, file));
+        //     // const promiseB = promiseA.then(imageHelper.refreshProfilePhoto(promiseA), console.log('rejected'));
+
+        //     // console.log("맡애 콘솔로그 promiseA : " + promiseA);
+        //     // console.log("밑에 thenProm : " + thenProm);
+
+        //     //const fileName = await imageHelper.uploadImage(user, file);
+        //     // new Promise(imageHelper.uploadImage(user, file)).then((fileName) => {
+        //     //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
+        //     // });
+        //     //console.log(fileName);
+                
+            
+        //     //res.render('pages/user/user.ejs', {user: user});
+        // }
     } else {
         return;
     }

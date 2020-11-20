@@ -15,6 +15,14 @@ function getSubPhotos(user) {
     
 }
 
+async function getUserPhotoCount(user) {
+    let photoCountQuery = "SELECT COUNT(*) FROM `css-capstone`.USER_PROFILE_IMAGE WHERE `user_id` = ?";
+    let photoCountData = [user.user_id]; 
+    db.query(photoCountQuery, photoCountData, (err, result) => {
+        return result[0]['COUNT(*)'];
+    });
+}
+
 async function refreshProfilePhoto(fileName) {
     const imgData = await getImage(fileName);
     const convertedImg = encode(imgData.Body);
@@ -103,4 +111,4 @@ function uploadImage(user, file) {
     });
 }
 
-module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
+module.exports = { getProfilePhoto, getUserPhotoCount, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };

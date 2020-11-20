@@ -21,10 +21,10 @@ function logger(req, res, next) {
     let method = req.method;
     let url = req.url;
     let status = res.statusCode;
-  
+
     const start = process.hrtime();
     const durationInMilliseconds = getActualRequestDurationInMilliseconds(start);
-  
+
     let log = `[${chalk.blue(
       formatted_date
     )}] ${method}:${url} ${status} ${chalk.red(
