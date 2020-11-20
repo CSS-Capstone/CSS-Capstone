@@ -61,6 +61,8 @@ input {
 
 .navbar__right__menu {
     justify-content: flex-end;
+    align-items: center;
+    padding-top: 1.2rem;
 }
 
 #wrapper {

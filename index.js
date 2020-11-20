@@ -11,6 +11,7 @@ const app = express();
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 // const facebookStrategy = require('passport-facebook').Strategy;
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
@@ -36,6 +37,10 @@ const transporter = nodemailer.createTransport({
       user: "hotelfinder114@outlook.com",
       pass: "Hotel0505114"
     }
+});
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100
 });
 
 require('./passport/passport-google-setup');
