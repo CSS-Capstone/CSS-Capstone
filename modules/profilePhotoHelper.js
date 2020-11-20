@@ -2,7 +2,6 @@ const dotenv = require('dotenv');
 const s3 = require('../utilities/s3');
 const db = require('../utilities/db');
 const uuid = require('uuid');
-// ahahhahah
 const DEFAULT_PROFILE_PHOTO = "default_profile_img";
 
 async function getProfilePhoto(user) {
@@ -13,14 +12,6 @@ async function getProfilePhoto(user) {
 
 function getSubPhotos(user) {
     
-}
-
-async function getUserPhotoCount(user) {
-    let photoCountQuery = "SELECT COUNT(*) FROM `css-capstone`.USER_PROFILE_IMAGE WHERE `user_id` = ?";
-    let photoCountData = [user.user_id]; 
-    db.query(photoCountQuery, photoCountData, (err, result) => {
-        return result[0]['COUNT(*)'];
-    });
 }
 
 async function refreshProfilePhoto(fileName) {
@@ -111,4 +102,8 @@ function uploadImage(user, file) {
     });
 }
 
+<<<<<<< Updated upstream
 module.exports = { getProfilePhoto, getUserPhotoCount, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
+=======
+module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
+>>>>>>> Stashed changes
