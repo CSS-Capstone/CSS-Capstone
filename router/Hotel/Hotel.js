@@ -27,6 +27,9 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
         if (hoteldata.status !== 'ok') {
             throw 'API Satus is bad';
         }
+        console.log("===============");
+        console.log(hoteldata.results.location);
+        console.log(typeof (hoteldata.results.location));
         // if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0)
         if (typeof (hoteldata.results.location) === 'undefined' || hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
             console.log("No hotel and location fetched");
