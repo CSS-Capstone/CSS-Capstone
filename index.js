@@ -109,7 +109,13 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     var searchedData = req.body;
+    console.log(searchedData);
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
+    let dateObj = {
+        checkin__date: req.body.checkin__date
+    ,   checkout__date: req.body.checkout__date
+    };
+    res.cookie('hotelBookingDateData', dateObj);
     var locationStr = searchedData.location;
     res.redirect(`/hotel/searched/${locationStr}`);
 });
