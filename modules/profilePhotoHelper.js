@@ -102,8 +102,4 @@ function uploadImage(user, file) {
     });
 }
 
-<<<<<<< Updated upstream
-module.exports = { getProfilePhoto, getUserPhotoCount, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
-=======
 module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
->>>>>>> Stashed changes
