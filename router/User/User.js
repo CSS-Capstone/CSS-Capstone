@@ -12,9 +12,6 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
 
-    // Adding a line for re push to git
-    // WORKKKK
-    
     // let userPhotos = await imageHelper.getImageKeys(user);
     // req.session.user.userPhotos = userPhotos;
     
@@ -35,21 +32,71 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
     }
 });
 
-router.get('/user/viewComments', async (req, res) => {
-    
+router.get('/user/viewComments', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/viewComments');
+
+    let user = req.session.user;
+    let commentsArr = [];
+    let commentsData = [user.user_id];
+    let commentsQuery = `SELECT * FROM COMMENT WHERE user_id = ?`;
+    db.query(commentsQuery, commentsData, async (err, results) => {
+        if (err) console.log('Failed to retrieve user comment : ' + err);
+        console.log(results);
+    });
+});
+
+router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/viewBookingHistory');
+
+    let user = req.session.user;
+    let userBookingHistoryArr = [];
+    let userBookingHistoryData = [user.user_id];
+    let getBookingHistoryQuery = `SELECT BK.booking_id, BK.booking_date, BK.booking_price,
+                                        BK.hotel_id, BK.check_in_date, BK.check_out_date,
+                                        HTL.hotel_name, HTL.address, HTL.isAPI, HTL.api_hotel_id
+                                    FROM
+                                        HOTEL HTL
+                                    INNER JOIN
+                                        BOOKING BK
+                                    ON
+                                        HTL.hotel_id = BK.hotel_id AND HTL.user_id = ?
+                                    ORDER BY
+                                        BK.booking_date
+                                    DESC`; 
+    db.query(getBookingHistoryQuery, userBookingHistoryData, async (err, results, fields) => {
+        if (err) console.log('Failed to retrieve booking history : ' + err);
+        var i;
+        for (i = 0; i < results.length; i++) {
+            var booking = { 
+                booking_id: results[i].booking_id,
+                booking_date: results[i].booking_date,
+                booking_price: results[i].booking_price,
+                check_in_date: results[i].check_in_date,
+                check_out_date: results[i].check_out_date,
+                hotel_id: results[i].hotel_id,
+                hotel_name: results[i].hotel_name,
+                hotel_address: results[i].address,
+                hotel_isAPI: results[i].isAPI,
+                hotel_API_id: results[i].api_hotel_id
+            };
+            userBookingHistoryArr.push(booking);
+        }
+        req.session.user.userBookingHistory = userBookingHistoryArr;
+        res.json(req.session.user);
+    });
 });
 
 router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
-    console.log('Got the fetch request from the front-end');
+    console.log('Fetch request: /user/viewHotelPosts');
 
     let user = req.session.user;
-    // Will be moved to different section
     var userHotelPostArr = [];
     let userHotelPostImgArr = [];
+    let getHotelInfoData = [user.user_id, user.user_id];
     let getHotelInfoQuery = `SELECT hotel.hotel_id, hotel.user_id,hotel_name, hotel_price, country, city, address, hotel_img_id 
                             FROM HOTEL hotel 
                             INNER JOIN USER_HOTEL_IMAGE hotel_Image
-                            ON (hotel.hotel_id = hotel_Image.hotel_id AND hotel.user_id = hotel_Image.user_id)`;
+                            ON hotel.hotel_id = hotel_Image.hotel_id AND hotel.user_id = ?`;
 
     function isHotelIdExist(arr, toPush) {
         var indexToReturn = -1;
@@ -63,10 +110,8 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
 
     if (!user.is_host) {
         return;
-    } else if (user.userPostHotels) { 
-        res.json(req.session.user);
     } else {
-        db.query(getHotelInfoQuery, async (err, results, fields) => {
+        db.query(getHotelInfoQuery, getHotelInfoData, async (err, results, fields) => {
             if (err) console.log('Failed to retrieve hotel info from user : ' + err);
             else {
                 var i;
@@ -111,15 +156,6 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
             }
         });
     }
-
-});
-
-router.post('/user/viewComments', () => {
-
-});
-
-router.post('/user/viewHotelPosts', () => {
-
 });
 
 router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) => {
@@ -161,8 +197,6 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
         //     //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
         //     // });
         //     //console.log(fileName);
-                
-            
         //     //res.render('pages/user/user.ejs', {user: user});
         // }
     } else {
