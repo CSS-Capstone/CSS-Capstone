@@ -28,9 +28,6 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
             throw 'API Satus is bad';
         }
         console.log("===============");
-        console.log(hoteldata.results.locations[0]);
-        console.log(typeof (hoteldata.results.locations[0]));
-        //
         // if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0)
         if (typeof (hoteldata.results.locations[0]) === 'undefined' || hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
             console.log("No hotel and location fetched");
@@ -79,6 +76,8 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
 
 
 router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => {
+    console.log(req.session.user);
+    let username = req.session.user.username;
     let dateObj = req.cookies.hotelBookingDateData;
     console.log(dateObj);
     let dateObjCheckInDate = req.cookies.hotelBookingDateData.checkin__date;
@@ -101,8 +100,6 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
     const hotelCountryName = req.query.countryName;
     const cityFullName = req.query.cityFullName;
     const cityTrimedName = trimCityNameHelper.trimCitiyNameHelper(cityFullName);
-    //console.log(hotelCountryName);
-    // Geoendoing
     const theKey = `AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4`;
     const GEOAPIURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${hotelCoordLat},${hotelCoordLon}&key=${theKey}`;
     const GEO_RESPONSE = await fetch(GEOAPIURL);
@@ -111,6 +108,15 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
     const GEO_Formatted_Address = GEO_Data.results[0].formatted_address;
     const weatherAPIURL = `http://api.openweathermap.org/data/2.5/weather?lat=${hotelCoordLat}&lon=${hotelCoordLon}&appid=${process.env.WEATHER_API_KEY}`;
     const airqualityAPIURL = `https://api.waqi.info/feed/${cityTrimedName}/?token=${AIRQualityBACKUP_KEY}`;
+    // ===================== COMMENTS FOR QUERY API ==============================
+    const queryToRetrieveCommentsForAPI = `SELECT user.username, comment.rating, comment.comment_date, comment.comment_content, comment.user_id, comment.hotel_id, hotel.hotel_name, hotel.address, hotel.city, hotel.country
+                                            FROM COMMENT AS comment 
+                                            INNER JOIN HOTEL AS hotel 
+                                            ON comment.hotel_id = hotel.hotel_id
+                                            INNER JOIN USER AS user
+                                            ON comment.user_id = user.user_id 
+                                            WHERE hotel.api_hotel_id=?`;
+    let queryRetrieveTargetHotel = hotelId;
     try {
         const weatherDataResponse = await fetch(weatherAPIURL);
         const weatherData = await weatherDataResponse.json();
@@ -123,25 +129,37 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
                 //console.log("wrong aqi: ");
                 airQualityData.data.aqi = 43;
             }
-            const hotelObj = {
-                hotelId
-            ,   hotelLabel
-            ,   hotelFullName
-            ,   hotelScore
-            ,   hotelCoordLat
-            ,   hotelCoordLon
-            ,   hotelLocationName
-            ,   hotelCountryName
-            ,   GEO_Formatted_Address
-            ,   cityFullName
-            ,   preSelected_CheckInDate
-            ,   preSelected_CehckOutDate
-            };
-            res.render('pages/hotel/hotelSearchedDetail', {
-                hotelObj: hotelObj, 
-                StripePublicKey:StripePublicKey, 
-                weatherData:weatherData,
-                airQualityData: airQualityData
+            db.query(queryToRetrieveCommentsForAPI, [queryRetrieveTargetHotel], (errorDetailHotelAPI, resultDetailHotelAPI) => {
+                if (errorDetailHotelAPI) {
+                    console.log("ERROR: ERROR RETRIEVE DETAIL HOTEL API COMMENT");
+                    console.log(errorDetailHotelAPI);
+                    throw errorDetailHotelAPI;
+                }
+                console.log("==== RESULT DETAIL HOTEL API ====");
+                console.log(resultDetailHotelAPI);
+
+                const hotelObj = {
+                    hotelId
+                ,   hotelLabel
+                ,   hotelFullName
+                ,   hotelScore
+                ,   hotelCoordLat
+                ,   hotelCoordLon
+                ,   hotelLocationName
+                ,   hotelCountryName
+                ,   GEO_Formatted_Address
+                ,   cityFullName
+                ,   preSelected_CheckInDate
+                ,   preSelected_CehckOutDate
+                ,   resultDetailHotelAPI: resultDetailHotelAPI 
+                
+                };
+                res.render('pages/hotel/hotelSearchedDetail', {
+                    hotelObj: hotelObj, 
+                    StripePublicKey:StripePublicKey, 
+                    weatherData:weatherData,
+                    airQualityData: airQualityData
+                });
             });
         } catch(error) {
             console.log(error);
@@ -246,7 +264,7 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
                 console.log("AFFECTED DATA: ", insertResult.affectedRows);
                 console.log(insertResult.insertId);
                 let hotelID = insertResult.insertId;
-                let dataForBooking = [bookingDate, bookingPrice, user_id, hotelID, hotelCheckInDate, hotelCheckOutDate];
+                let dataForBooking = [bookingDate, bookingPrice, user_id, hotelID];
                 // INSERT BOOKING DATA INTO DATABASE
                 db.query(INSERT_BOOKING_DB_QUERY, dataForBooking, async (errorBooking, resultBooking) => {
                     if (errorBooking) {

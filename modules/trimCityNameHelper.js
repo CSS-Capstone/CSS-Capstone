@@ -77,4 +77,13 @@ function validateCheckInAndOutDate(checkin, checkout) {
     return [insertedCheckin, insertedCheckout];
 }
 
-module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData, validateCheckInAndOutDate };
+function isInputEmpty(commentReview) {
+    let comment = '';
+    if (typeof (commentReview) === 'undefined') {
+        commentReview = '';
+    }
+    commentReview.length <= 0 ?  comment = 'no comment from user' : comment = commentReview;
+    return comment;
+}
+
+module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData, validateCheckInAndOutDate, isInputEmpty };

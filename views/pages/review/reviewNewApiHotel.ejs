@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Finder -- Review Hotel</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="/css/reviewNewApiHotel.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+    <section class="review_api_hotel_header_section">
+        <div class="review_api_hotel_left">
+            <img class="review_api_hotel_left_img" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelApiObj.api_hotel_id%>_1/330/330.jpg" alt="hotel from api image">
+            <h2 class="review_api_hotel_header"><%=hotelApiObj.hotel_name%></h2>
+            <p class="review_api_hotel_price_header">Price You Paid: 
+                <span class="review_api_hotel_price">
+                    $<%=hotelApiObj.booking_price%>
+                </span>
+            </p>
+            <p class="review_api_hotel_location_header">Locatd at: 
+                <span class="review_api_hotel_location">
+                    <%=hotelApiObj.address%>
+                </span>
+            </p>
+            <p class="review_api_hotel_city_header">City: 
+                <span class="review_api_hotel_city">
+                    <%=hotelApiObj.city%>
+                </span>
+            </p>
+            <p class="review_api_hotel_country_header">Country: 
+                <span class="review_api_hotel_country"><%=hotelApiObj.country%></span>   
+            </p>
+        </div>
+        <div class="review_api_hotel_comment_right">
+            <div class="review_api_hotel_comment_question">
+                <h2 class="review_api_hotel_comment_date">Share your experience from <br>
+                    <span class="review_api_hotel_comment_checkin_date">
+                        <%=hotelApiObj.check_in_date.toDateString()%>
+                    </span> to 
+                    <span class="review_api_hotel_comment_checkout_date">
+                        <%=hotelApiObj.check_out_date.toDateString()%>
+                    </span>
+                    
+                </h2>
+            </div>
+            <div class="review_api_hotel_comment_container">
+                <form action="/user/review" method="POST">
+                    <input type="hidden" name="booking_id" value="<%=hotelApiObj.booking_id%>"/>
+                    <input type="hidden" name="user_id" value="<%=hotelApiObj.user_id%>"/>
+                    <input type="hidden" name="hotel_id" value="<%=hotelApiObj.hotel_id%>"/>
+                    <br>
+                    <i class="fas fa-star rating"></i>
+                    <label for="rating">My Rate: </label>
+                    <select name="rating" id="rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" selected>5</option>
+                    </select>
+                    <br><br>
+                    <textarea name="reviewComment" id="userReviewHotel" cols="50" rows="10"></textarea>
+                    <br><br>
+                    <div class="review_api_hotel_comment_button_container">
+                        <a class="review_api_hotel_comment_go_back_button" href="/user">Go Back</a>
+                        <button class="review_api_hotel_comment_submit_button">Share Experience</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <br>
+    <hr>
+    <%- include('../../partials/footer') %>
+</body>
+</html>

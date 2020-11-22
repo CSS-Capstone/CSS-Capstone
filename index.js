@@ -85,10 +85,12 @@ const HOTEL_ROUTE = require('./router/Hotel/Hotel.js');
 const BECOMEHOST_ROUTE = require('./router/BecomeHost/BecomeHost.js');
 const USER_ROUTE = require('./router/User/User.js');
 const ACCOUNT_ROUTE = require('./router/Account/Account.js');
+const USER_REVIEW_ROUTE = require('./router/UserReview/UserReview.js');
 app.use(HOTEL_ROUTE);
 app.use(BECOMEHOST_ROUTE);
 app.use(USER_ROUTE);
 app.use(ACCOUNT_ROUTE);
+app.use(USER_REVIEW_ROUTE);
 
 app.get('/', (req, res) => {
     let isLoggedIn = req.session.user == null ? false : true;
