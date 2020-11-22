@@ -264,7 +264,7 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
                 console.log("AFFECTED DATA: ", insertResult.affectedRows);
                 console.log(insertResult.insertId);
                 let hotelID = insertResult.insertId;
-                let dataForBooking = [bookingDate, bookingPrice, user_id, hotelID];
+                let dataForBooking = [bookingDate, bookingPrice, user_id, hotelID, hotelCheckInDate, hotelCheckOutDate];
                 // INSERT BOOKING DATA INTO DATABASE
                 db.query(INSERT_BOOKING_DB_QUERY, dataForBooking, async (errorBooking, resultBooking) => {
                     if (errorBooking) {
