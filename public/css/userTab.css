@@ -1,0 +1,72 @@
+@import "global.css";
+
+.user__tab__wrapper {
+    width: 65%;
+    margin: 0 auto;
+    height: auto;
+}
+
+.user__tab__btn__container {
+    height: auto;
+    display: flex;
+    width: 100%;
+}
+
+.user__tab__btn__container button {
+    width: 25%;
+    height: 100%;
+    margin: 1rem 0rem;
+    padding: 1rem;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    font-size: 1.3rem;
+}
+
+.user__tab__panel {
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    height: 460px;
+    background-color: rgb(251, 251, 251);
+    overflow-y: auto;
+}
+
+.user__tab__btn:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.user__tab__btn:focus {
+    outline: 0;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.hotel__postings__row {
+    display: flex;
+    border-radius: 1%;
+    border: 1px solid var(--color-light-grey);
+    margin-bottom: 0.7rem;
+}
+
+.hotel__postings__image {
+    width: 230px;
+    height: 180px;
+}
+
+.hotel__info__container {
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+}
+
+.hotel__info__name {
+    font-size: var(--font-regular);
+    font-weight: var(--weight-semi-bold);
+}
+
+.booking__history__row {
+    display: flex;
+    border-radius: 1%;
+    border: 1px solid var(--color-light-grey);
+    margin-bottom: 0.7rem;
+}
+
+.booking__hisotry__info__container {
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+}

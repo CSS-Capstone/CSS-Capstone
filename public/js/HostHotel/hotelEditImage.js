@@ -18,7 +18,7 @@ nextBtn.addEventListener('click', (event) => {
 function checkIfHitLastTap() {
     let tabNumbers = allTabs.length;
     if (allTabs[tabNumbers - 1].style.display == 'block') {
-        console.log("hello");
+        // console.log("hello");
         if (existingImages.length > 0) {
             // add event listener to remove icon to existing items
             // add function that allow to remove pre-existing images
@@ -28,10 +28,41 @@ function checkIfHitLastTap() {
                 });
             });
         }
+        let totalImageDisplayer = document.querySelector('.totalImageDisplayer');
+        totalImageDisplayer.textContent = 'Maximum Images: 10 Images';
         nextBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            console.log("stop!");
+            let editImageValidationMinimum = document.querySelector('.editImageValidationMin');
+            let editImageValidationMax = document.querySelector('.editImageValidationMax');
             let allImageInputTags = document.querySelectorAll('#hotelImagePost');
+            // grab all images (both pre-exist if there is one and inserted images)
+            let totalImageCounter = 0;
+            let preSubmittedImages = document.querySelectorAll('.submitted_image');
+            // console.log(preSubmittedImages.length);
+            if (preSubmittedImages.length) {
+                totalImageCounter = preSubmittedImages.length;
+            }
+            if (allImageInputTags.length) {
+                totalImageCounter += allImageInputTags.length;
+            }
+            // console.log(totalImageCounter);
+            if (totalImageCounter <= 1) {
+                console.log("We need more Images");
+                editImageValidationMinimum.textContent = `We need at least one images`;
+                setTimeout(() => {
+                    editImageValidationMinimum.textContent = '';
+                }, 2000);
+                return false;
+            }
+            if (totalImageCounter > 11) {
+                editImageValidationMax.textContent = 'Image cannot be more than 10';
+                setTimeout(() => {
+                    editImageValidationMax.textContent = '';
+                }, 2000);
+                return false;
+            }
+            // console.log("Remove return false then it will work");
+            // console.log("stop!");
             let formSubmitTag = document.querySelector('#regForm');
             for (let i = 0; i < allImageInputTags.length - 1; i++) {
                 if (allImageInputTags[i].hasAttribute('disabled')) {
@@ -48,7 +79,7 @@ function checkIfHitLastTap() {
             createInputBox();
             const imageInputDIVDOM = imageInputBtn.closest('.form_group');
             imageInputBtn.files = event.target.files;
-            console.log(event.target.files[0]);
+            // console.log(event.target.files[0]);
             renderImageToDOM(imageInputDIVDOM, event.target.files[0]);
         });
     }
@@ -85,15 +116,15 @@ function createInputBox() {
     });
     nextImageInputDOM.addEventListener('change', (event) => {
         createInputBox();
-        console.log(event.target);
-        console.log(event.target.files[0]);
+        //console.log(event.target);
+        //console.log(event.target.files[0]);
         renderImageToDOM(nextImageInputDOM, event.target.files[0]);
     }); 
 }
 
 function renderImageToDOM(fileContainer, theFile) {
     if (fileContainer.querySelector('.labelForUploadImage') != null) {
-            console.log("It has Label OBJ");
+            //console.log("It has Label OBJ");
             fileContainer.querySelector('.labelForUploadImage').style.display = "none"; 
         }
 
@@ -109,7 +140,7 @@ function renderImageToDOM(fileContainer, theFile) {
         fileReader.onload = (event) => {
             eachImageContainer.innerHTML = `<img src="${event.target.result}"/>`;
             let inputArea = fileContainer.querySelector('#hotelImagePost');
-            console.log(inputArea);
+            //console.log(inputArea);
             inputArea.setAttribute('disabled', 'disabled');
             deleteIconArea.addEventListener('click', (event) => {
                 removeTheElement(event.target);

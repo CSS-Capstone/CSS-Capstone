@@ -11,6 +11,7 @@ const app = express();
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 // const facebookStrategy = require('passport-facebook').Strategy;
 // const cookieSession = require('cookie-session');
 // const expressSession = require('express-session'); 
@@ -22,6 +23,7 @@ const trim = require('./modules/trim-city');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const logger = require('./modules/logger');
 // const transporter = nodemailer.createTransport({
 //     service: 'gmail',
 //     auth: {
@@ -36,12 +38,17 @@ const transporter = nodemailer.createTransport({
       pass: "Hotel0505114"
     }
 });
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100
+});
 
 require('./passport/passport-google-setup');
 require('./passport/passport-facebook-setup');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
+app.use(logger.logger);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -78,10 +85,12 @@ const HOTEL_ROUTE = require('./router/Hotel/Hotel.js');
 const BECOMEHOST_ROUTE = require('./router/BecomeHost/BecomeHost.js');
 const USER_ROUTE = require('./router/User/User.js');
 const ACCOUNT_ROUTE = require('./router/Account/Account.js');
+const USER_REVIEW_ROUTE = require('./router/UserReview/UserReview.js');
 app.use(HOTEL_ROUTE);
 app.use(BECOMEHOST_ROUTE);
 app.use(USER_ROUTE);
 app.use(ACCOUNT_ROUTE);
+app.use(USER_REVIEW_ROUTE);
 
 app.get('/', (req, res) => {
     // var currDomain = req.get('host');
@@ -120,6 +129,13 @@ app.post('/', async (req, res) => {
     var checkOutDate = req.body.chkout;
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     // console.log(searchedData.location);
+    console.log(searchedData);
+    searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
+    let dateObj = {
+        checkin__date: req.body.checkin__date
+    ,   checkout__date: req.body.checkout__date
+    };
+    res.cookie('hotelBookingDateData', dateObj);
     var locationStr = searchedData.location;
     // console.log(locationStr);
     res.clearCookie('searchKeyword');
@@ -296,7 +312,7 @@ app.post('/auth/register', (req, res) => {
                             to: email,
                             subject: 'Test sending email',
                             text: 'That was easy!',
-                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}">http://localhost:8080/confirm_account/${userId}/${userPasswordEncoded}</a></div>`
+                            html: `<div><p>Please click the link below to confirm your new account.</p><br><a href="https://testssl.css-hotelfinder.net/confirm_account/${userId}/${userPasswordEncoded}">https://testssl.css-hotelfinder.net/confirm_account/${userId}/${userPasswordEncoded}</a></div>`
                         };
                         transporter.sendMail(mailOptions, (error, info) => {
                             if (error){

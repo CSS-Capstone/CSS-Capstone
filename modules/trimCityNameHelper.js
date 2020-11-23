@@ -53,4 +53,37 @@ function addSemiToEachImageData(imageArray) {
     }
 }
 
-module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData };
+function validateCheckInAndOutDate(checkin, checkout) {
+    let insertedCheckin = checkin;
+    let insertedCheckout = checkout;
+    if (insertedCheckin.trim().length === 0 || insertedCheckin == null || typeof(insertedCheckin) === 'undefined') {
+        insertedCheckin = new Date();
+        let dd = insertedCheckin.getDate() + 1;
+        let mm = insertedCheckin.getMonth() + 1;
+        let yyyy = insertedCheckin.getFullYear();
+        let today = mm + '/' + dd + '/' + yyyy;
+        // console.log("TODAY ");
+        // console.log(today.toString());
+        insertedCheckin = today.toString();
+    }
+    if (insertedCheckout.trim().length === 0 || insertedCheckout == null || typeof(insertedCheckout) === 'undefined') {
+        insertedCheckout = new Date();
+        let dd = insertedCheckout.getDate() + 2;
+        let mm = insertedCheckout.getMonth() + 1;
+        let yyyy = insertedCheckout.getFullYear();
+        let tomorrow = mm + '/' + dd + '/' + yyyy;
+        insertedCheckout = tomorrow;
+    }
+    return [insertedCheckin, insertedCheckout];
+}
+
+function isInputEmpty(commentReview) {
+    let comment = '';
+    if (typeof (commentReview) === 'undefined') {
+        commentReview = '';
+    }
+    commentReview.length <= 0 ?  comment = 'no comment from user' : comment = commentReview;
+    return comment;
+}
+
+module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData, validateCheckInAndOutDate, isInputEmpty };

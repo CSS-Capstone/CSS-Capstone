@@ -61,6 +61,8 @@ input {
 
 .navbar__right__menu {
     justify-content: flex-end;
+    align-items: center;
+    padding-top: 1.2rem;
 }
 
 #wrapper {
@@ -85,15 +87,25 @@ input {
     border-radius: 50%;
     background-color: transparent;
     cursor: pointer;
+    outline: none;
 }
 
 .submitBtn:hover {
     border: 3px solid var(--color-strong-blue);
+    outline: none;
 }
 
 .submitBtn > i {
     font-size: 2rem;
     color: var(--color-strong-blue);
+}
+
+#checkin > input[type=text] {
+    width: 200px;
+}
+
+#checkout > input[type=text] {
+    width: 200px;
 }
 
 .searchbar__item#location {

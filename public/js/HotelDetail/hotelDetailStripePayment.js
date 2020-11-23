@@ -48,12 +48,22 @@ function sendStripeDataForBack_End() {
     const hotelLocation = hotelLocationDOM.getAttribute('data-hotel-location');
     const hotelAddressDOM = document.querySelector('.hotelDetail_address');
     const hotelAddress = hotelAddressDOM.getAttribute('data-hotel-address');
+    // const hotelDefaultPrice = document.querySelector('.hotelDetail_default_hotelPrice').value;
+    const hotelRateAttribute = Number(hotelRateDOMEle.getAttribute('data-rate-value'));
+    const hotelDefaultPrice = grabAllHotelRate(hotelRateAttribute);
+    // Hotel Date
+    const hotelCheckInDate = document.querySelector('#from');
+    const hotelCheckOutDate = document.querySelector('#to');
+    let hotelCheckInDateValue = hotelCheckInDate.value;
+    let hotelCheckOutDateValue = hotelCheckOutDate.value;
     console.log(hotelBookingId);
     console.log(theTotalHotelPriceStripe);
     console.log(hotelName);
     console.log(hotelLocation);
     console.log(hotelAddress);
-
+    console.log(hotelDefaultPrice);
+    console.log(hotelCheckInDateValue);
+    console.log(hotelCheckOutDateValue);
     const body = {
         hotelId: hotelBookingId
     ,   totalPrice: theTotalHotelPriceStripe
@@ -62,51 +72,40 @@ function sendStripeDataForBack_End() {
     ,   hotelName: hotelName
     ,   hotelLocation: hotelLocation
     ,   hotelAddress: hotelAddress
-    // ,   tokenId: token.id
+    ,   hotelDefaultPrice:hotelDefaultPrice
+    ,   hotelCheckInDate:hotelCheckInDateValue
+    ,   hotelCheckOutDate: hotelCheckOutDateValue
     }
     return body;
 }
 
+// Date Checker
+function checkDateInputValidation() {
+    
+}
+
 function organizeDataFromStripe() {
-    if (document.querySelector('#userFirstName').value.length === 0) {
-        console.log("Empty");
-        const validationFirstName = document.querySelector('.validationUserFirstName');
-        validationFirstName.textContent = "*Required";
+    // Date Checker
+    const hotelCheckInDate = document.querySelector('#from');
+    const hotelCheckOutDate = document.querySelector('#to');
+    const checkDateValidation = document.querySelector('.checkDateValidation');
+    console.log(hotelCheckInDate.value);
+    if (hotelCheckInDate.value.trim() === '' || hotelCheckInDate.value == null) {
+        console.log("It is returning false");
+        checkDateValidation.textContent = 'Please select desired check in date';
+        setTimeout(() => {
+            checkDateValidation.textContent = '';
+        }, 2000);
         return false;
     }
-    if (document.querySelector('#userLastName').value.length === 0) {
-        console.log("last name empty");
-        const validationLastName = document.querySelector('.validationUserLastName');
-        validationLastName.textContent = "*Required";
+    if (hotelCheckOutDate.value.trim() === '' || hotelCheckOutDate.value == null) {
+        console.log("It is returning false");
+        checkDateValidation.textContent = 'Please select desired check out date';
+        setTimeout(() => {
+            checkDateValidation.textContent = '';
+        }, 2000);
         return false;
     }
-    if (document.querySelector('#userEmail').value.length === 0) {
-        console.log("email empty");
-        return false;
-    } 
-    if (document.querySelector('#userEmail').value.length !== 0) {
-        const emailRegex = /\S+@\S+\.\S+/;
-        const email = document.querySelector('#userEmail').value;
-        console.log(emailRegex.test(email));
-        if (!emailRegex.test(email)) {
-            return false;
-        }
-    }
-
-    if (document.querySelector('#userPhone').value.length === 0) {
-        console.log("Phone Empty");
-        return false;
-    } 
-
-    if (document.querySelector('#userPhone').value.length !== 0) {
-        const phoneRegex = /\d{3}[- ]\d{3}[- ]\d{4}$/;
-        const phone = document.querySelector('#userPhone').value;
-        console.log(phoneRegex.test(phone));
-        if(!phoneRegex.test(phone)) {
-            return false;
-        }
-    }
-
     // stripe front-end
     const theInformationForStripe = sendStripeDataForBack_End();
     theTotalHotelPriceStripe = theInformationForStripe.totalPrice;
@@ -188,4 +187,3 @@ function grabAllHotelRate(numPrice) {
         return Number(numPrice + defaultTotalPrice[8]).toFixed(2);
     }
 }
-

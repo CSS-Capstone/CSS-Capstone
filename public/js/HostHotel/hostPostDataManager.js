@@ -10,6 +10,7 @@ imageSubmitBtn.addEventListener('click', (event) => {
     let allImageInputTags = document.querySelectorAll('#hotelImagePost');
     let invalidImageText = document.querySelector('.image_container_step');
     const formSubmitTag = document.querySelector('#formSubmitTag');
+    const postingImage_max_validation = document.querySelector('.postHostImage_max_validation');
     // exclude the last one
     if (allImageInputTags[0].value == '') {
         console.log("Input is empty");
@@ -19,7 +20,14 @@ imageSubmitBtn.addEventListener('click', (event) => {
         }, 2000);
         return false;
     }
-    
+    if (allImageInputTags.length > 11) {
+        postingImage_max_validation.textContent = "You cannot upload more than 10 Images\n Please Remove Some Images";
+        setTimeout( () => {
+            postingImage_max_validation.textContent = ''
+        },3000);
+        return false;
+    }
+
     for (let i = 0; i < allImageInputTags.length - 1; i++) {
         if (allImageInputTags[i].hasAttribute('disabled')) {
             allImageInputTags[i].removeAttribute('disabled');
@@ -50,7 +58,7 @@ function CreateNextElements()  {
     nextImageInputArea.classList.add('form_group');
     nextLabelArea.classList.add('labelForUploadImage');
     nextImageInputField.setAttribute('type', 'file');
-    nextImageInputField.setAttribute('accept', 'image/*');
+    nextImageInputField.setAttribute('accept', '.png, .jpg, .jpeg');
     nextImageInputField.setAttribute('id', 'hotelImagePost');
     nextImageInputField.setAttribute('name', "hotelImages");
     nextLabelArea.innerHTML = "Click to Uplaod Image";

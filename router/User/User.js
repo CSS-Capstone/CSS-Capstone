@@ -4,11 +4,14 @@ const authMW = require('../../modules/auth');
 const dotenv = require('dotenv');
 const multer = require('../../utilities/multer');
 const imageHelper = require('../../modules/profilePhotoHelper');
-const hotelRetrieveHelper = require('../../modules/hotelRetrieveHelper');
+const hotelImgHelper = require('../../modules/hotelRetrieveHelper');
+const db = require('../../utilities/db');
+const s3 = require('../../utilities/s3');
 
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
+
     // let userPhotos = await imageHelper.getImageKeys(user);
     // req.session.user.userPhotos = userPhotos;
     
@@ -29,12 +32,130 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
     }
 });
 
-router.post('/user/viewComments', () => {
+router.get('/user/viewComments', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/viewComments');
 
+    let user = req.session.user;
+    let commentsArr = [];
+    let commentsData = [user.user_id];
+    let commentsQuery = `SELECT * FROM COMMENT WHERE user_id = ?`;
+    db.query(commentsQuery, commentsData, async (err, results) => {
+        if (err) console.log('Failed to retrieve user comment : ' + err);
+        console.log(results);
+    });
 });
 
-router.post('/user/viewHotelPosts', () => {
+router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/viewBookingHistory');
 
+    let user = req.session.user;
+    let userBookingHistoryArr = [];
+    let userBookingHistoryData = [user.user_id];
+    let getBookingHistoryQuery = `SELECT BK.booking_id, BK.booking_date, BK.booking_price,
+                                        BK.hotel_id, BK.check_in_date, BK.check_out_date,
+                                        HTL.hotel_name, HTL.address, HTL.isAPI, HTL.api_hotel_id
+                                    FROM
+                                        HOTEL HTL
+                                    INNER JOIN
+                                        BOOKING BK
+                                    ON
+                                        HTL.hotel_id = BK.hotel_id AND HTL.user_id = ?
+                                    ORDER BY
+                                        BK.booking_date
+                                    DESC`; 
+    db.query(getBookingHistoryQuery, userBookingHistoryData, async (err, results, fields) => {
+        if (err) console.log('Failed to retrieve booking history : ' + err);
+        var i;
+        for (i = 0; i < results.length; i++) {
+            var booking = { 
+                booking_id: results[i].booking_id,
+                booking_date: results[i].booking_date,
+                booking_price: results[i].booking_price,
+                check_in_date: results[i].check_in_date,
+                check_out_date: results[i].check_out_date,
+                hotel_id: results[i].hotel_id,
+                hotel_name: results[i].hotel_name,
+                hotel_address: results[i].address,
+                hotel_isAPI: results[i].isAPI,
+                hotel_API_id: results[i].api_hotel_id
+            };
+            userBookingHistoryArr.push(booking);
+        }
+        req.session.user.userBookingHistory = userBookingHistoryArr;
+        res.json(req.session.user);
+    });
+});
+
+router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/viewHotelPosts');
+
+    let user = req.session.user;
+    var userHotelPostArr = [];
+    let userHotelPostImgArr = [];
+    let getHotelInfoData = [user.user_id, user.user_id];
+    let getHotelInfoQuery = `SELECT hotel.hotel_id, hotel.user_id,hotel_name, hotel_price, country, city, address, hotel_img_id 
+                            FROM HOTEL hotel 
+                            INNER JOIN USER_HOTEL_IMAGE hotel_Image
+                            ON hotel.hotel_id = hotel_Image.hotel_id AND hotel.user_id = ?`;
+
+    function isHotelIdExist(arr, toPush) {
+        var indexToReturn = -1;
+        arr.forEach(function (item, index) {
+            if(item.hotel_id === toPush.hotel_id) {
+                indexToReturn = index;
+            }
+        });
+        return indexToReturn;
+    }
+
+    if (!user.is_host) {
+        return;
+    } else {
+        db.query(getHotelInfoQuery, getHotelInfoData, async (err, results, fields) => {
+            if (err) console.log('Failed to retrieve hotel info from user : ' + err);
+            else {
+                var i;
+                for (i = 0; i < results.length; i++) {
+                    var hotel = { 
+                        hotel_id: results[i].hotel_id,
+                        user_id: results[i].user_id,
+                        hotel_name: results[i].hotel_name,
+                        hotel_price: results[i].hotel_price,
+                        country: results[i].country,
+                        city: results[i].city,
+                        address: results[i].address,
+                        hotel_images: [results[i].hotel_img_id]
+                    };
+                    if (i == 0) {
+                        userHotelPostArr.push(hotel);
+                    } else {
+                        var doesExistIndex = isHotelIdExist(userHotelPostArr, hotel);
+                        if (doesExistIndex === -1) {
+                            userHotelPostArr.push(hotel);
+                        } else {
+                            userHotelPostArr[doesExistIndex].hotel_images.push(hotel.hotel_images[0]);
+                        }
+                    }
+                }
+
+                await Promise.all(userHotelPostArr.map(async function (item, index) {
+                    let params = {
+                        Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                    ,   Key: `${item.hotel_images[0]}`
+                    };
+                    let eachImageData = await s3.s3.getObject(params).promise();
+                    let imageData = eachImageData.Body;
+                    let buff = Buffer.from(imageData);
+                    let base64data = buff.toString('base64');
+                    let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+                    item.hotel_images[0] = imageDOM;
+                }, userHotelPostArr));
+
+                req.session.user.userPostHotels = userHotelPostArr;
+                res.json(req.session.user);
+            }
+        });
+    }
 });
 
 router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) => {
@@ -47,30 +168,37 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
         || file.mimetype == "image/gif") {
         
         const user = req.session.user; 
-       
-        const fileName = imageHelper.uploadImage(user, file);
-        console.log(fileName);
-
-        // let promiseA = new Promise(function(resolve, reject) {
-        //     resolve(imageHelper.uploadImage(user,file)),
-        //     reject(console.log('Failed in new Promise'));
-        // });
-        // let thenProm = promiseA.then(value => {console.log("after promA : " + value)});
-
-        // const promiseA = new Promise(imageHelper.uploadImage(user, file));
-        // const promiseB = promiseA.then(imageHelper.refreshProfilePhoto(promiseA), console.log('rejected'));
-
-        // console.log("맡애 콘솔로그 promiseA : " + promiseA);
-        // console.log("밑에 thenProm : " + thenProm);
-
-        //const fileName = await imageHelper.uploadImage(user, file);
-        // new Promise(imageHelper.uploadImage(user, file)).then((fileName) => {
-        //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
-        // });
-        //console.log(fileName);
-            
         
-        //res.render('pages/user/user.ejs', {user: user});
+        //new Promise(imageHelper.getUserPhotoCount(user))
+        
+        // if (imgCnt >= 3) {
+        //     console.log ('NO MORE PHOTOS FOR YOU BROO');
+        //     res.json(req.session.user);
+        // } else if (imgCnt == 0) {
+        //     console.log("JUST FOR FUUUN DO YOU COME HERE?");
+        // } else {
+        //     //const fileName = imageHelper.uploadImage(user, file);
+        //     console.log("Will upload a file ");
+
+        //     // let promiseA = new Promise(function(resolve, reject) {
+        //     //     resolve(imageHelper.uploadImage(user,file)),
+        //     //     reject(console.log('Failed in new Promise'));
+        //     // });
+        //     // let thenProm = promiseA.then(value => {console.log("after promA : " + value)});
+
+        //     // const promiseA = new Promise(imageHelper.uploadImage(user, file));
+        //     // const promiseB = promiseA.then(imageHelper.refreshProfilePhoto(promiseA), console.log('rejected'));
+
+        //     // console.log("맡애 콘솔로그 promiseA : " + promiseA);
+        //     // console.log("밑에 thenProm : " + thenProm);
+
+        //     //const fileName = await imageHelper.uploadImage(user, file);
+        //     // new Promise(imageHelper.uploadImage(user, file)).then((fileName) => {
+        //     //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
+        //     // });
+        //     //console.log(fileName);
+        //     //res.render('pages/user/user.ejs', {user: user});
+        // }
     } else {
         return;
     }

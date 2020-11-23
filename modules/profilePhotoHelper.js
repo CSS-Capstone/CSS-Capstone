@@ -2,7 +2,6 @@ const dotenv = require('dotenv');
 const s3 = require('../utilities/s3');
 const db = require('../utilities/db');
 const uuid = require('uuid');
-// ahahhahah
 const DEFAULT_PROFILE_PHOTO = "default_profile_img";
 
 async function getProfilePhoto(user) {

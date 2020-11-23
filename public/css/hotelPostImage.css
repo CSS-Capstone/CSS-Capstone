@@ -29,9 +29,20 @@
     color: var(--color-mid-grey);
 }
 
+.postHostImage_max_number_image {
+    font-weight: bold;
+    color: var(--color-warning);
+}
+
+.postHostImage_max_validation {
+    font-weight: bold;
+    color: var(--color-warning);
+}
+
 .main_image_container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    overflow: scroll;
 }
 
 .form_group {
@@ -96,6 +107,8 @@ input[type="file"] {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
 }
+
+
 
 .form_group img {
     width: 240px;
