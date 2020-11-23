@@ -1,5 +1,4 @@
 const express = require('express');
-const db = require('../../utilities/db.js');
 // const app = express();
 const dotenv = require('dotenv');
 const uuid = require('uuid');
