@@ -39,8 +39,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 const limiter = rateLimit({
-    windowMs: 0.5 * 60 * 1000,
-    max: 5
+    windowMs: 1 * 60 * 1000,
+    max: 100
 });
 
 require('./passport/passport-google-setup');
