@@ -2,6 +2,7 @@ const user_tab_btn = document.querySelectorAll('.user__tab__btn');
 const user_tab_panel = document.querySelectorAll('.user__tab__panel');
 
 initialSelect();
+getComments();
 user_tab_btn.forEach((eachBtn, index) => {
     eachBtn.addEventListener('click', (event) => {
         displayPanel(event, index);
@@ -56,13 +57,33 @@ function clearDom(toRemove) {
 }
 
 function ifDataEmpty(domElem, message) {
-
+    var messageElem = document.createElement('div');
+    messageElem.setAttribute('class', 'missing__info__message');
+    messageElem.innerHTML = message;
+    domElem.appendChild(messageElem);
 }
 
 async function getComments() {
     const getCommentsRequest = await fetch(`/user/viewComments`);
     const commentsData = await getCommentsRequest.json();
+    const comments = commentsData.userComments;
     var commentsPanel = document.getElementById('comments');
+
+    if (comments.length === 0) {
+        ifDataEmpty(commentsPanel, "You don't have any comments.");
+        return;
+    }
+
+    for (var i = 0; i < comments.length; i++) {
+        var rowContainer = document.createElement('div');
+        rowContainer.setAttribute('class', 'cooment__row');
+        var commentId = new String(comments[i].comment_id);
+
+        var img = document.createElement('img');
+        img.setAttribute('class', 'user__profile__image');
+        img.setAttribute('src', "");
+
+    }
 }
 
 async function getBookingHistory() {
@@ -73,6 +94,7 @@ async function getBookingHistory() {
 
     if (bookingHistories.length === 0) {
         ifDataEmpty(bookingHistoryPanel, "You don't have any booking records.");
+        return;
     }
 
     for (var i = 0; i < bookingHistories.length; i++) {
@@ -132,8 +154,9 @@ async function getHotelPosts() {
     const hotelPosts = hotelPostsData.userPostHotels;
     var hotelPostPanel = document.getElementById("hotel_posts");
 
-    if (bookingHistories.length === 0) {
+    if (hotelPosts.length === 0) {
         ifDataEmpty(hotelPostPanel, "You don't have any hotel posting records.");
+        return;
     }
 
     for (var i = 0; i < hotelPosts.length; i++){

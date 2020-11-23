@@ -39,8 +39,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100
+    windowMs: 0.5 * 60 * 1000,
+    max: 5
 });
 
 require('./passport/passport-google-setup');
@@ -216,8 +216,8 @@ app.post('/auth/login', async (req, res) => {
                     httpOnly: true
                 }
                 
-                db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ? AND is_main = ?`, [userId, true], async (error, photo) => {
-                    let profile_img = (Object.keys(photo).length === 0) ? null : photo[0].img_id;
+                db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ?`, [userId], async (error, photo) => {
+                    let profile_img = (Object.keys(photo).length === 0) ? 'default_profile_img' : photo[0].img_id;
                     res.cookie('jwt', token, cookieOptions);
                     req.user = results[0];
                     req.user.profile_img = profile_img;

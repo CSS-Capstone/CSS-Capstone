@@ -56,12 +56,10 @@ function uploadImage(user, file) {
     const fileType = image[image.length - 1];
 
     const fileName = uuid.v5(image[0], process.env.SEED_KEY);
-    // console.log(uuid.v5(image[0], process.env.SEED_KEY));
-    // console.log(fileName);
     const fullFileName = userId + "_" + fileName + "." + fileType;
 
     const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME,
         Key: `${fullFileName}`,
         Body: file.buffer
     };
@@ -73,32 +71,12 @@ function uploadImage(user, file) {
 
         console.log("======= AWS S3 Upload Success =======");
 
-        const isMain = true;
-
-        console.log(data);
-
-        let insertPhotoQuery = "INSERT INTO `css-capstone`.USER_PROFILE_IMAGE SET user_id=?, img_id=?, is_main=?";
-        let insertPhotoData = [userId, fullFileName, isMain];
+        let insertPhotoQuery = "INSERT INTO `css-capstone`.USER_PROFILE_IMAGE SET user_id=?, img_id=?";
+        let insertPhotoData = [userId, fullFileName];
         db.query(insertPhotoQuery, insertPhotoData, (err, results, fields) => {
             if (err) console.log('Failed to upload NEW photo' + err);
-            else {
-                console.log('MySQL : Success to upload NEW photo');
-
-                const isSub = false;
-                let updatePhotoQuery = "UPDATE `css-capstone`.USER_PROFILE_IMAGE SET `is_main` = ? WHERE `img_id` != ? AND `user_id` = ?";
-                let updatePhotoData = [isSub, fullFileName, userId];
-                db.query(updatePhotoQuery, updatePhotoData, (err, results, fields) => {
-                    if (err) console.log('Failed to UPDATE previous photo status' + err);
-                    else {
-                        console.log('MySQL : Success to update previous photo');
-                        console.log('END OF imageHelper.uploadImage')
-                        console.log(fullFileName);
-                        return fullFileName;
-                    }
-                });
-            }
+            else console.log('MySQL : Success to upload NEW photo');
         });
-        //res.redirect('/user');
     });
 }
 

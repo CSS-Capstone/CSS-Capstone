@@ -47,7 +47,7 @@
                 <% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
                     <img class='profile__image' src='images/default_user_profile_img_login.png'/>
                 <% } else { %>
-                    <%- user.profile_img%>
+                    <img class='profile__image' src="<%= user.profile_img%>"/>
                 <% } %>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
@@ -78,12 +78,14 @@
         <div class="profile__right">
             <div class="profile__right__heading">
                 Hi, I'm <%- user.username %>
+                <button class="forget__me__btn">
+                    Forget Me
+                </button>
             </div>
             <div class="profile__right__joined">
                 Joined in 20xx
             </div>
             <a href=# id="underline">Edit profile</a>
-    
             <div class="profile__right__heading__sub">
                 About
             </div>

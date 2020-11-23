@@ -54,13 +54,25 @@
 .profile__right {
     padding-left: 5rem;
     width: 100%;
-    
 }
 
 .profile__right__heading {
     font-size: var(--font-large);
     font-weight: var(--weight-regular);
     padding-bottom: 0.5rem;
+}
+
+.forget__me__btn {
+    background-color: rgb(182, 39, 39);
+    border: 1px solid var(--color-black);
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    display: inline-block;
+    font-size: var(--font-regular);
+    font-weight: var(--weight-regular);
+    margin: 0px 0px 0px 150px;
+    cursor: pointer;
 }
 
 .profile__right__joined {

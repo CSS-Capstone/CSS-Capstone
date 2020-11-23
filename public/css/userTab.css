@@ -46,6 +46,11 @@
     margin-bottom: 0.7rem;
 }
 
+.missing__info__message {
+    font-size: var(--font-large);
+    font-weight: var(--weight-semi-bold);
+}
+
 .hotel__postings__image {
     width: 230px;
     height: 180px;

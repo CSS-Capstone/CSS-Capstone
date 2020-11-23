@@ -18,17 +18,41 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
     // let getHotelPosts = await hotelRetrieveHelper.getUserHotelPostInfo(user);
     // req.sesssion.user.hotelPosts = getHotelPosts;
 
-    if (user.profile_img == imageHelper.DEFAULT_PROFILE_PHOTO || !user.profile_img) {
-        req.session.user.profile_img = imageHelper.DEFAULT_PROFILE_PHOTO;
-        res.render('pages/user/user', {user: user});
+    if (!user.profile_img || user.profile_img === "default_profile_img") {
+        req.session.user.profile_img = "default_profile_img";
+        res.render('pages/user/user', {user: req.session.user});
     } else {
         console.log('You seem to have more than a default photo');
-        try {
-            req.session.user.profile_img = await imageHelper.getProfilePhoto(user);
-        } catch(err) {
-            console.log('Waiting for image..');
+        let params = {
+            Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
+        ,   Key: `${user.profile_img}`
+        };
+        let photoImageData = await s3.s3.getObject(params).promise();
+        let imageData = photoImageData.Body;
+        let buff = Buffer.from(imageData);
+        let base64data = buff.toString('base64');
+        let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+        user.profile_img = imageDOM;
+        req.session.user = user;
+        res.render('pages/user/user', {user: req.session.user});
+    }
+});
+
+router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) => {
+
+    const file = req.file;
+    var user = req.session.user
+    console.log("======= File info from client side =======");
+    console.log(file);
+
+    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
+        || file.mimetype == "image/gif") {
+
+        if(!user.profile_img || user.profile_img === "default_profile_img") {
+            imageHelper.uploadImage(user, file);
         }
-        res.render('pages/user/user', {user: user});
+    } else {
+        return;
     }
 });
 
@@ -38,10 +62,24 @@ router.get('/user/viewComments', authMW.isLoggedIn, async (req, res) => {
     let user = req.session.user;
     let commentsArr = [];
     let commentsData = [user.user_id];
+    // based on booking_id get hotel image, hotel name, and hotel address
     let commentsQuery = `SELECT * FROM COMMENT WHERE user_id = ?`;
     db.query(commentsQuery, commentsData, async (err, results) => {
         if (err) console.log('Failed to retrieve user comment : ' + err);
-        console.log(results);
+        var i;
+        for (i = 0; i < results.length; i++) {
+            var comment = {
+                comment_id: results[i].comment_id,
+                rating: results[i].rating,
+                comment_date: results[i].comment_date,
+                comment_content: results[i].comment_content,
+                hotel_id: results[i].hotel_id,
+                booking_id: results[i].booking_id
+            };
+            commentsArr.push(comment);
+        }
+        req.session.user.userComments = commentsArr;
+        res.json(req.session.user);
     });
 });
 
@@ -155,52 +193,6 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
                 res.json(req.session.user);
             }
         });
-    }
-});
-
-router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) => {
-
-    const file = req.file;
-    console.log("======= File info from client side =======");
-    console.log(file);
-
-    if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
-        || file.mimetype == "image/gif") {
-        
-        const user = req.session.user; 
-        
-        //new Promise(imageHelper.getUserPhotoCount(user))
-        
-        // if (imgCnt >= 3) {
-        //     console.log ('NO MORE PHOTOS FOR YOU BROO');
-        //     res.json(req.session.user);
-        // } else if (imgCnt == 0) {
-        //     console.log("JUST FOR FUUUN DO YOU COME HERE?");
-        // } else {
-        //     //const fileName = imageHelper.uploadImage(user, file);
-        //     console.log("Will upload a file ");
-
-        //     // let promiseA = new Promise(function(resolve, reject) {
-        //     //     resolve(imageHelper.uploadImage(user,file)),
-        //     //     reject(console.log('Failed in new Promise'));
-        //     // });
-        //     // let thenProm = promiseA.then(value => {console.log("after promA : " + value)});
-
-        //     // const promiseA = new Promise(imageHelper.uploadImage(user, file));
-        //     // const promiseB = promiseA.then(imageHelper.refreshProfilePhoto(promiseA), console.log('rejected'));
-
-        //     // console.log("맡애 콘솔로그 promiseA : " + promiseA);
-        //     // console.log("밑에 thenProm : " + thenProm);
-
-        //     //const fileName = await imageHelper.uploadImage(user, file);
-        //     // new Promise(imageHelper.uploadImage(user, file)).then((fileName) => {
-        //     //     req.session.user.profile_img = imageHelper.refreshProfilePhoto(fileName);
-        //     // });
-        //     //console.log(fileName);
-        //     //res.render('pages/user/user.ejs', {user: user});
-        // }
-    } else {
-        return;
     }
 });
 
