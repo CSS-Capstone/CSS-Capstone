@@ -182,7 +182,7 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
         }
         // console.log(hoteldata.results.hotels.length);
         // console.log(hoteldata.results.locations.length);
-        if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
+        if (typeof (hoteldata.results.locations[0]) === 'undefined' || hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
             console.log('hello');
             var topRatedHotel = [];
             var hotelCountry = [];
