@@ -75,7 +75,10 @@ function uploadImage(user, file) {
         let insertPhotoData = [userId, fullFileName];
         db.query(insertPhotoQuery, insertPhotoData, (err, results, fields) => {
             if (err) console.log('Failed to upload NEW photo' + err);
-            else console.log('MySQL : Success to upload NEW photo');
+            else {
+                console.log('MySQL : Success to upload NEW photo');
+                return;
+            }
         });
     });
 }

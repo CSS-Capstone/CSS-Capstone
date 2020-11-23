@@ -50,6 +50,18 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
 
         if(!user.profile_img || user.profile_img === "default_profile_img") {
             imageHelper.uploadImage(user, file);
+            let params = {
+                Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
+            ,   Key: `${user.profile_img}`
+            };
+            let photoImageData = await s3.s3.getObject(params).promise();
+            let imageData = photoImageData.Body;
+            let buff = Buffer.from(imageData);
+            let base64data = buff.toString('base64');
+            let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+            user.profile_img = imageDOM;
+            req.session.user = user;
+            res.json(req.session.user);;
         }
     } else {
         return;

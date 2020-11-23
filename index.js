@@ -49,6 +49,7 @@ require('./passport/passport-facebook-setup');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("stylesheets"));
 app.use(logger.logger);
+app.use(limiter);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
