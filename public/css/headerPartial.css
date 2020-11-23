@@ -1,0 +1,174 @@
+@import "global.css";
+
+a {
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+ul {
+    list-style: none;
+    padding: 0px;
+}
+
+li {
+    display: inline;
+}
+
+input {
+    margin-top: 5px;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+    border-bottom-style: hidden;
+}
+
+.index__bg {
+    background: url('../images/index-head-hotel.jpg');
+    top: 0%;
+    width: 100%;
+    height: 12.5vh;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* Needed to position the navbar */
+    /* position: relative; */
+    /* z-index: -1; */
+}
+
+#navbar {
+    /* position: absolute; */
+    display: flex;
+    justify-content: space-between;
+    background-color: transparent;
+    align-items: center;
+    color: var(--color-white);
+    padding: 16px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.navbar__logo {
+    font-size: var(--font-medium);
+    font-weight: var(--weight-semi-bold);
+    justify-content: flex-start;
+}
+
+.navbar__center__menu {
+    justify-content: center;
+}
+
+.navbar__right__menu {
+    justify-content: flex-end;
+}
+
+#wrapper {
+    width: 70%;
+    margin: 0 auto;
+}
+
+#wrapper-keywords {
+    width: 100%;
+    margin: 0 auto;
+    pointer-events: none;
+}
+
+.searchbar_container {
+    display: none;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    border-radius: 32px;
+    box-shadow: 1px 2px 1.5px 2px var(--color-shadow);
+    background-color: var(--color-white);
+    padding: 0.5rem 0.7rem;
+}
+
+.keywords_container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    border-radius: 32px;
+    box-shadow: 1px 2px 1.5px 2px var(--color-shadow);
+    background-color: var(--color-white);
+    padding: 0.5rem 0.7rem;
+}
+
+.submitBtn {
+    border: 3px solid transparent;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.submitBtn:hover {
+    border: 3px solid var(--color-strong-blue);
+}
+
+.submitBtn > i {
+    font-size: 2rem;
+    color: var(--color-strong-blue);
+}
+
+.searchbar__item#location {
+    padding-left: 28px;
+}
+
+.keywords__item#location {
+    padding-left: 10px;
+}
+
+#location__searchterm {
+    outline: none;
+}
+
+.cards {
+    height: 40vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; 
+    margin: 5rem 2rem;
+}
+
+.cards__col {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 10px;
+    margin: 0rem 0.5rem;
+    background-color: white;
+
+}
+
+.card img {
+    width: 100%;
+    height: 280px;
+    margin: 0 auto;
+    border-radius: 10%;
+    cursor: pointer;
+    transition: all ease 0.3s;
+}
+
+.card img:hover {
+    transform: scale(0.9);
+}
+
+
+.card_title {
+    color: var(--color-strong-blue);
+    font-weight: var(--weight-regular);
+}
+
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+    .cards__col {
+        width: 100%;
+        display: block;
+        margin-bottom: 20px;
+    }
+}
+
+/* Style the counter cards */

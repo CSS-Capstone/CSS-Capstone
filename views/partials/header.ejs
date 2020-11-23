@@ -1,1 +1,141 @@
-<h2>Header</h2>
+<div class="index__bg">
+    <nav id="navbar">
+        <div class="navbar__logo">
+            <i class="fas fa-hotel"></i>
+            <a href="/">Hotel Finder</a>
+        </div>
+        <div class="navbar__center__menu" onclick = "showSearchBar()">
+            <section id="wrapper-keywords" onclick = "showSearchBar()">
+                <div class="searchbar">
+                    <form action="">
+                        <div class="keywords_container" onclick = "showSearchBar()">
+                            <div class="keywords__item" id="location">
+                                <input 
+                                    id="location__searchterm" type="text"
+                                    name="location"
+                                    value='<%= searchKeyword.location %>'
+                                    placeholder="Where are you going?"/>
+                            </div>
+                            <!-- <div>
+                                <%= searchKeyword.checkInDate %> - <%= searchKeyword.checkOutDate %>
+                            </div> -->
+                            <div class="keywords__item" id="checkin">
+                                
+                                <input 
+                                    id="checkin__date" 
+                                    name="chkin"
+                                    type="text" 
+                                    value='<%= searchKeyword.checkInDate %>'
+                                    placeholder="Add dates"/>
+                                
+                            </div>
+                            <div class="keywords__item" id="checkout">
+                                
+                                <input 
+                                    id="checkout__date"
+                                    name="chkout"
+                                    type="text" 
+                                    value='<%= searchKeyword.checkOutDate %>'
+                                    placeholder="Add dates"/>
+                                
+                            </div>
+                            <!-- <div class="searchbar__item" id="guests">
+                                Guests
+                            </div> -->
+                        
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+        <div class="navbar__right__menu">
+            <span class="navbar__menu__item">
+                <a href="#"><i class="far fa-moon"></i></a>
+            </span>
+            <span class="navbar__menu__item"><a href="#" onclick="openForm()">Become a host</a></span>
+            <%- include('../partials/modal_account') %>
+            <span class="navbar__menu__item">
+                <a href="#" onclick="showDropDown()" class="dropdown__link">
+                    <i class="fas fa-bars"></i>
+                    <i class="far fa-user-circle"></i>
+                </a>
+            </span>
+            <%- include('../partials/user_dropdown_menu', {isLoggedIn: isLoggedIn}) %>
+        </div>
+    </nav>
+    <section id="wrapper">
+        <div class="searchbar">
+            <form action="/" method="post">
+                <div class="searchbar_container">
+                    <div class="searchbar__item" id="location">
+                        <label for="searchbar__location">
+                            Location
+                        </label><br>
+                        <input 
+                            id="location__searchterm" type="text"
+                            name="location"
+                            value='<%= searchKeyword.location %>'
+                            placeholder="Where are you going?"/>
+                    </div>
+                    <div class="searchbar__item" id="checkin">
+                        <label for="searchbar__checkin">
+                            Check in
+                        </label><br>
+                        <input 
+                            id="checkin__date" 
+                            name="chkin"
+                            type="text" 
+                            value='<%= searchKeyword.checkInDate %>'
+                            placeholder="Add dates"/>
+                        <script>
+                            var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                            checkinDate.appendTo('#checkin__date');
+                        </script>
+                    </div>
+                    <div class="searchbar__item" id="checkout">
+                        <label for="searchbar__checkout">
+                            Check out
+                        </label><br>
+                        <input 
+                            id="checkout__date"
+                            name="chkout"
+                            type="text" 
+                            value='<%= searchKeyword.checkOutDate %>'
+                            placeholder="Add dates"/>
+                        <script>
+                            var checkinDate = new ej.calendars.DatePicker({ width: "170px" });
+                            checkinDate.appendTo('#checkout__date');
+                        </script>
+                    </div>
+                    <!-- <div class="searchbar__item" id="guests">
+                        Guests
+                    </div> -->
+                    <div class="searchbar__item" id="searchbtn">
+                        <button class="submitBtn" type="submit">
+                            <i class="fas fa-search-location"></i>
+                        </button>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+    </section>
+</div>
+<%- include('../partials/places_api') %>
+<script>
+    var keywords = document.querySelector('.keywords_container');
+    var searchbar = document.querySelector('.searchbar_container');
+    var background = document.querySelector('.index__bg');
+    function showSearchBar() {
+        console.log('tada');
+        console.log(keywords);
+        console.log(searchbar);
+        console.log(background);
+        console.log(keywords.style);
+        console.log(searchbar.style);
+        console.log(background.style);
+        keywords.style.display = 'none';
+        background.style.height = '30vh';
+        searchbar.style.display = 'flex';
+    }
+</script>

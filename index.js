@@ -84,6 +84,8 @@ app.use(USER_ROUTE);
 app.use(ACCOUNT_ROUTE);
 
 app.get('/', (req, res) => {
+    // var currDomain = req.get('host');
+    // console.log(req.get('host'));
     let isLoggedIn = req.session.user == null ? false : true;
 
     let userDetailLogin = {
@@ -101,16 +103,33 @@ app.get('/', (req, res) => {
         modalStyle: '',
         stayInWhere: '',
         formDataLogin: userDetailLogin,
-        formDataRegister: userDetailRegister
+        formDataRegister: userDetailRegister,
+        // currDomain: currDomain
     });
 });
 
 // index user input to test page
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     var searchedData = req.body;
+    console.log(req.body);
+    console.log(req.body.location);
+    var location = req.body.location;
+    console.log(location);
+    var checkInDate = req.body.chkin;
+    var checkOutDate = req.body.chkout;
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
+    // console.log(searchedData.location);
     var locationStr = searchedData.location;
+    // console.log(locationStr);
+    res.clearCookie('searchKeyword');
+    let searchKeyword = {
+        location: location,
+        checkInDate: checkInDate,
+        checkOutDate: checkOutDate
+    }
+    res.cookie('searchKeyword', searchKeyword);
+    // console.log(req.cookies);
     res.redirect(`/hotel/searched/${locationStr}`);
 });
 

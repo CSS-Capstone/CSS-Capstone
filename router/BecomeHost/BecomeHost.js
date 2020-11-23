@@ -226,8 +226,11 @@ router.get('/become-host/hotel/:id', async (req, res) => {
                 let each_hotel_image = each_hotel_image_data.Body;
                 let buffer = Buffer.from(each_hotel_image);
                 let base64data = buffer.toString('base64');
+                // console.log(base64data);
                 let imageDOM = 'data:image/jpeg;base64,' + base64data;
+                // console.log(imageDOM);
                 imageArray.push(imageDOM);
+                console.log(typeof(imageArray[i]));
             }
             res.render('pages/hostHotel/hotelDetail', {
                 imageArray:imageArray

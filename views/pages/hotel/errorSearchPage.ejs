@@ -1,22 +1,105 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>Search Hotel for Anywhere</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- CSS -->
         <link rel="stylesheet" href="/css/errorSearchPage.css">
 
-        <!-- JS -->
-        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+        <!-- Index CSS -->
+        <link rel="stylesheet" href="/css/headerPartial.css">
+        <!-- Footer CSS -->
+        <link rel="stylesheet" href="/css/footer.css">
+        <!-- Modal Login CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/modal.css">
+        <!-- Datepicker -->
+        <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+        <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
     </head>
     <body>
-        <h1>Hello</h1>
-        <!-- navbar -->
-        <!-- make it similar as the one in index.ejs -->
-        <!-- however, navbar will be smaller than the one in index.ejs -->
-
-        <!-- end of navar -->
-        <!-- grid for country -->
-
-        <!-- grid for top rated hotel -->
-        
+        <%- include('../../partials/header') %>
+        <div class="app">
+            <h2 style="margin: 0;">Travel the world with HotelFinder</h2>
+            <ul class = "hs-country full">
+                <% for(var i = 0; i < hotelCountry.length; i++) { %>
+                    <li class = "item-country size"> 
+                        <img src='<%= hotelCountry[i].pictureURL %>' style = "
+                            z-index: 2000;
+                            position: relative; 
+                            top: 36px;
+                            height: 190px;
+                            box-shadow: 0 0 2px #000;"> 
+                        <div style = "position: relative;
+                            z-index: 4000;
+                            top: -16px;
+                            border: 1px solid black;
+                            width: 250px;
+                            text-align: center;
+                            background-color: white;
+                            padding: 0.376em;
+                            border-bottom-left-radius: 8px;
+                            border-bottom-right-radius: 8px;">
+                            <% if (hotelCountry[i].name === "") { %>
+                                <span style = "text-decoration: underline;">Country Name Invalid</span>
+                            <% } else { %>
+                                <a href="/hotel/searched/<%= hotelCountry[i].name %>">
+                                    <p><%= hotelCountry[i].name %></p>
+                                </a>
+                            <% } %> 
+                        </div>
+                    </li>
+                <% } %>
+            </ul>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <h2 style = "margin-bottom:-35px;">Top-rated places to stay</h2>
+            <ul class = "hs-top-rated">
+                <span id = "size-of-hotel-rendered" style = "display: none"><%= topRatedHotel.length %></span>
+                <% for(var i = 0; i < topRatedHotel.length; i++) { %>
+                    <li class = "item-top-rated size">
+                        <% if (topRatedHotel[i].pictures === undefined) { %>
+                            <img src="/images/unavailable-image.jpg">
+                            <br>
+                            Country's name: <%= topRatedHotel[i].hotel_name %> 
+                            <br> 
+                            <%= topRatedHotel[i].city %>, <%= topRatedHotel[i].country %>
+                            <br> 
+                            $<%= topRatedHotel[i].hotel_price %>  
+                        <% } else { %>
+                            <div class="slideshow-container" id = "top-rated-slider-<%= i %>">
+                                <% for(var j = 0; j < topRatedHotel[i].pictures.length; j++) { %>
+                                    <div class="mySlides fade">
+                                        <img src="<%= topRatedHotel[i].pictures[j] %>" style=
+                                        "width: 250px; 
+                                        height: 175px;
+                                        border-radius: 8px;">
+                                    </div>
+                                <% } %>  
+                                
+                                <a class="prev" onclick="plusSlides(-1, this.parentNode)">&#10094;</a>
+                                <a class="next" onclick="plusSlides(1, this.parentNode)">&#10095;</a>
+                            </div>
+                            <!-- <img src="<%= topRatedHotel[i].pictures[0] %>"> -->
+                            <br>
+                            <div style = "position: relative; top: 175px;">
+                                Country's name: <%= topRatedHotel[i].hotel_name %> 
+                                <br> 
+                                <%= topRatedHotel[i].city %>, <%= topRatedHotel[i].country %>
+                                <br> 
+                                $<%= topRatedHotel[i].hotel_price %>  
+                            </div>
+                        <% } %>  
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+        <%- include('../../partials/places_api') %>
+        <%- include('../../partials/footer') %>
     </body>
-</html>
+    <!-- Slider for Top Rated -->
+    <script src = "/js/HotelSearch/hotelSearchPrice.js"></script>
+    <script src = "/js/HotelSearch/hotelSearchImage.js"></script>
+    <script src = "/js/errorSearch/Slider.js"></script>
+</html> 
