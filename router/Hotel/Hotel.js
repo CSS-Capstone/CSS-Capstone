@@ -16,9 +16,6 @@ const router = express.Router();
 const authMW = require('../../modules/auth');
 const db = require('../../utilities/db.js');
 // const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
-
-const authMW = require('../../modules/auth');
-
 //just for testing,will delete later after all logic is done
 router.get('/trial/fucked-up-page', (req, res) => {
     console.log('hello');
