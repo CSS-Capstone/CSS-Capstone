@@ -14,14 +14,11 @@ const trimCityNameHelper = require('../../modules/trimCityNameHelper');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 const router = express.Router();
 const authMW = require('../../modules/auth');
-<<<<<<< HEAD
 const db = require('../../utilities/db.js');
 // const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
-=======
 
 // const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
 
->>>>>>> 132330e375f61dd6f5e47b98b4e233c8e8d00cea
 //just for testing,will delete later after all logic is done
 // router.get('/trial/fucked-up-page', (req, res) => {
 //     console.log('hello');
