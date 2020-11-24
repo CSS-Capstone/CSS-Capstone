@@ -26,9 +26,11 @@ body {
 }
 
 .hotel_search_container {
-    margin: 2rem 1rem;
+    /* margin: 2rem 1rem; */
+    margin: 0 1rem;
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 
 .hotel_searched_info {

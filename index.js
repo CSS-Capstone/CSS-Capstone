@@ -121,21 +121,21 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
     var searchedData = req.body;
-    console.log(req.body);
-    console.log(req.body.location);
+    // console.log(req.body);
+    // console.log(req.body.location);
     var location = req.body.location;
-    console.log(location);
-    var checkInDate = req.body.chkin;
-    var checkOutDate = req.body.chkout;
+    // console.log(location);
+    var checkInDate = req.body.checkin__date;
+    var checkOutDate = req.body.checkout__date;
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     // console.log(searchedData.location);
-    console.log(searchedData);
+    // console.log(searchedData);
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     let dateObj = {
         checkin__date: req.body.checkin__date
     ,   checkout__date: req.body.checkout__date
     };
-    res.cookie('hotelBookingDateData', dateObj);
+    // res.cookie('hotelBookingDateData', dateObj);
     var locationStr = searchedData.location;
     // console.log(locationStr);
     res.clearCookie('searchKeyword');
@@ -769,7 +769,7 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // ===============================================
 
 app.get("*", (req, res) => {
-    res.send("hello: make-up link not in our domain");
+    res.status('404').render('pages/invalidURL');
 });
 
 const port = 8080;

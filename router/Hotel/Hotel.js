@@ -15,161 +15,159 @@ const trimCityNameHelper = require('../../modules/trimCityNameHelper');
 const stripe = require('stripe')(`sk_test_51HeDoXDKUeOleiaZmD7Cs7od48G3QKEFJULAQh4Iz6bDh5UNREhDafamLTfqfxfVH2ajagBLpbVZpet2GYIXzcmM00YWS0Bvi4`);
 const router = express.Router();
 const authMW = require('../../modules/auth');
-const db = require('../../utilities/db.js');
+
 // const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
 
-const authMW = require('../../modules/auth');
-
 //just for testing,will delete later after all logic is done
-router.get('/trial/fucked-up-page', (req, res) => {
-    console.log('hello');
-            var topRatedHotel = [];
-            var hotelCountry = [];
-            // query the top 20 or 25 hotel based on rate from DB
-            // how to get the review of the hotel
-            db.query('SELECT * FROM HOTEL ORDER BY hotel_price DESC LIMIT 20', (error, result) => {
-                if (error) {
-                    console.log(error);
-                }
-                else {
-                    console.log('top 20 hotel');
-                    var ids = [];
-                    for (var j = 0; j < result.length; j++) {
-                        ids.push(result[j].hotel_id);
-                    }
-                    db.query('SELECT * FROM `css-capstone`.USER_HOTEL_IMAGE WHERE hotel_id IN (?)', [ids], async (imageErr, images) => {
-                        if (imageErr) {
-                            console.log(imageErr);
-                        }
-                        else {
-                            console.log('image query');
-                            var currHotel = {};
-                            // var currPictures = [];
-                            // var pictures = images;
-                            // create hashmap for the pictures for faster runtime
-                            var imagesHash = {};
-                            for (var n = 0; n < images.length; n++) {
-                                imagesHash[images[n].hotel_id] = [];
-                            }
-                            for (var m = 0; m < images.length; m++) {
-                                let S3Param = {
-                                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
-                                    Key: `${images[m].hotel_img_id}`
-                                };
-                                let hotel_image_data = await s3.s3.getObject(S3Param).promise();
-                                // console.log(hotel_image_data);
-                                let hotel_image = hotel_image_data.Body;
-                                // console.log(hotel_image);
-                                let buffer = Buffer.from(hotel_image);
-                                // console.log(buffer);
-                                let base64data = buffer.toString('base64');
-                                // console.log(base64data);
-                                let imageDOM = 'data:image/jpeg;base64,' + base64data;
-                                // console.log(imageDOM);
-                                // currPictures.push(imageDOM);
-                                imagesHash[images[m].hotel_id].push(imageDOM);
-                                // imagesHash[images[m].hotel_id].push(images[m].hotel_img_id);
-                            }
-                            // console.log(imagesHash);
-                            for (var k = 0; k < result.length; k++) {
-                                currHotel.hotel_id = result[k].hotel_id;
-                                currHotel.hotel_name = result[k].hotel_name;
-                                currHotel.hotel_price = result[k].hotel_price;
-                                currHotel.country = result[k].country;
-                                currHotel.city = result[k].city;
-                                // get all the pictures based on the hotel_id
-                                // for (var l = 0; l < images.length; l++) {
-                                //     if (currHotel.hotel_id === images[l].hotel_id) {
-                                //         // console.log(currHotel.hotel_id);
-                                //         // console.log(images[l].hotel_id);
-                                //         // console.log(images[l]);
-                                //         let S3Param = {
-                                //             Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
-                                //             Key: `${images[l].hotel_img_id}`
-                                //         };
-                                //         let hotel_image_data = await s3.s3.getObject(S3Param).promise();
-                                //         // console.log(hotel_image_data);
-                                //         let hotel_image = hotel_image_data.Body;
-                                //         // console.log(hotel_image);
-                                //         let buffer = Buffer.from(hotel_image);
-                                //         // console.log(buffer);
-                                //         let base64data = buffer.toString('base64');
-                                //         // console.log(base64data);
-                                //         let imageDOM = 'data:image/jpeg;base64,' + base64data;
-                                //         // console.log(imageDOM);
-                                //         currPictures.push(imageDOM);
-                                //         // currPictures.push(images[l]);
-                                //     }
-                                // }
+// router.get('/trial/fucked-up-page', (req, res) => {
+//     console.log('hello');
+//             var topRatedHotel = [];
+//             var hotelCountry = [];
+//             // query the top 20 or 25 hotel based on rate from DB
+//             // how to get the review of the hotel
+//             db.query('SELECT * FROM HOTEL ORDER BY hotel_price DESC LIMIT 20', (error, result) => {
+//                 if (error) {
+//                     console.log(error);
+//                 }
+//                 else {
+//                     console.log('top 20 hotel');
+//                     var ids = [];
+//                     for (var j = 0; j < result.length; j++) {
+//                         ids.push(result[j].hotel_id);
+//                     }
+//                     db.query('SELECT * FROM `css-capstone`.USER_HOTEL_IMAGE WHERE hotel_id IN (?)', [ids], async (imageErr, images) => {
+//                         if (imageErr) {
+//                             console.log(imageErr);
+//                         }
+//                         else {
+//                             console.log('image query');
+//                             var currHotel = {};
+//                             // var currPictures = [];
+//                             // var pictures = images;
+//                             // create hashmap for the pictures for faster runtime
+//                             var imagesHash = {};
+//                             for (var n = 0; n < images.length; n++) {
+//                                 imagesHash[images[n].hotel_id] = [];
+//                             }
+//                             for (var m = 0; m < images.length; m++) {
+//                                 let S3Param = {
+//                                     Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
+//                                     Key: `${images[m].hotel_img_id}`
+//                                 };
+//                                 let hotel_image_data = await s3.s3.getObject(S3Param).promise();
+//                                 // console.log(hotel_image_data);
+//                                 let hotel_image = hotel_image_data.Body;
+//                                 // console.log(hotel_image);
+//                                 let buffer = Buffer.from(hotel_image);
+//                                 // console.log(buffer);
+//                                 let base64data = buffer.toString('base64');
+//                                 // console.log(base64data);
+//                                 let imageDOM = 'data:image/jpeg;base64,' + base64data;
+//                                 // console.log(imageDOM);
+//                                 // currPictures.push(imageDOM);
+//                                 imagesHash[images[m].hotel_id].push(imageDOM);
+//                                 // imagesHash[images[m].hotel_id].push(images[m].hotel_img_id);
+//                             }
+//                             // console.log(imagesHash);
+//                             for (var k = 0; k < result.length; k++) {
+//                                 currHotel.hotel_id = result[k].hotel_id;
+//                                 currHotel.hotel_name = result[k].hotel_name;
+//                                 currHotel.hotel_price = result[k].hotel_price;
+//                                 currHotel.country = result[k].country;
+//                                 currHotel.city = result[k].city;
+//                                 // get all the pictures based on the hotel_id
+//                                 // for (var l = 0; l < images.length; l++) {
+//                                 //     if (currHotel.hotel_id === images[l].hotel_id) {
+//                                 //         // console.log(currHotel.hotel_id);
+//                                 //         // console.log(images[l].hotel_id);
+//                                 //         // console.log(images[l]);
+//                                 //         let S3Param = {
+//                                 //             Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
+//                                 //             Key: `${images[l].hotel_img_id}`
+//                                 //         };
+//                                 //         let hotel_image_data = await s3.s3.getObject(S3Param).promise();
+//                                 //         // console.log(hotel_image_data);
+//                                 //         let hotel_image = hotel_image_data.Body;
+//                                 //         // console.log(hotel_image);
+//                                 //         let buffer = Buffer.from(hotel_image);
+//                                 //         // console.log(buffer);
+//                                 //         let base64data = buffer.toString('base64');
+//                                 //         // console.log(base64data);
+//                                 //         let imageDOM = 'data:image/jpeg;base64,' + base64data;
+//                                 //         // console.log(imageDOM);
+//                                 //         currPictures.push(imageDOM);
+//                                 //         // currPictures.push(images[l]);
+//                                 //     }
+//                                 // }
 
                                 
-                                currHotel.pictures = imagesHash[currHotel.hotel_id];
-                                topRatedHotel.push(currHotel);
-                                currHotel = {};
-                                // currPictures = [];
-                            }
-                            // console.log(topRatedHotel);
-                        }
-                        db.query('SELECT country FROM HOTEL GROUP BY country LIMIT 10', async (countryErr, results) => {
-                            // call pixabay api to get the photos for each country
+//                                 currHotel.pictures = imagesHash[currHotel.hotel_id];
+//                                 topRatedHotel.push(currHotel);
+//                                 currHotel = {};
+//                                 // currPictures = [];
+//                             }
+//                             // console.log(topRatedHotel);
+//                         }
+//                         db.query('SELECT country FROM HOTEL GROUP BY country LIMIT 10', async (countryErr, results) => {
+//                             // call pixabay api to get the photos for each country
                             
-                            if (countryErr) {
-                                console.log(error);
-                            }
-                            else {
-                                console.log('country query');
-                                var currCountry = {};
-                                for (var i = 0; i < results.length; i++) {
-                                    currCountry.name = results[i].country;
-                                    // get the picture of currCountry from pixabay api
-                                    // currCountry.picture = the picture from pixabay
-                                    const apiName = currCountry.name.toLowerCase();
-                                    const pixabayURL = `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${encodeURIComponent(apiName)}`;
-                                    const pixabayResponse = await fetch(pixabayURL);
-                                    const pixabayData = await pixabayResponse.json();
-                                    const pictureURLUsed = pixabayData.hits[0].webformatURL;
-                                    currCountry.pictureURL = pictureURLUsed;
-                                    // console.log(pixabayResponse);
-                                    // console.log(pixabayData);
-                                    hotelCountry.push(currCountry);
-                                    currCountry = {};
-                                }
-                                // console.log(topRatedHotel);
-                                // console.log(hotelCountry);
+//                             if (countryErr) {
+//                                 console.log(error);
+//                             }
+//                             else {
+//                                 console.log('country query');
+//                                 var currCountry = {};
+//                                 for (var i = 0; i < results.length; i++) {
+//                                     currCountry.name = results[i].country;
+//                                     // get the picture of currCountry from pixabay api
+//                                     // currCountry.picture = the picture from pixabay
+//                                     const apiName = currCountry.name.toLowerCase();
+//                                     const pixabayURL = `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${encodeURIComponent(apiName)}`;
+//                                     const pixabayResponse = await fetch(pixabayURL);
+//                                     const pixabayData = await pixabayResponse.json();
+//                                     const pictureURLUsed = pixabayData.hits[0].webformatURL;
+//                                     currCountry.pictureURL = pictureURLUsed;
+//                                     // console.log(pixabayResponse);
+//                                     // console.log(pixabayData);
+//                                     hotelCountry.push(currCountry);
+//                                     currCountry = {};
+//                                 }
+//                                 // console.log(topRatedHotel);
+//                                 // console.log(hotelCountry);
                                 
-                                //query the picture of the hotel
-                                let searchKeyword = req.cookies.searchKeyword;
-                                let isLoggedIn = req.session.user == null ? false : true;
+//                                 //query the picture of the hotel
+//                                 let searchKeyword = req.cookies.searchKeyword;
+//                                 let isLoggedIn = req.session.user == null ? false : true;
             
-                                let userDetailLogin = {
-                                    email: ''
-                                }
-                                let userDetailRegister = {
-                                    email: '',
-                                    username: ''
-                                }
-                                // console.log(topRatedHotel);
-                                return res.render('pages/hotel/errorSearchPage', {
-                                    topRatedHotel: topRatedHotel, 
-                                    hotelCountry: hotelCountry,
-                                    searchKeyword: searchKeyword,
-                                    isLoggedIn: isLoggedIn,
-                                    registerMessage: '',
-                                    loginMessage: '',
-                                    resetPasswordMessage: '',
-                                    modalStyle: '',
-                                    stayInWhere: '',
-                                    formDataLogin: userDetailLogin,
-                                    formDataRegister: userDetailRegister
-                                });
-                            }
-                        });
-                    });
-                    // console.log(ids);
-                    // query the hotel
-                }
-            });
-})
+//                                 let userDetailLogin = {
+//                                     email: ''
+//                                 }
+//                                 let userDetailRegister = {
+//                                     email: '',
+//                                     username: ''
+//                                 }
+//                                 // console.log(topRatedHotel);
+//                                 return res.render('pages/hotel/errorSearchPage', {
+//                                     topRatedHotel: topRatedHotel, 
+//                                     hotelCountry: hotelCountry,
+//                                     searchKeyword: searchKeyword,
+//                                     isLoggedIn: isLoggedIn,
+//                                     registerMessage: '',
+//                                     loginMessage: '',
+//                                     resetPasswordMessage: '',
+//                                     modalStyle: '',
+//                                     stayInWhere: '',
+//                                     formDataLogin: userDetailLogin,
+//                                     formDataRegister: userDetailRegister
+//                                 });
+//                             }
+//                         });
+//                     });
+//                     // console.log(ids);
+//                     // query the hotel
+//                 }
+//             });
+// })
 
 router.get('/hotel/searched/:cityname', async (req, res) => {
     // API KEY will be hide to env
@@ -189,10 +187,10 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
         if (hoteldata.results.hotels.length === 0 && hoteldata.results.locations.length === 0) {
             console.log('hello');
             var topRatedHotel = [];
-            var hotelCountry = [];
+            var hotelCity = [];
             // query the top 20 or 25 hotel based on rate from DB
             // how to get the review of the hotel
-            db.query('SELECT * FROM HOTEL ORDER BY hotel_price DESC LIMIT 20', (error, result) => {
+            db.query('SELECT * FROM HOTEL ORDER BY hotel_price DESC LIMIT 10', (error, result) => {
                 if (error) {
                     console.log(error);
                 }
@@ -242,40 +240,13 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                                 currHotel.hotel_price = result[k].hotel_price;
                                 currHotel.country = result[k].country;
                                 currHotel.city = result[k].city;
-                                // get all the pictures based on the hotel_id
-                                // for (var l = 0; l < images.length; l++) {
-                                //     if (currHotel.hotel_id === images[l].hotel_id) {
-                                //         // console.log(currHotel.hotel_id);
-                                //         // console.log(images[l].hotel_id);
-                                //         // console.log(images[l]);
-                                //         let S3Param = {
-                                //             Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
-                                //             Key: `${images[l].hotel_img_id}`
-                                //         };
-                                //         let hotel_image_data = await s3.s3.getObject(S3Param).promise();
-                                //         // console.log(hotel_image_data);
-                                //         let hotel_image = hotel_image_data.Body;
-                                //         // console.log(hotel_image);
-                                //         let buffer = Buffer.from(hotel_image);
-                                //         // console.log(buffer);
-                                //         let base64data = buffer.toString('base64');
-                                //         // console.log(base64data);
-                                //         let imageDOM = 'data:image/jpeg;base64,' + base64data;
-                                //         // console.log(imageDOM);
-                                //         currPictures.push(imageDOM);
-                                //         // currPictures.push(images[l]);
-                                //     }
-                                // }
-
-                                
                                 currHotel.pictures = imagesHash[currHotel.hotel_id];
                                 topRatedHotel.push(currHotel);
                                 currHotel = {};
-                                // currPictures = [];
                             }
                             // console.log(topRatedHotel);
                         }
-                        db.query('SELECT country FROM HOTEL GROUP BY country LIMIT 10', async (countryErr, results) => {
+                        db.query('SELECT city FROM HOTEL GROUP BY city ORDER BY COUNT(city) DESC LIMIT 5', async (countryErr, results) => {
                             // call pixabay api to get the photos for each country
                             
                             if (countryErr) {
@@ -283,24 +254,25 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                             }
                             else {
                                 console.log('country query');
-                                var currCountry = {};
+                                var currCity = {};
+                                // console.log(results);
                                 for (var i = 0; i < results.length; i++) {
-                                    currCountry.name = results[i].country;
+                                    currCity.name = results[i].city;
                                     // get the picture of currCountry from pixabay api
                                     // currCountry.picture = the picture from pixabay
-                                    const apiName = currCountry.name.toLowerCase();
+                                    const apiName = currCity.name.toLowerCase();
                                     const pixabayURL = `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${encodeURIComponent(apiName)}`;
                                     const pixabayResponse = await fetch(pixabayURL);
                                     const pixabayData = await pixabayResponse.json();
                                     const pictureURLUsed = pixabayData.hits[0].webformatURL;
-                                    currCountry.pictureURL = pictureURLUsed;
+                                    currCity.pictureURL = pictureURLUsed;
                                     // console.log(pixabayResponse);
                                     // console.log(pixabayData);
-                                    hotelCountry.push(currCountry);
-                                    currCountry = {};
+                                    hotelCity.push(currCity);
+                                    currCity = {};
                                 }
                                 // console.log(topRatedHotel);
-                                // console.log(hotelCountry);
+                                // console.log(hotelCity);
                                 
                                 //query the picture of the hotel
                                 let searchKeyword = req.cookies.searchKeyword;
@@ -315,8 +287,9 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                                 }
                                 // console.log(topRatedHotel);
                                 return res.render('pages/hotel/errorSearchPage', {
+                                    theKey: theKey,
                                     topRatedHotel: topRatedHotel, 
-                                    hotelCountry: hotelCountry,
+                                    hotelCity: hotelCity,
                                     searchKeyword: searchKeyword,
                                     isLoggedIn: isLoggedIn,
                                     registerMessage: '',
