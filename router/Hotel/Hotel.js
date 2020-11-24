@@ -17,8 +17,6 @@ const authMW = require('../../modules/auth');
 const db = require('../../utilities/db.js');
 // const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
 
-// const { trimCitiyNameHelper } = require('../../modules/trimCityNameHelper');
-
 //just for testing,will delete later after all logic is done
 // router.get('/trial/fucked-up-page', (req, res) => {
 //     console.log('hello');
