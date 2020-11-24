@@ -4,7 +4,13 @@ const dotenv = require('dotenv');
 
 function logger(req, res, next) {
     let current_datetime = new Date(Date.now());
-    let ip = req.connection.remoteAddress;
+    var ip = req.headers["x-forwarded-for"];
+    if (ip){
+      var list = ipAddr.split(",");
+      ip = list[list.length-1];
+    } else {
+      ip = req.connection.remoteAddress;
+    }
     let formatted_date =
         "[ip : " + ip + "] " + 
         current_datetime.getFullYear() +

@@ -77,8 +77,6 @@ function updateImage(userId, prevFileName, file, newFileName) {
                     if (error) console.log('Failed to upload photo to S3' + error); 
                     else {
                         console.log("======= AWS S3 Upload Success =======");
-                        console.log('MySQL : Success to update NEW photo');
-                        console.log('fullFileName : ' + newFileName);
                         return;
                     }
                 });
