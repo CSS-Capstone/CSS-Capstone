@@ -113,14 +113,26 @@ async function getBookingHistory() {
 
         var infoContainer = document.createElement('div');
         infoContainer.setAttribute('class', 'booking__hisotry__info__container');
+
+        var linkContainer = document.createElement('div');
+        linkContainer.setAttribute('class', 'booking__hisotry__link__container');
         
         var dateToday = new Date(Date.now());
         var dateToCompare = dateToday.getFullYear() + "-" + (dateToday.getMonth() + 1) + "-" + dateToday.getDate();
 
-        var leaveCommentButton = document.createElement
+        // var bookingLinkBtn = document.createElement('button');
+        // bookingLinkBtn.setAttribute('class', 'view__booking__btn');
+        // bookingLinkBtn.setAttribute('onclick', "location.href='/become-host/hotel/" + `${hotelId}` + "'");
+        // bookingLinkBtn.innerHTML = "View My Booking Info!";
+
+        var leaveCommentBtn;
+        var isCommentBtnVis = false;
         if (dateToCompare > bookingHistories[i].check_out_date) {
-            console.log("Shoud leave comments");
-            console.log('user/review/booking:id/new');
+            isCommentBtnVis = true;
+            leaveCommentBtn = document.createElement('button');
+            leaveCommentBtn.setAttribute('class', 'leave__comment__btn');
+            leaveCommentBtn.setAttribute('onclick', "location.href='/user/review/" + `${bookingHistories[i].booking_id}` + "/new'");
+            leaveCommentBtn.innerHTML = "Please leave comments";
         }
 
         var hotelName = document.createElement('div');
@@ -149,8 +161,14 @@ async function getBookingHistory() {
         infoContainer.appendChild(chkInDate);
         infoContainer.appendChild(chkOutDate);
 
+        //linkContainer.appendChild(bookingLinkBtn);
+        if (isCommentBtnVis) {
+            linkContainer.appendChild(leaveCommentBtn);
+        }
+
         rowContainer.appendChild(img);
         rowContainer.appendChild(infoContainer);
+        rowContainer.appendChild(linkContainer);
         bookingHistoryPanel.appendChild(rowContainer);
     }
 }

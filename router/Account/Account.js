@@ -23,7 +23,7 @@ router.put('/account/:id', (req, res) => {
     res.send('hello: I am the put page of after edit (save edited data happends here');
 });
 
-// redner delete hotel page
+// render delete hotel page
 router.get('/account/:id/delete', (req, res) => {
     res.send('hello: I am deleting page for hotel');
 })
