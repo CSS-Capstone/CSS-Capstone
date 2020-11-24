@@ -7,16 +7,11 @@ const imageHelper = require('../../modules/profilePhotoHelper');
 const hotelImgHelper = require('../../modules/hotelRetrieveHelper');
 const db = require('../../utilities/db');
 const s3 = require('../../utilities/s3');
+const uuid = require('uuid');
 
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
-
-    // let userPhotos = await imageHelper.getImageKeys(user);
-    // req.session.user.userPhotos = userPhotos;
-    
-    // let getHotelPosts = await hotelRetrieveHelper.getUserHotelPostInfo(user);
-    // req.sesssion.user.hotelPosts = getHotelPosts;
 
     if (!user.profile_img || user.profile_img === "default_profile_img") {
         req.session.user.profile_img = "default_profile_img";
@@ -32,7 +27,7 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
         let buff = Buffer.from(imageData);
         let base64data = buff.toString('base64');
         let imageDOM = 'data:image/jpeg;base64,'+ base64data;
-        user.profile_img = imageDOM;
+        user.profile_img_dom = imageDOM;
         req.session.user = user;
         res.render('pages/user/user', {user: req.session.user});
     }
@@ -48,20 +43,34 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
     if (file.mimetype == "image/jpeg" || file.mimetype == "image/png" 
         || file.mimetype == "image/gif") {
 
+        let userId = user.user_id;
+        let image = file.originalname.split(".");
+        const fileType = image[image.length - 1];
+        const fileName = uuid.v5(image[0], process.env.SEED_KEY);
+        const fullFileName = userId + "_" + fileName + "." + fileType;
+
         if(!user.profile_img || user.profile_img === "default_profile_img") {
-            imageHelper.uploadImage(user, file);
-            let params = {
-                Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
-            ,   Key: `${user.profile_img}`
-            };
-            let photoImageData = await s3.s3.getObject(params).promise();
-            let imageData = photoImageData.Body;
-            let buff = Buffer.from(imageData);
+            imageHelper.uploadImage(userId, file, fullFileName);
+            
+            let buff = Buffer.from(file.buffer);
             let base64data = buff.toString('base64');
             let imageDOM = 'data:image/jpeg;base64,'+ base64data;
-            user.profile_img = imageDOM;
-            req.session.user = user;
-            res.json(req.session.user);;
+            req.session.user.profile_img = fullFileName;
+            req.session.user.profile_img_dom = imageDOM
+            res.json(req.session.user);
+        } else {
+            if (user.profile_img === fullFileName) {
+                res.json(req.session.user);
+            } else {
+                imageHelper.updateImage(userId, user.profile_img, file, fullFileName);
+
+                let buff = Buffer.from(file.buffer);
+                let base64data = buff.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+                req.session.user.profile_img = fullFileName;
+                req.session.user.profile_img_dom = imageDOM
+                res.json(req.session.user);
+            }
         }
     } else {
         return;

@@ -20,9 +20,11 @@ function displayPanel(event, index) {
         clearDom('booking_history');
     } else if (index == 1) {
         getBookingHistory();
+        clearDom('comments');
         clearDom('hotel_posts');
     } else if (index == 2) {
         getHotelPosts();
+        clearDom('comments');
         clearDom('booking_history');
     }
     event.target.style.backgroundColor = '#589fe6';
@@ -83,6 +85,8 @@ async function getComments() {
         img.setAttribute('class', 'user__profile__image');
         img.setAttribute('src', "");
 
+        
+
     }
 }
 
@@ -112,8 +116,11 @@ async function getBookingHistory() {
         
         var dateToday = new Date(Date.now());
         var dateToCompare = dateToday.getFullYear() + "-" + (dateToday.getMonth() + 1) + "-" + dateToday.getDate();
+
+        var leaveCommentButton = document.createElement
         if (dateToCompare > bookingHistories[i].check_out_date) {
             console.log("Shoud leave comments");
+            console.log('user/review/booking:id/new');
         }
 
         var hotelName = document.createElement('div');

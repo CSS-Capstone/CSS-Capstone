@@ -12,18 +12,10 @@
 		</div>
 		<div class="photo__main">
 			<% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
-				<img class='profile__image' src='images/default_user_profile_img_login.png'/>
+				<img class='profile__image' src='images/default_user_profile_img_login.png' id='profile__image__modal'/>
 			<% } else { %>
-				<%- user.profile_img%>
+				<img class='profile__image' src="<%= user.profile_img_dom%>" id='profile__image__modal'/>
 			<% } %>
-		</div>
-		<div class="photo__other__container">
-			<span class="photo__other">
-				SMALL Photo images
-			</span>
-			<span class="photo__other">
-				SMALL Photo images
-			</span>
 		</div>
 		<div class="photo__upload__paragraph">
 			A profile photo that shows your face can help other hosts and guests get to know you. Airbnb requires all hosts to have a profile photo. We don’t require guests to have a profile photo, but hosts can. If you’re a guest, even if a host requires you to have a photo, they won’t be able to see it until your booking is confirmed. 

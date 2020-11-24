@@ -1,17 +1,13 @@
 const dotenv = require('dotenv');
 const s3 = require('../utilities/s3');
 const db = require('../utilities/db');
-const uuid = require('uuid');
+
 const DEFAULT_PROFILE_PHOTO = "default_profile_img";
 
 async function getProfilePhoto(user) {
     const imgData = await getImage(user.profile_img);
     const convertedImg = encode(imgData.Body);
     return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
-}
-
-function getSubPhotos(user) {
-    
 }
 
 async function refreshProfilePhoto(fileName) {
@@ -50,14 +46,48 @@ function encode(data) {
     return base64;
 }
 
-function uploadImage(user, file) {
-    let userId = user.user_id;
-    let image = file.originalname.split(".");
-    const fileType = image[image.length - 1];
+function updateImage(userId, prevFileName, file, newFileName) {
+    const params = {
+        Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME,
+        Key: `${prevFileName}`
+    };
 
-    const fileName = uuid.v5(image[0], process.env.SEED_KEY);
-    const fullFileName = userId + "_" + fileName + "." + fileType;
+    s3.s3.deleteObject(params, (error, data) => {
+        if (error) {
+            console.log('Failed to delete photo from S3' + error); 
+        }
 
+        console.log("======= AWS S3 Delete Success =======");
+
+        let updatePhotoQuery = "UPDATE `css-capstone`.USER_PROFILE_IMAGE SET img_id=? WHERE user_id=?";
+        let updatePhotoData = [newFileName, userId];
+        db.query(updatePhotoQuery, updatePhotoData, (err, results, fields) => {
+            if (err) console.log('Failed to update NEW photo' + err);
+            else {
+                console.log('MySQL : Success to update NEW photo');
+                console.log('fullFileName : ' + newFileName);
+
+                const paramsUpload = {
+                    Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME,
+                    Key: `${newFileName}`,
+                    Body: file.buffer
+                };
+            
+                s3.s3.upload(paramsUpload, (error, data) => {
+                    if (error) console.log('Failed to upload photo to S3' + error); 
+                    else {
+                        console.log("======= AWS S3 Upload Success =======");
+                        console.log('MySQL : Success to update NEW photo');
+                        console.log('fullFileName : ' + newFileName);
+                        return;
+                    }
+                });
+            }
+        });
+    }); 
+}
+
+function uploadImage(userId, file, fullFileName) {
     const params = {
         Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME,
         Key: `${fullFileName}`,
@@ -77,10 +107,11 @@ function uploadImage(user, file) {
             if (err) console.log('Failed to upload NEW photo' + err);
             else {
                 console.log('MySQL : Success to upload NEW photo');
+                console.log('fullFileName : ' + fullFileName);
                 return;
             }
         });
     });
 }
 
-module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage };
+module.exports = { getProfilePhoto, refreshProfilePhoto, getImageKeys, encode, DEFAULT_PROFILE_PHOTO, uploadImage, updateImage };

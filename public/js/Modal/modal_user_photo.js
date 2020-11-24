@@ -18,30 +18,20 @@ function isFileImage(file) {
 async function uploadImage() {
     let imgFile = this.files[0];
 
-    // const fileReader = new FileReader();
-    //     fileReader.readAsDataURL(imgFile);
-    //     fileReader.onload = (event) => {
-    //         eachImageContainer.innerHTML = `<img src="${event.target.result}"/>`;
-    //         let inputArea = fileContainer.querySelector('#hotelImagePost');
-    //         console.log(inputArea);
-    //         // inputArea.setAttribute('disabled', 'disabled');
-    //         deleteIconArea.addEventListener('click', (event) => {
-    //             removeTheElement(event.target);
-    //         });
-    //     };
-
-    if (imgFile) {
+    if (imgFile && isFileImage(imgFile)) {
         const formData = new FormData();
         formData.append('imageFile', imgFile);
-        const response = await fetch('/user/upload', {
+        const uploadRes = await fetch('/user/upload', {
             method: 'POST',
             headers: {},
             body: formData
-        }).then(response => {
-            console.log("Reponse From fetch: ", response);
-            window.location.replace(response.url);
-        }).catch(error => {
-            console.log(error);
+        }).then(async (uploadRes) => {
+            const imageUploadRes = await uploadRes.json();
+            const imageData = imageUploadRes.profile_img_dom;
+            const profileImg = document.getElementById('profile__image__main');
+            profileImg.setAttribute('src', `${imageData}`);
+            const profileImgModal = document.getElementById('profile__image__modal');
+            profileImgModal.setAttribute('src', `${imageData}`);
         });
     } else {
         console.log('Not supported type');

@@ -72,18 +72,6 @@
     border: 1px solid transparent;
 }
 
-.photo__other__container {
-	display: flex;
-}
-
-.photo__other {
-	background-color: blue;
-	width: 64px;
-	height: 64px;
-	border: 1px solid transparent;
-	margin-left: 0.6rem;
-}
-
 .photo__upload__paragraph {
 	color: var(--color-mid-grey);
 	font-size: var(--font-micro);

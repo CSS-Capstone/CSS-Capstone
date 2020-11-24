@@ -45,9 +45,9 @@
         <div class="profile__left">
             <div class="profile__left__upper">
                 <% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
-                    <img class='profile__image' src='images/default_user_profile_img_login.png'/>
+                    <img class='profile__image' src='images/default_user_profile_img_login.png' id='profile__image__main'/>
                 <% } else { %>
-                    <img class='profile__image' src="<%= user.profile_img%>"/>
+                    <img class='profile__image' src="<%= user.profile_img_dom%>" id='profile__image__main'/>
                 <% } %>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
