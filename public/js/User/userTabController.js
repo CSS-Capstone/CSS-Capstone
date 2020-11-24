@@ -170,7 +170,6 @@ async function getHotelPosts() {
         var rowContainer = document.createElement('div');
         var hotelId = new String(hotelPosts[i].hotel_id);
         rowContainer.setAttribute('class', 'hotel__postings__row');
-        rowContainer.setAttribute('onclick', "location.href='/become-host/hotel/" + `${hotelId}` + "'");
 
         var img = document.createElement('img');
         img.setAttribute('class', 'hotel__postings__image');
@@ -178,6 +177,14 @@ async function getHotelPosts() {
 
         var hotelInfoContainer = document.createElement('div');
         hotelInfoContainer.setAttribute('class', 'hotel__info__container');
+
+        var hotelLinkContainer = document.createElement('div');
+        hotelLinkContainer.setAttribute('class', 'hotel__link__container');
+
+        var viewHostingBtn = document.createElement('button');
+        viewHostingBtn.setAttribute('class', 'hotel__postings__btn');
+        viewHostingBtn.setAttribute('onclick', "location.href='/become-host/hotel/" + `${hotelId}` + "'");
+        viewHostingBtn.innerHTML = "View My Hotel!";
 
         var hotelName = document.createElement('div');
         hotelName.setAttribute('class', 'hotel__info__name');
@@ -194,8 +201,10 @@ async function getHotelPosts() {
         hotelInfoContainer.appendChild(hotelName);
         hotelInfoContainer.appendChild(hotelAddr);
         hotelInfoContainer.appendChild(hotelPrice);
+        hotelLinkContainer.appendChild(viewHostingBtn);
         rowContainer.appendChild(img);
         rowContainer.appendChild(hotelInfoContainer);
+        rowContainer.appendChild(hotelLinkContainer);
         hotelPostPanel.appendChild(rowContainer);
     }
 }

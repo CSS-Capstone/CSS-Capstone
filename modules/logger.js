@@ -6,7 +6,7 @@ function logger(req, res, next) {
     let current_datetime = new Date(Date.now());
     var ip = req.headers["x-forwarded-for"];
     if (ip){
-      var list = ipAddr.split(",");
+      var list = ip.split(",");
       ip = list[list.length-1];
     } else {
       ip = req.connection.remoteAddress;
