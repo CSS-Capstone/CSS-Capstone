@@ -14,21 +14,28 @@
     <link rel="stylesheet" href="/css/navigation.css">
     <!-- Footer CSS -->
     <link rel="stylesheet" href="/css/footer.css">
-     <!-- Font Awesome -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-     <!-- Index CSS -->
-     <link rel="stylesheet" href="/css/headerPartial.css">
-     <!-- Modal Login CSS -->
-     <link rel="stylesheet" type="text/css" href="/css/modal.css">
-     <!-- Datepicker -->
-     <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
-     <!-- <script src="../../passport/passport-google-setup.js"></script> -->
-     <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- Index CSS -->
+    <link rel="stylesheet" href="/css/headerPartial.css">
+    <!-- Modal Login CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/modal.css">
+    <!-- Datepicker -->
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <body>
+        
     <!-- Navigation Parital View -->
     <%- include('../../partials/header') %>
     <!-- End of Navigation Partial View -->
+    <div onclick = "closeSearchBar()" style="position: relative; height: 100%; width: 100%;">
+        <div class="index-overlay"></div>
+        <br />
+        <br />
     <main class="hotel_search_container">
         <section class="hotel_searched_info">
             <small class="hotel_searched_count"><%= theHotelData.filterHotelData.length %>+ hotels had been found</small>
@@ -86,6 +93,17 @@
             
                 </div>
             <script>
+                function initialize() {
+                    initMap();
+                    activatePlacesSearch();
+                }
+                function activatePlacesSearch(){
+                    var input = document.getElementById('location_search');
+                    let option = {
+                        types: ['(cities)']
+                    };
+                    var autocomplete = new google.maps.places.Autocomplete(input, option);
+                }
                 function initMap() {  
                     let map;
                     let longitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lon%>");
@@ -140,14 +158,13 @@
                 }
             </script>
             <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=<%=theKey%>&callback=initMap&libraries=&v=weekly">
+                src="https://maps.googleapis.com/maps/api/js?key=<%=theKey%>&callback=initialize&libraries=places&v=weekly">
             </script>
         </section>
     </main>
     <%- include('../../partials/places_api') %>
     <%- include('../../partials/footer') %>
     <script src="/js/HotelSearch/hotelSearchPrice.js"></script>
-    <script src="/js/HotelSearch/hotelSearchImage.js"></script>
-    
+    <script src="/js/HotelSearch/hotelSearchImage.js"></script>    
 </body>
 </html>

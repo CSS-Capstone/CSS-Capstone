@@ -22,20 +22,43 @@ input {
     border-bottom-style: hidden;
 }
 
+.index-overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: none;
+}
+
+.darkBG .index-overlay {
+    z-index: 1;
+    background: rgba(0,0,0,0.5);
+    display: block;
+}
+
 .index__bg {
     background: url('../images/index-head-hotel.jpg');
     top: 0%;
     width: 100%;
     height: 12.5vh;
-
+    
     /* Center and scale the image nicely */
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    /* transform: translate(-50%, -50%) scale(1.15); */
 
     /* Needed to position the navbar */
     /* position: relative; */
-    /* z-index: -1; */
+    /* z-index: 2;
+    opacity: 1; */
+}
+
+.darkBG .index__bg {
+    z-index: 2;
+    display: block;
+    /* transform: translate(-50%, -50%) scale(1.15); */
 }
 
 #navbar {
@@ -70,7 +93,7 @@ input {
 }
 
 #wrapper-keywords {
-    width: 100%;
+    width: 110%;
     margin: 0 auto;
     pointer-events: none;
 }
@@ -114,11 +137,11 @@ input {
     color: var(--color-strong-blue);
 }
 
-.searchbar__item#location {
+.searchbar__item #location {
     padding-left: 28px;
 }
 
-.keywords__item#location {
+.keywords__item #location {
     padding-left: 10px;
 }
 
