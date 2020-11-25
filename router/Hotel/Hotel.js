@@ -366,6 +366,109 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
     }
 });
 
+router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
+    let hotelId = req.params.id;
+    let dateObj = req.cookies.hotelBookingDateData;
+    console.log(dateObj);
+    const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+    let dateObjCheckInDate = req.cookies.hotelBookingDateData.checkin__date;
+    let dateObjCheckOutDate = req.cookies.hotelBookingDateData.checkout__date;
+    let dateObjectInAndOut = trimCityNameHelper.validateCheckInAndOutDate(dateObjCheckInDate, dateObjCheckOutDate);
+    let preSelected_CheckInDate = dateObjectInAndOut[0];
+    let preSelected_CehckOutDate =  dateObjectInAndOut[1];
+    const findHotelQuery = `SELECT *
+                            FROM HOTEL
+                            WHERE hotel_id = ?`;
+                            
+    const findHotelImageQuery = `SELECT hotel_img_id
+                                 FROM USER_HOTEL_IMAGE
+                                 WHERE hotel_id = ?`;
+    const queryToRetrieveCommentsForHotelDB = `SELECT user.username, comment.rating, comment.comment_date, comment.comment_content, comment.user_id, comment.hotel_id
+                                            FROM COMMENT AS comment
+                                            INNER JOIN USER AS user
+                                            ON comment.user_id = user.user_id 
+                                            WHERE comment.hotel_id=?`;
+    let hotel_id_data = [hotelId];
+    let imageArray = [];
+    db.query(findHotelQuery, hotel_id_data, async (searchedPostedHotelError, searchedPostedHotelResult) => {
+        if (searchedPostedHotelError) {
+            console.log("ERROR: DB ERROR Hotel Searched Posted");
+            console.log(searchedPostedHotelError);
+            throw searchedPostedHotelError;
+        }
+        let hotelDBObj = {
+            hotel_id: searchedPostedHotelResult[0].hotel_id
+        ,   hotel_name: searchedPostedHotelResult[0].hotel_name
+        ,   hotel_price: searchedPostedHotelResult[0].hotel_price
+        ,   hotel_country: searchedPostedHotelResult[0].country
+        ,   hotel_city: searchedPostedHotelResult[0].city
+        ,   hotel_address: searchedPostedHotelResult[0].address
+        ,   preSelected_CheckInDate: preSelected_CheckInDate
+        ,   preSelected_CehckOutDate: preSelected_CehckOutDate
+        };
+        const weatherAPIDBURL = `http://api.openweathermap.org/data/2.5/weather?q=${hotelDBObj.hotel_city}&appid=${process.env.WEATHER_API_KEY}`;
+        let weatherReponse = await fetch(weatherAPIDBURL);
+        let weatherData = await weatherReponse.json();
+        const airqualityAPIURL = `https://api.waqi.info/feed/${hotelDBObj.hotel_city}/?token=${process.env.AIR_QUALITY_BACKUP_KEY}`;
+        let airqualityResponse = await fetch(airqualityAPIURL);
+        const airQualityData = await airqualityResponse.json();
+            //console.log(airQualityData.data.aqi);
+            if (airQualityData.data.aqi === '-') {
+                //console.log("wrong aqi: ");
+                airQualityData.data.aqi = 43;
+            }
+        // retrieve images from S3 using MySQL primary key
+        db.query(findHotelImageQuery, hotelDBObj.hotel_id, async (searchedPostHotelImageError, searchPostedHotelImageResult) => {
+            if (searchedPostHotelImageError) {
+                console.log("ERROR: DB ERROR Hotel Image Searched Posted");
+                console.log(searchedPostHotelImageError);
+                throw searchedPostHotelImageError;
+            }
+            for (let i = 0; i < searchPostedHotelImageResult.length; i++) {
+                console.log("Image Loop Entered");
+                let searchedPostedS3Param = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                ,   Key: `${searchPostedHotelImageResult[i].hotel_img_id}`
+                };
+                let eachHotelImage = await s3.s3.getObject(searchedPostedS3Param).promise();
+                let each_hotel_image = eachHotelImage.Body;
+                let buffer = Buffer.from(each_hotel_image);
+                let base64data = buffer.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,' + base64data;
+                imageArray.push(imageDOM);
+            }
+            db.query(queryToRetrieveCommentsForHotelDB, hotelDBObj.hotel_id, (searchedPostHotelReviewError, searchedPostHotelReviewResult) => {
+                if(searchedPostHotelReviewError) {
+                    console.log("ERROR: DB ERROR Hotel Searched Review Retrieve");
+                    console.log(searchedPostHotelReviewError);
+                    throw searchedPostHotelReviewError;
+                }
+                let userComment = searchedPostHotelReviewResult;
+                console.log(userComment);
+                res.render('pages/hotel/hotelSearchedDBPostDetail', 
+                    {
+                        hotelDBObj:hotelDBObj, 
+                        imageArray:imageArray, 
+                        weatherData:weatherData, 
+                        airQualityData:airQualityData, 
+                        userComment:userComment,
+                        StripePublicKey:StripePublicKey
+                    });
+            })
+        });
+    });
+});
+
+// COVID FOR DB Hotel Data
+router.get('/hotel/searched/detail/posted/covid/:country', async (req, res) => {
+    const countryCode = req.params.country;
+    const COVID_API_URL = `https://corona-api.com/countries/${countryCode}`;
+    const covidAPIResponse = await fetch(`${COVID_API_URL}`);
+    const covidAPIData = await covidAPIResponse.json();
+    //console.log(covidAPIData);
+    res.json(covidAPIData);
+});
+
 
 router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => {
     console.log(req.session.user);
