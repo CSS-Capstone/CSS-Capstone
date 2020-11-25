@@ -599,6 +599,12 @@ router.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => 
     }
 });
 
+// insert booking data into DB based on hotel from DB
+//res.redirect(`/hotel/searched/detailDB/${paymentData.body.hotelId}/payment`);
+router.get('/hotel/searched/detailDB/:id/payment', (req, res) => {
+    res.send("Hello payment thing");
+});
+
 router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, res) => {
     const user_id = req.session.user.user_id;
     // ===============================================
@@ -715,6 +721,7 @@ router.get('/hotel/searched/detail/:id/paymentconfirm', async (req, res) => {
     res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
 });
 
+// Stripe for the hotels from API
 router.post('/hotel/searched/detail/:id/payment', (req, res) => {
     const paymentData = req.body;
     const passingData = req.body.body;
@@ -737,5 +744,25 @@ router.post('/hotel/searched/detail/:id/payment', (req, res) => {
         res.redirect(`/hotel/searched/detail/${passingData.hotelId}/payment`);
     });
 });
+
+// Stripe for Hotel from DB
+router.post('/hotel/searched/detailDB/:id/payment', (req, res) => {
+    const paymentData = req.body;
+    // const passingData = req.body.body;
+    // console.log(passingData);
+    let hotelPrice = Number(paymentData.body.totalPrice * 100).toFixed(2);
+    hotelPrice = Number(hotelPrice);
+    res.cookie('hotelBookingDataDB', paymentData);
+    stripe.customers.create({
+        email: paymentData.email
+    ,   source: paymentData.token
+    }).then(customer => stripe.charges.create({
+        customer: customer.id
+    ,   currency: 'usd'
+    ,   amount: hotelPrice
+    })).then(function() {
+        res.redirect(`/hotel/searched/detailDB/${paymentData.body.hotelId}/payment`);
+    });
+}); 
 
 module.exports = router;
