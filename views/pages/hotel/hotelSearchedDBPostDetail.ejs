@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Finder - Searched Hotel Detail</title>
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="/css/hotelSearchedDbPostDetail.css">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $( function() {
+                var hiddenDateFrom = $(".hiddenDateFrom");
+                var dateFormat = "mm/dd/yy",
+                  from = $( "#from" )
+                    .datepicker({
+                      defaultDate: "+1w",
+                      changeMonth: true,
+                      numberOfMonths: 1,
+                      minDate: 0
+                    })
+                    .on( "change", function() {
+                      to.datepicker( "option", "minDate", getDate( this ) );
+                      hiddenDateFrom.value = from.value;
+                    }),
+                  to = $( "#to" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 1,
+                    minDate: 1
+                  })
+                  .on( "change", function() {
+                    from.datepicker( "option", "maxDate", getDate( this ) );
+                  });
+             
+                function getDate( element ) {
+                  var date;
+                  try {
+                    date = $.datepicker.parseDate( dateFormat, element.value );
+                  } catch( error ) {
+                    date = null;
+                  }
+             
+                  return date;
+                }
+              } );
+        } );
+    </script>
+</head>
+<body>
+    <header class="hotelSearched_detail_header">
+        <h2 class="hotelSearched_detail_header_hotelName">
+            <i class="fas fa-database"></i>
+            <%=hotelDBObj.hotel_name%>
+        </h2>
+        <div class="hotelSearched_detail_header_contents">
+            <div class="hotelSearched_detail_header_basicInfo">
+                <i class="fas fa-star hotelSearched_detail_rating"></i>
+                <p class="hotelSearched_detail_hotelLocation"><%=hotelDBObj.hotel_city%>, <%=hotelDBObj.hotel_country%></p>
+            </div>
+            <div class="hotelSearched_detail_export">
+                <i class="fas fa-share-square dbCopyLink">&nbsp; Share
+                    <span class="tooltiptext">Click to Copy URL</span>
+                </i>
+                <i class="fas fa-heart hotelSearched_detail_heart">
+                    <span class="hotelSearched_detail_heart_hover_text">Save it ot your list (Require Login)</span>
+                </i>
+            </div>
+        </div>
+        <section class="hotelSearched_detail_main_image_section">
+            <div class="hotelSearched_detail_main_image_container">
+                <div class="hotelDetail_main_image">
+                    <img class="hotelSearched_detail_big_image" src="<%=imageArray[0]%>" alt="hotel main image"/>
+                </div>
+                <div class="hotelSearched_detail_sub_image">
+                    <% for (let i = 1; i < 5; i++) { %>
+                        <% if (imageArray[i]) { %>
+                            <img class="hotelSearched_detail_small_image" src="<%=imageArray[i]%>" alt="hotel sub image"/>
+                        <% } else { %>
+                            <img class="hotelSearched_detail_small_image" src="/images/userHotelPost.jpg" alt="user not posted default hotel image">
+                        <% } %>
+                    <% } %>
+                    <% if (imageArray.length > 5) { %>
+                        <button class="hotelSearched_detail_more_image_btn">Show More</button>
+                    <% } %>  
+                </div>
+            </div>
+         </section>
+    </header>
+    <!-- USER HOTEL BOOKING SECTION -->
+    <section class="hotelSearched_detail_main" data-hotel-id="<%=hotelDBObj.hotel_id%>" data-hotel-name="<%=hotelDBObj.hotel_name%>">
+        <main class="hotelSearched_detail_main_hotelInfo">
+            <div class="hotelSearched_detail_main_booking_container">
+                <div class="hotelSearched_detail_booking_header">
+                    <h2 class="hotelSearched_detail_header_title" data-price-night="<%=Number(hotelDBObj.hotel_price).toFixed(2)%>">YOUR &nbsp;
+                        <span class="hotelSearched_detail_header_subTitle">Information</span>
+                    </h2>
+                    <img class="hotelSearched_detail_header_image" src="<%=imageArray[0]%>" alt="hotel Detail Image 1"/>
+                    <h3 class="hotelSearched_detail_header_hotel_price">$<%=Number(hotelDBObj.hotel_price).toFixed(2)%> / Night</h3>
+                    <button id="hotelSearched_detail_checkout-button" class="hotelSearched_detail_book_btn" data-stripe-id="<%=StripePublicKey%>">Book It</button>
+                    <div class="hotelSearched_detail_summary">
+                        <ul class="hotelSearched_detail_summary_details">
+                            <li>
+                                <small>Selected Room <strong>single</strong> Price: <strong>$0.00</strong></small>
+                            </li>
+                            <li>
+                                <small>Number of guest(s) <strong>1: </strong> Price: <strong>$0.00</strong></small>
+                            </li>
+                        </ul>
+                        <h3 class="hotelSearched_detail_summary_totalPrice">$<%=(hotelDBObj.hotel_price).toFixed(2)%></h3>
+                    </div>
+                </div>
+                <div class="hotelSearched_detail_hotel_info">
+                    <div class="hotelSearched_detail_hotel_address">
+                        <div class="hotelSearched_detail_address_info_container">
+                            <h2>Hotel Address</h2>
+                            <p class="hotel_address" data-hotel-address="<%=hotelDBObj.hotel_address%>"><%=hotelDBObj.hotel_address%></p>
+                        </div>
+                        <div class="hotelSearched_detail_city_info_container">
+                            <h2>City Full Name</h2>
+                            <p class="hotel_full_city_country" data-hotel-city="<%=hotelDBObj.hotel_city%>" data-hotel-country="<%=hotelDBObj.hotel_country%>">
+                                <%=hotelDBObj.hotel_city%>, <%=hotelDBObj.hotel_country%>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="hotelSearched_detail_form_group">
+                        <!-- Hotel Room Type Section -->
+                        <section class="hotelSearched_detail_Info_room_section">
+                            <h3 class="hotelSearched_detail_room_title">Room Type</h3>
+                            <div class="hotelSearched_detail_room_radio_container">
+                                <div>
+                                    <input type="radio" name="hotelRoomType" id="single" value="single" checked/>
+                                    <label for="Single">Single</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="hotelRoomType" id="deluxe" value="deluxe"/>
+                                    <label for="Deluxe">Deluxe</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="hotelRoomType" id="double-double" value="double-double"/>
+                                    <label for="Double-Double">Double-Double</label>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- Hotel Guest Type Section -->
+                        <section class="hotelSearched_detail_Info_guest_section">
+                            <small class="hotelSearched_detail_guest_title">Guests</small>
+                            <div class="hotelSearched_detail_guest_option">
+                                <select name="guests" id="guests" class="guests">
+                                    <option value="0" selected>Guest 1</option>
+                                    <option value="1">Guest 2</option>
+                                    <option value="2">Guest 3</option>
+                                    <option value="3">Guest 4 or More</option>
+                                </select>
+                            </div>
+                        </section>
+                    </div><br><br>
+                    <!-- Date Section -->
+                    <div class="hotelSearcehd_detail_checkin_checkout_map_container">
+                        <div class="date_container">
+                            <div class="date_container_from">
+                                <label for="from">From</label><br>
+                                <input readonly type="text" id="from" name="from" value="<%=hotelDBObj.preSelected_CheckInDate%>" onchange="fillOutSummaryInfo()"><br><br>
+                                <span class="checkDateValidation"></span>
+                            </div>
+                            <div class="date_container_to">
+                                <label for="to">to</label><br>
+                                <input readonly type="text" id="to" name="to" value="<%=hotelDBObj.preSelected_CehckOutDate%>" onchange="fillOutSummaryInfo()"><br><br>
+                                <span class="checkDateValidation"></span>
+                            </div>
+                        </div>
+                        <div id="map" style="width: 100%; height: 300px;">
+                                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+    <!-- Things to Know Section -->
+    <!-- hotelSearcehd_detail_checkin_checkout_map_container -->
+    <section class="hotelSearched_detail_things_to_know">
+        <h2 class="hotelSearched_detail_things_to_know_title" data-currency-countryName="<%=weatherData.sys.country%>">
+            Things to know
+        </h2>
+        <div class="hotelSearched_detail_tab_container">
+            <div class="hotelSearched_detail_tab_button_container">
+                <button class="hotelSearched_detail_tab_btn" id="hotelSearched_detail_tab_btn_first">Weather</button>
+                <button class="hotelSearched_detail_tab_btn">Covid</button>
+                <button class="hotelSearched_detail_tab_btn" id="hotelSearched_detail_tab_video" data-hotel-city-fullname="<%=hotelDBObj.hotel_city%>">Video of the City</button>
+                <button class="hotelSearched_detail_tab_btn">Currency</button>
+            </div>
+            <!-- Each Panel -->
+            <div class="hotelSearched_detail_tab_panel" id="hotelSearched_detail_panel_first">
+                <div class="hotelSearched_detail_weather_air_container">
+                    <div class="hotelSearched_detail_weather_container">
+                        <div class="hotelSearched_detail_weather_leftside">
+                            <h3 class="hotelSearched_detail_weather_title">Current Weather in City</h3>
+                            <h2><%=hotelDBObj.hotel_city%>, <%=hotelDBObj.hotel_country%></h2>
+                            <img class="hotelSearched_detail_weather_left_icon" src="http://openweathermap.org/img/w/<%=weatherData.weather[0].icon%>.png" alt="current weather icon"/>
+                            <p class="hotelSearched_detail_weather_left_description"><%=weatherData.weather[0].description%></p>
+                            <p class="hotelSearched_detail_weather_left_feelslike">Feels like <%=(weatherData.main.feels_like * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
+                        </div>
+                        <div class="hotelSearched_detail_weather_rightside">
+                            <p>Current Temperature(Kelvin): <strong><%=weatherData.main.temp%>&#8490;</strong></p>
+                            <p>Current Temperature(Fahrenheit): <strong><%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</strong></p>
+                            <p>Current Temperature(Celsius): <strong><%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</strong></p>
+                            <div class="hotelSearched_detail_weather_wind">
+                                <h3>Wind Speed</h3>
+                                <i class="fas fa-wind"></i>&nbsp; <strong><%=weatherData.wind.speed%>mph</strong>
+                            </div>
+                            <div class="hotelSearched_detail_weather_humid">
+                                <h3>Humidity</h3>
+                                <i class="fas fa-tint-slash"></i>&nbsp; <strong><%=weatherData.main.humidity%>%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hotelSearched_detail_air_quality_container">
+                        <div class="hotelSearched_detail_air_quality_left">
+                            <h2 class="hotelSearched_detailed_air_quality_title">Air Quality</h2>
+                            <i class="face"></i>
+                            <p class="hotelSearched_detail_air_quality_value"></p>
+                            <p class="hotelSearched_detail_air_quality_index" data-air-quality-index="<%=airQualityData.data.aqi%>">Air Index: <%=airQualityData.data.aqi%></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Covid Panel -->
+            <div class="hotelSearched_detail_tab_panel">
+                <div class="hotelSearched_detail_covid_header">
+                    <h2 class="hotelSearched_detail_covid_countryName"></h2>
+                    <small class="hotelSearched_detail_covid_lastupdate" data-countryName="<%=weatherData.sys.country%>"></small>
+                </div>
+                <div class="chart_data">
+                    <canvas id="myChart" class="graph"></canvas>
+                </div>
+            </div>
+            <!-- Video -->
+            <div class="hotelSearched_detail_tab_panel">
+                <video class="hotelSearched_detail_cityVideo_frame" 
+                    src=""
+                    width="1218"
+                    height="400"
+                    loop muted
+                    type="video/mp4"
+                    controls preload="1">
+                </video>
+                <div class="hotelSearched_detail_video_buttonContainer"> 
+                    <button class="video_show_more_btn">Show More Videos</button>
+                </div>
+            </div>
+            <!-- Currency -->
+            <div class="hotelSearched_detail_tab_panel">
+                <div class="hotelSearched_detail_currency_container">
+                    <div class="hotelSearched_detail_currency_left">
+                        <h2 class="hotelSearched_detail_currency_default"></h2>
+                        <small class="hotelSearched_detail_currency_default_from"></small>
+                        <p class="hotelSearched_detail_currency_to"></p>
+                        <small class="hotelSearched_detail_curreny_lastUpdated"></small>
+                    </div>
+                    <div class="hotelSearched_detail_currency_right">
+                        <h2 class="hotelSearched_detail_currency_right_header">Type the Value and Press Enter to Convert</h2>
+                        <div class="hotelSearched_detail_currency_from_top">
+                            <p class="hotelSearched_detail_top_default"></p>
+                            <div class="hotelSearched_detail_top_input_container">
+                                <i class="fas fa-dollar-sign"></i>&nbsp;
+                                <input class="hotelSearched_detail_currency_top_amount" type="text" placeholder="Press Enter when you type amount"/>
+                            </div>
+                            <span class="currency_validation"></span>
+                        </div>
+                        <div class="hotelSearched_detail_currency_middle_divider">
+                            <h1 class="hotelSearched_detail_currency_middle">To</h1>
+                        </div>
+                        <div class="hotelSearched_detail_currency_to_bottom">
+                            <p class="hotelSearched_detail_currency_bottom_country_code"></p>
+                            <h3 class="hotelSearched_detail_currency_bottom_result"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section for Reviews -->
+    <section class="hotelSearched_detail_reviews">
+        <h2 class="hotelSearched_detail_reviews_header" data-user-comment="<%=userComment.length%>"><i class="fas fa-star hotelReviewIcon"></i> Reviews (<%=userComment.length%>)</h2>
+        <% if (userComment.length) { %>
+            <p class="userRating">User Rate:
+                <% for (let i = 1; i < userComment.length; i++) { %>
+                    <% userComment[0].rating += userComment[i].rating%>
+                <% } %>
+                <%=(userComment[0].rating / userComment.length).toFixed(2)%>
+            </p>
+            <div class="hotelSearched_detail_reviews_container">
+                <% if (userComment.length >= 8) { %>
+                    <% for (let i = 0; i < 8; i++) { %>
+                        <div class="hotelSearched_detail_each_review_container">
+                            <div class="hotelSearched_detail_each_review_header">
+                                <div>
+                                    <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                </div>
+                                <div class="hotelSearched_detail_each_review_header_content">
+                                    <h3 class="hotelSearched_detail_each_review_header_content_username">
+                                        <%=userComment[i].username%>
+                                    </h3>
+                                    <p class="hotelSearched_detail_each_review_header_content_date">
+                                        <%=userComment[i].comment_date.toDateString()%>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="hotelSearched_detail_each_review_comment_content">
+                                <p><%=userComment[i].comment_content%></p>
+                            </div>
+                        </div>
+                    <% } %>
+                    <button class="hotelSearched_detail_review_display_all_button">Show All <%=userComment.length%> Reviews</button>
+                <% } else { %>
+                    <% for (let i = 0; i < userComment.length; i++) { %>
+                        <div class="hotelSearched_detail_review_container">
+                            <div class="hotelSearched_detail_review_header">
+                                <div>
+                                    <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                </div>
+                                <div class="hotelSearched_detail_each_review_header_content">
+                                    <h3 class="hotelSearched_detail_each_review_header_content_username">
+                                        <%=userComment[i].username%>
+                                    </h3>
+                                    <p class="hotelSearched_detail_each_review_header_content_date">
+                                        <%=userComment[i].comment_date.toDateString()%>
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="hotelSearched_detail_each_review_comment_content">
+                                    <%=userComment[i].comment_content%>
+                                </p>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }%>
+            </div>
+        <% } else { %>
+            <p>Currently there are no reviews of this hotel</p>
+        <% }%>
+    </section>
+    <!-- ================================== -->
+    <!-- ============ MODAL =============== -->
+    <div class="modal" id="myModal">
+        <header>
+            <span class="close_modal_btn">&times;</span>
+            <p class="modal_img_counter"></p>
+        </header>
+        <i class="fas fa-chevron-circle-left modal-left"></i>
+        <main class="modal_image_container">
+            <% for (let i = 0; i < imageArray.length; i++) { %>
+                <img class="modal_img" src="<%=imageArray[i]%>" alt="user posted hotel images" images-in-modal="<%=imageArray[i]%>"/>
+            <% } %>
+        </main>
+        <i class="fas fa-chevron-circle-right modal-right"></i>
+    </div>
+
+    <!-- =================================== -->
+    <!-- Video Modal ======================= -->
+    <div class="video_modal" id='videoModal'>
+        <header>
+            <span class="close_video_modal_btn">&times;</span>
+            <main class="modal_video_container">
+                <video 
+                    class="modal_video" 
+                    src=""
+                    loop muted 
+                    type="video/mp4"
+                    controls preload="1">
+                </video>
+            </main>
+            <ul class="modal_video_navigation">
+                
+            </ul>
+        </header>
+    </div>
+    <!-- ========================================= -->
+    <!-- ========== Modal For Review ==============-->
+    <% if (userComment.length) { %>
+        <div class="review_modal" id="reviewModal">
+            <header>
+                <span class="close_reivew_modal_btn">&times;</span>
+            </header>
+            <main class="modal_review_container">
+                <div class="modal_review_header_container">
+                    <h3 class="modal_review_header">
+                        <i class="fas fa-star hotelReviewIcon"></i> 
+                        <%=(userComment[0].rating / userComment.length).toFixed(2)%>
+                        Reviews (<%=userComment.length%>)
+                    </h3>
+                    <h4 class="modal_review_hotel_name"><%=hotelDBObj.hotel_name%></h4>
+                    <h4 class="modal_review_hotel_address"><%=hotelDBObj.hotel_address%></h4>
+                    <h4 class="modal_review_hotel_city"><%=hotelDBObj.hotel_city%></h4>
+                    <h4 class="modal_review_hotel_country"><%=hotelDBObj.hotel_country%></h4>
+                </div>
+                <div class="modal_review_lists_all_container">
+                    <% for (let i = 0; i < userComment.length; i++) { %>
+                        <div class="modal_review_each_container">
+                            <div class="modal_review_each_header">
+                                <div>
+                                    <img class="modal_hotelDetail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                </div>
+                                <div class="hotelSearched_detail_each_review_header_content">
+                                    <h3 class="modal_hotelDetail_each_review_header_content_username"><%=userComment[i].username%></h3>
+                                    <p class="modal_hotelDetail_each_review_header_content_date"><%=userComment[i].comment_date.toDateString()%></p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="modal_hotelDetail_each_review_comment_content">
+                                    <%=userComment[i].comment_content%>
+                                </p>
+                            </div>
+                            <br>
+                            <hr>
+                            <br>
+                        </div>
+                    <% } %>
+                </div>
+            </main>
+        </div>
+    <% } %>
+    <!-- =============== END ================= -->
+
+</body>
+<script src="https://checkout.stripe.com/checkout.js" defer></script>
+    <!-- <script src="https://js.stripe.com/v3/"></script> -->
+    <script>
+        const publicStripeKey = "<%=StripePublicKey%>";
+    </script>
+<!-- COPY URL -->
+<script src="/js/HotelDetailDB/hotelDetailDBStripePayment.js" defer></script>
+<script src="/js/HotelDetailDB/hotelDetailDBCopyUrl.js" defer></script>
+<script src="/js/HotelDetailDB/hotelDetailDBTabController.js" defer></script>
+<script src="/js/HotelDetailDB/hotelDetailDBReviewModal.js" defer></script>
+<% if (imageArray.length > 5) { %>
+    <script src="/js/HotelDetailDB/hotelSearchedDBHotelImageModal.js" defer></script>
+<% } %>
+<script src="/js/HotelDetailDB/hotelDetailDBPriceSummary.js" defer></script>
+<!-- Chart js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0" defer></script>
+<script>
+    function initMap() {
+        let map;
+        let address = "<%=hotelDBObj.hotel_address%>";
+	    map = new google.maps.Map(document.getElementById("map"), {
+	    	zoom: 14,
+	    });
+	    const geocoder = new google.maps.Geocoder();
+	    geocoder.geocode({
+	    	'address': address
+	    }, (results, status) => {
+	    	if(status == google.maps.GeocoderStatus.OK) {
+	    		console.log("It got in OK Status");
+	    		console.log("GEO Location: ", results[0].geometry.location);
+	    		new google.maps.Marker({
+	    		   position: results[0].geometry.location,
+	    		   map: map
+	    		});
+	    		map.setCenter(results[0].geometry.location);
+	    	 } else {
+	    		 console.log("Something is wrong on your map");
+	    	 }
+	    });
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=initMap&libraries=&v=weekly">
+</script>
+</html>
