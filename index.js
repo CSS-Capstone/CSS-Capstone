@@ -136,7 +136,10 @@ app.post('/', async (req, res) => {
         checkin__date: req.body.checkin__date
     ,   checkout__date: req.body.checkout__date
     };
-    // res.cookie('hotelBookingDateData', dateObj);
+    // ============================================
+    // DO NOT JUST REMOVE THE THING
+    res.cookie('hotelBookingDateData', dateObj);
+    // =============================================
     var locationStr = searchedData.location;
     // console.log(locationStr);
     res.clearCookie('searchKeyword');
