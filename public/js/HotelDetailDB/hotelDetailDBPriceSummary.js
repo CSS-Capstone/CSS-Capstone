@@ -72,6 +72,9 @@ function calculateTotalPrice(numberOfDaysStaying, roomPrice, additionalGuestPric
     let numberRoomPrice = Number(roomPrice);
     let numberAdditionalPriceGuest = Number(additionalGuestPrice);
     let totalPrice = 0;
+    if (numberStayingDates === 0) {
+        numberStayingDates = Number(1);
+    }
     totalPrice = (hotelDefaultPriceAttribute * numberStayingDates) + numberRoomPrice + numberAdditionalPriceGuest;
     totalPrice = totalPrice.toFixed(2);
     return totalPrice;
