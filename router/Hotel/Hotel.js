@@ -370,6 +370,8 @@ router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
     let hotelId = req.params.id;
     let dateObj = req.cookies.hotelBookingDateData;
     console.log(dateObj);
+    console.log("============ DEBUGING ============ ");
+    
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     let dateObjCheckInDate = req.cookies.hotelBookingDateData.checkin__date;
     let dateObjCheckOutDate = req.cookies.hotelBookingDateData.checkout__date;
