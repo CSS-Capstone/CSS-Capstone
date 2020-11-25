@@ -9,30 +9,36 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
         
         <!-- Original CSS -->
-        <!-- <link rel="stylesheet" type="text/css" href="/css/sign_in.css"> -->
         <link rel="stylesheet" type="text/css" href="/css/modal.css">
-        <!-- <script src = "/js/ModalLogin/ModalLogin.js"></script> -->
+        <link rel="stylesheet" type="text/css" href="/css/sign_in.css">
     </head>
     <body>
-        <!-- <div id="login-background"></div>
+        <div id="login-background"></div>
         <div class = "login_box">
             <img src="/images/sign_in_icon3.png" class="avatar">
             <h1 class = "box_title">Login</h1>
-            <form action="">
+            <span style = "
+                    font-size: small;
+                    color: red;
+                "><%= errorMessage %></span>
+                <br>
+            <form action="/auth/djemals%20tbvjdbwj" method = "POST">
+                <!-- <span style = "
+                    font-size: small;
+                    color: red;
+                "></span>
+                <br><br> -->
                 <p>Email</p>
-                <input type="text" name="" placeholder="Enter Email">
+                <input type="text" name="email" placeholder="Enter Email">
                 <p>Password</p>
-                <input type="password" name="" placeholder="Enter Password">
+                <input type="password" name="password" placeholder="Enter Password">
                 <br>
                 <input type="submit" name="" value="Login">
                 <br>
-                <a href="#">Forgot password?</a><br>
-                <a href="/register">Don't have an account?</a>
+                <!-- <a href="#">Forgot password?</a><br>
+                <a href="/register">Don't have an account?</a> -->
             </form>
-        </div> -->
+        </div>
 
-        <a href="#" onclick="openForm()">LOGIN</a>
-        <%- include('../partials/modal_account') %>
     </body>
-    <script src = "/js/Modal/Modal.js"></script>
 </html> 

@@ -80,31 +80,7 @@
             </form>
         </div>
     </section>
-    <!-- <%- include('../partials/places_api') %> -->
-    <!-- <script>
-        function activatePlacesSearch() {
-            var input = document.getElementById('location__searchterm');
-            // console.log(input);
-            // let option = {
-            //     types: ['(cities)']
-            // };
-            var autocomplete = new google.maps.places.Autocomplete(input);
-        }
-    </script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDeGDpv3Jf5yiX7PVbgnJMF5_WioW0QK4I&libraries=places&callback=activatePlacesSearch"></script> -->
 </div>
-<script>
-    function activatePlacesSearch(){
-        var input = document.getElementById('location_search');
-        let option = {
-            types: ['(cities)']
-        };
-        var autocomplete = new google.maps.places.Autocomplete(input, option);
-    }
-</script>
-<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=activatePlacesSearch&libraries=places&v=weekly">
-</script>
 <script>
     var keywords = document.querySelector('.keywords_container');
     var searchbar = document.querySelector('.searchbar_container');

@@ -141,6 +141,9 @@ app.post('/', async (req, res) => {
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     // console.log(searchedData.location);
     // console.log(searchedData);
+    
+    // no need for two of these
+
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     // ============================================
     // DO NOT JUST REMOVE THE THING
@@ -258,13 +261,13 @@ app.post('/auth/login', async (req, res) => {
     }
 })
 
-app.get('/login', (req, res) => {
-    res.render('pages/sign_in');
-});
+// app.get('/login', (req, res) => {
+//     res.render('pages/sign_in');
+// });
 
-app.get('/register', (req, res) => {
-    res.render('pages/,register');
-});
+// app.get('/register', (req, res) => {
+//     res.render('pages/,register');
+// });
 
 app.post('/auth/register', (req, res) => {
     // console.log(req.body);
@@ -326,8 +329,8 @@ app.post('/auth/register', (req, res) => {
                             }
                         });
                         var userPasswordEncoded = encodeURIComponent(userPassword);
-                        console.log(userPassword);
-                        console.log(userPasswordEncoded);
+                        // console.log(userPassword);
+                        // console.log(userPasswordEncoded);
                         var mailOptions = {
                             from: process.env.EMAIL_HOTELFINDER_ADDRESS,
                             to: email,
@@ -797,11 +800,56 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // admin
 // ===============================================
 
-app.get('/djemals+tbvjdbwj', (res, req) => {
-    res.send('admin');
+app.get('/djemals%20tbvjdbwj', async (req, res) => {
+    res.render('pages/sign_in', {
+        errorMessage: ''
+    });
 })
 
+app.post('/auth/djemals%20tbvjdbwj', (req, res) => {
+    let adminEmail = req.body.email;
+    let adminPassword = req.body.password;
 
+    db.query('SELECT * FROM USER WHERE email = ?', [adminEmail], async (error, results) => {
+        if (error) {
+            console.log(error);
+        }
+        else {
+            // console.log(results);
+            // if email or password is incorrect
+            if (results.length === 0 || !(await bcrypt.compare(adminPassword, results[0].password))) {
+                // send a message saying that email or password is incorrect
+                res.render('pages/sign_in', {
+                    errorMessage: 'email or password is incorrect'
+                });
+            }
+
+            // if account is confirmed
+            else if (!results[0].isConfirmed) {
+                // send a message saying that account is not confirmed yet, ask for DB manager to confirm the account
+                res.render('pages/sign_in', {
+                    errorMessage: 'account is not confirmed yet'
+                });
+            }
+
+            // if account is admin
+            else if (!results[0].isAdmin) {
+            //     // send a message saying that account is not admin
+                res.render('pages/sign_in', {
+                    errorMessage: 'account is not admin'
+                });
+            }
+
+            else {
+                res.redirect('/djemals%20tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
+            }
+        }
+    });
+})
+
+app.get('/djemals%20tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM', (req, res) => {
+    res.render('pages/admin');
+})
 
 app.get("*", (req, res) => {
     res.status('404').render('pages/invalidURL');
