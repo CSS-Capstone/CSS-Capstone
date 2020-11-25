@@ -1,5 +1,15 @@
 @import "global.css";
 
+/* FLASH */
+.index_flash_container_error {
+    background-color: var(--color-warning);
+}
+.index_flash_error_message {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+}
+/* End of Flash */
+
 a {
     text-decoration: none;
     color: var(--color-white);

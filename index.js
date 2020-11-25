@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const flash = require('connect-flash');
 // const redis = require('redis');
 // const redisStore = require('connect-redis')(session);
 // const client  = redis.createClient();
@@ -74,12 +75,20 @@ app.use(session({
     cookie: { maxAge: 6000000 }
 }));
 
+// FLASH ================================
+app.use(flash());
+// ======================================
+
 // ===============================================
 // ============ Database connection ==============
 // ===============================================
 const db = require('./utilities/db.js');
 
-
+app.use( (req, res, next) => {
+    res.locals.error_message = req.flash("error");
+    res.locals.success_message = req.flash("success");
+    next();
+});
 // ===============================================
 // =============== ROUTER ========================
 // ===============================================

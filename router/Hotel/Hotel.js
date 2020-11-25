@@ -369,9 +369,6 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
 router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
     let hotelId = req.params.id;
     let dateObj = req.cookies.hotelBookingDateData;
-    console.log(dateObj);
-    console.log("============ DEBUGING ============ ");
-    
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     let dateObjCheckInDate = req.cookies.hotelBookingDateData.checkin__date;
     let dateObjCheckOutDate = req.cookies.hotelBookingDateData.checkout__date;
@@ -446,7 +443,6 @@ router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
                     throw searchedPostHotelReviewError;
                 }
                 let userComment = searchedPostHotelReviewResult;
-                console.log(userComment);
                 res.render('pages/hotel/hotelSearchedDBPostDetail', 
                     {
                         hotelDBObj:hotelDBObj, 
@@ -482,8 +478,6 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
     let dateObjectInAndOut = trimCityNameHelper.validateCheckInAndOutDate(dateObjCheckInDate, dateObjCheckOutDate);
     let preSelected_CheckInDate = dateObjectInAndOut[0];
     let preSelected_CehckOutDate =  dateObjectInAndOut[1];
-    console.log(dateObjectInAndOut[0]);
-    console.log(dateObjectInAndOut[1]);
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
     const AirQualityKey = process.env.AIR_QUALITY_KEY;
     const AIRQualityBACKUP_KEY = process.env.AIR_QUALITY_BACKUP_KEY;
@@ -615,9 +609,6 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
     // console.log(hotelCookieData.body.hotelDefaultPrice);
     let hotelCheckInDateString = hotelCookieData.body.hotelCheckInDate;
     let hotelCheckOutDateString = hotelCookieData.body.hotelCheckOutDate;
-    console.log("============LOOK================");
-    console.log(hotelCheckInDateString);
-    console.log(hotelCheckOutDateString);
     // console.log("Check in Date");
     let hotelCheckInDate = new Date(hotelCheckInDateString);
     let hotelCheckOutDate = new Date(hotelCheckOutDateString);

@@ -3,6 +3,7 @@ const db = require('../utilities/db.js');
 function isLoggedIn(req, res, next) {
     if (!req.session.user) {
         console.log("User is not currently logged in");
+        req.flash('error', "You must logged in to proceed");
         res.redirect('/');
     } else {
         next();
