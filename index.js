@@ -20,6 +20,7 @@ const cookieParser = require('cookie-parser');
 // Helper Functions =========================
 const authMW = require('./modules/auth');
 const trim = require('./modules/trim-city');
+const trimCityNameHelper = require('./modules/trimCityNameHelper');
 // const url = require('url');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -132,12 +133,17 @@ app.post('/', async (req, res) => {
     // console.log(searchedData.location);
     // console.log(searchedData);
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
-    let dateObj = {
-        checkin__date: req.body.checkin__date
-    ,   checkout__date: req.body.checkout__date
-    };
     // ============================================
     // DO NOT JUST REMOVE THE THING
+    // IF DATE IS UNDEFINE
+    let myCheckInDate = req.body.checkin__date;
+    let myCheckOutDate = req.body.checkout__date;
+    let trimHelperDateObj = trimCityNameHelper.validateCheckInAndOutDate(myCheckInDate, myCheckOutDate);
+    
+    let dateObj = {
+        checkin__date: trimHelperDateObj[0]
+    ,   checkout__date: trimHelperDateObj[1]
+    };
     res.cookie('hotelBookingDateData', dateObj);
     // =============================================
     var locationStr = searchedData.location;
@@ -148,6 +154,8 @@ app.post('/', async (req, res) => {
         checkInDate: checkInDate,
         checkOutDate: checkOutDate
     }
+    console.log("=========FROM INDEX POST =============");
+    console.log(dateObj);
     res.cookie('searchKeyword', searchKeyword);
     // console.log(req.cookies);
     res.redirect(`/hotel/searched/${locationStr}`);
