@@ -24,18 +24,6 @@
     </head>
     <body>
         <%- include('../../partials/header') %>
-        <script>
-            function activatePlacesSearch(){
-                var input = document.getElementById('location_search');
-                let option = {
-                    types: ['(cities)']
-                };
-                var autocomplete = new google.maps.places.Autocomplete(input, option);
-            }
-        </script>
-        <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=activatePlacesSearch&libraries=places&v=weekly">
-        </script>
         <div onclick = "closeSearchBar()" style="position: relative; height: 100%; width: 100%;">
             <div class="index-overlay"></div>
             <div class="app" onclick = "closeSearchBar()">

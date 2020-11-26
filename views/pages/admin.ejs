@@ -3,10 +3,11 @@
         <title>
             Admin
         </title>
+        <link rel="stylesheet" href="/css/admin.css">
     </head>
     <body>
         <h1>Hello to the admin</h1>
-        <p>
+        <div>
             <ul>
                 <li>Able to see all users</li>
                 <ul>
@@ -26,6 +27,49 @@
                     </ul>
                 </ul>
             </ul>
-        </p>
+        </div>
+        <br><br>
+        <div>
+            <h2>Able to see all users</h2>
+            <h5>Notice that these are not admin</h5>
+            <ul>
+                <% for(let i = 0; i < usersNotAdmin.length; i++) { %>
+                    <% if(usersNotAdmin[i].username === '') { %>
+                    <li>User does not have username</li>
+                    <% } else { %>
+                    <li><%= usersNotAdmin[i].username %></li>
+                    <% } %>
+                    <ul>
+                        <li>User ID: <b><%= usersNotAdmin[i].user_id %></b> </li>
+                        <li>Email: <b><%= usersNotAdmin[i].email %></b> </li>
+                        <% if(usersNotAdmin[i].isConfirmed === 1) { %>
+                        <li> <b>User has confirmed the account</b> </li>
+                        <% } else { %>
+                        <li> <b>User has not confirmed the account</b> </li>
+                        <% } %>
+                        <% if(usersNotAdmin[i].bookings === undefined) { %>
+                        <li> <b>This user does not have booking</b> </li>
+                        <% } else { %>
+                        <li>Bookings:</li>
+                        <ul>
+                            <% for(let j = 0; j < usersNotAdmin[i].bookings.length; j++) { %>
+                                <li>Booking ID: <%= usersNotAdmin[i].bookings[j].booking_id %></li>
+                                <ul>
+                                    <li>Booking date: <%= usersNotAdmin[i].bookings[j].booking_date %></li>
+                                    <li>Price: $<%= usersNotAdmin[i].bookings[j].booking_price %></li>
+                                    <li>Hotel ID: <%= usersNotAdmin[i].bookings[j].hotel_id %></li>
+                                    <li>Check-in date: <%= usersNotAdmin[i].bookings[j].check_in_date %></li>
+                                    <li>Check-out date: <%= usersNotAdmin[i].bookings[j].check_out_date %></li>
+                                </ul>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </ul>
+                    <br>
+                <% } %>
+            </ul>
+
+
+        </div>
     </body>
 </html>
