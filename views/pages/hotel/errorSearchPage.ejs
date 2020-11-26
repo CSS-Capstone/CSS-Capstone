@@ -24,6 +24,18 @@
     </head>
     <body>
         <%- include('../../partials/header') %>
+        <script>
+            function activatePlacesSearch(){
+                var input = document.getElementById('location_search');
+                let option = {
+                    types: ['(cities)']
+                };
+                var autocomplete = new google.maps.places.Autocomplete(input, option);
+            }
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiccr3QeWOHWRfSzLrNyUzrRX_I1bcZa4&callback=activatePlacesSearch&libraries=places&v=weekly">
+        </script>
         <div onclick = "closeSearchBar()" style="position: relative; height: 100%; width: 100%;">
             <div class="index-overlay"></div>
             <div class="app" onclick = "closeSearchBar()">
@@ -31,14 +43,16 @@
                 <ul class = "hs-country full">
                     <% for(var i = 0; i < hotelCity.length; i++) { %>
                         <li class = "item-country size"> 
-                                <img src='<%= hotelCity[i].pictureURL %>' style = "
+                                <img onclick = "location.href = '/hotel/searched/<%= hotelCity[i].name %>';"
+                                    src='<%= hotelCity[i].pictureURL %>' style = "
                                     z-index: 0;
                                     position: relative; 
                                     top: 36px;
                                     height: 190px;
-                                    box-shadow: 0 0 2px #000;">
-                                <a href="/hotel/searched/<%= hotelCity[i].name %>">
-                                <div style = "position: relative;
+                                    box-shadow: 0 0 2px #000;
+                                    cursor: pointer;">
+                                <div onclick = "location.href = '/hotel/searched/<%= hotelCity[i].name %>';"
+                                    style = "position: relative;
                                     top: -15px;
                                     border: 1px solid black;
                                     width: 250px;
@@ -47,7 +61,8 @@
                                     padding: 0.376em;
                                     border-bottom-left-radius: 8px;
                                     border-bottom-right-radius: 8px;
-                                    z-index: 0.5;">
+                                    z-index: 0.5;
+                                    cursor: pointer;">
                                     <% if (hotelCity[i].name === "") { %>
                                         <p style = "text-decoration: underline;">Country Name Invalid</p>
                                     <% } else { %>
@@ -58,25 +73,40 @@
                         </li>
                     <% } %>
                 </ul>
-                <h2 style = "margin-bottom:-35px; margin-top:15px;">Top-rated places to stay</h2>
+                <h2 style = "margin-bottom:-17px; margin-top:15px;">Top-rated places to stay</h2>
                 <ul class = "hs-top-rated">
                     <span id = "size-of-hotel-rendered" style = "display: none"><%= topRatedHotel.length %></span>
                     <% for(var i = 0; i < topRatedHotel.length; i++) { %>
                         <li class = "item-top-rated size">
                                 <% if (topRatedHotel[i].pictures === undefined) { %>
-                                    <img src="/images/unavailable-image.jpg">
-                                    <br>
-                                    Country's name: <%= topRatedHotel[i].hotel_name %> 
-                                    <br> 
-                                    <%= topRatedHotel[i].city %>, <%= topRatedHotel[i].country %>
-                                    <br> 
-                                    $<%= topRatedHotel[i].hotel_price %> 
+                                    <div 
+                                        onclick = "location.href = '/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>';"
+                                        style = "cursor: pointer;">
+                                        <img src="/images/unavailable-image.jpg" style=
+                                        "width: 250px; 
+                                        height: 175px;
+                                        border-radius: 8px;">
+                                    </div>
+                                    <div onclick = "location.href = '/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>';"
+                                    style = "position: relative;
+                                    top: 18px;
+                                    left: 10px;
+                                    cursor: pointer;">
+                                        <%= topRatedHotel[i].hotel_name %> 
+                                        <br> 
+                                        <%= topRatedHotel[i].city %>, <%= topRatedHotel[i].country %>
+                                        <br> 
+                                        $<%= topRatedHotel[i].hotel_price %> 
+                                    </div>
+                                    
                                     <!-- a href for clickable link -->
-                                    <!-- <a href="/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>"></a> -->
+                                    <!-- <a href="/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>">click</a> -->
                                 <% } else { %>
                                     <div class="slideshow-container" id = "top-rated-slider-<%= i %>">
                                         <% for(var j = 0; j < topRatedHotel[i].pictures.length; j++) { %>
-                                            <div class="mySlides fade">
+                                            <div 
+                                                onclick = "location.href = '/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>';"
+                                                class="mySlides fade" style = "cursor: pointer;">
                                                 <img src="<%= topRatedHotel[i].pictures[j] %>" style=
                                                 "width: 250px; 
                                                 height: 175px;
@@ -87,12 +117,14 @@
                                         <a class="next" onclick="plusSlides(1, this.parentNode)">&#10095;</a>
                                     </div>
                                     <br>
-                                    <div style = "position: relative; top: 175px;">
-                                        Country's name: <%= topRatedHotel[i].hotel_name %> 
+                                    <div 
+                                        onclick = "location.href = '/hotel/searched/detail/posted/<%= topRatedHotel[i].hotel_id %>';"
+                                        style = "position: relative; top: 175px; left: 10px; cursor: pointer;">
+                                        <%= topRatedHotel[i].hotel_name %> 
                                         <br> 
                                         <%= topRatedHotel[i].city %>, <%= topRatedHotel[i].country %>
                                         <br> 
-                                        $<%= topRatedHotel[i].hotel_price %>  
+                                        $<%= topRatedHotel[i].hotel_price %>
                                     </div>
                                 <% } %>  
                         </li>
@@ -100,8 +132,8 @@
                 </ul>
                 
             </div>
-        <%- include('../../partials/footer') %>
         <%- include('../../partials/places_api') %>
+        <%- include('../../partials/footer') %>
     </body>
     <!-- Slider for Top Rated -->
     <script src = "/js/HotelSearch/hotelSearchPrice.js"></script>
