@@ -77,6 +77,29 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
     }
 });
 
+router.post('/user/updateProfile', authMW.isLoggedIn, async(req, res) => {
+    console.log('Fetch request: /user/updateProfile');
+    var userProfileBio = {
+        about: req.body.about,
+        location: req.body.location,
+        languages: null
+    };
+    
+    userProfileBio.languages = "KOREAN, ENGLISH";
+
+    let bioQuery = `UPDATE USER SET profile_about = ?, profile_location = ?, profile_languages = ? WHERE user_id=?`;
+    let bioData = [userProfileBio.about, userProfileBio.location, 
+        userProfileBio.languages, req.session.user.user_id];
+    
+    db.query(bioQuery, bioData, async (err, results) => {
+        if (err) console.log('Failed to update user profile : ' + err);
+        else console.log('Successful update to user profile');
+    });
+
+    req.session.user.userProfileBio = userProfileBio;
+    res.json(req.session.user);
+});
+
 router.get('/user/viewComments', authMW.isLoggedIn, async (req, res) => {
     console.log('Fetch request: /user/viewComments');
 

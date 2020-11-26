@@ -20,5 +20,4 @@ function showDropDown() {
     } else {
         document.getElementById("dropdown__menu__loggedOut").classList.toggle("show");
     }
-    
 }

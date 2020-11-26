@@ -68,6 +68,8 @@ function ifDataEmpty(domElem, message) {
 async function getComments() {
     const getCommentsRequest = await fetch(`/user/viewComments`);
     const commentsData = await getCommentsRequest.json();
+    const userData = commentsData;
+    console.log(userData);
     const comments = commentsData.userComments;
     var commentsPanel = document.getElementById('comments');
 
@@ -78,15 +80,70 @@ async function getComments() {
 
     for (var i = 0; i < comments.length; i++) {
         var rowContainer = document.createElement('div');
-        rowContainer.setAttribute('class', 'cooment__row');
+        rowContainer.setAttribute('class', 'comment__row');
         var commentId = new String(comments[i].comment_id);
 
-        var img = document.createElement('img');
-        img.setAttribute('class', 'user__profile__image');
-        img.setAttribute('src', "");
+        var ratingContainer = document.createElement('div');
+        ratingContainer.setAttribute('class', 'comment__ratings__container');
 
+        var rating = document.createElement('div');
+        rating.setAttribute('class', 'user__comment__rating__big');
+        rating.innerHTML = `${comments[i].rating}`;
+
+        var stars = document.createElement('div');
+        stars.setAttribute('class', 'user__comment__rating__stars');
+        var starCalc = comments[i].rating;
+        for (let i = 0; i < starCalc; i++) {
+            var filledStar = document.createElement('span');
+            filledStar.setAttribute('class', 'fas fa-star');
+            stars.appendChild(filledStar);
+        }
+        if (starCalc < 5) {
+            for (let j = 0; j < (5 - starCalc); j++) {
+                var emptyStar = document.createElement('span');
+                emptyStar.setAttribute('class', 'far fa-star');
+                stars.appendChild(emptyStar);
+            }
+        }
+
+        var commentContainer = document.createElement('div');
+        commentContainer.setAttribute('class', 'user__comment__container');
+
+        var commentContents = document.createElement('div');
+        commentContents.setAttribute('class', 'user__comment');
+        commentContents.innerHTML = `${comments[i].comment_content}`;
+
+        var commentDaysAgo = document.createElement('div');
+        commentDaysAgo.setAttribute('class', 'user__comment__days__ago');
+        const oneDay = 24 * 60 * 60 * 1000;
+        const commentDate = comments[i].comment_date;
+        const postedDate = new Date(commentDate.substring(0, 4), commentDate.substring(5, 7), commentDate.substring(8, 10));
+        var dateToday = new Date(Date.now());
+        const todayDate = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, dateToday.getDate());
+        const diffDays = Math.round(Math.abs((postedDate - todayDate) / oneDay));
+        commentDaysAgo.innerHTML = " posted " + `${diffDays}` + " days ago"
+
+        var linkContainer = document.createElement('div');
+        linkContainer.setAttribute('class', 'user__comment__link__container');
+
+        var viewCommentBtn = document.createElement('button');
+        viewCommentBtn.setAttribute('class', 'comment__postings__btn');
+        viewCommentBtn.setAttribute('onclick', "location.href='/user/review/" + `${comments[i].booking_id}` + "/new'");
+        viewCommentBtn.innerHTML = "View My Comment!";
+
+        ratingContainer.appendChild(rating);
+        ratingContainer.appendChild(stars);
+
+        commentContainer.appendChild(commentDaysAgo);
+        commentContainer.appendChild(commentContents);
         
+        linkContainer.appendChild(viewCommentBtn);
 
+        rowContainer.appendChild(ratingContainer);
+        rowContainer.appendChild(commentContainer);
+        rowContainer.appendChild(linkContainer);
+        
+        commentsPanel.appendChild(rowContainer);
     }
 }
 
@@ -119,11 +176,6 @@ async function getBookingHistory() {
         
         var dateToday = new Date(Date.now());
         var dateToCompare = dateToday.getFullYear() + "-" + (dateToday.getMonth() + 1) + "-" + dateToday.getDate();
-
-        // var bookingLinkBtn = document.createElement('button');
-        // bookingLinkBtn.setAttribute('class', 'view__booking__btn');
-        // bookingLinkBtn.setAttribute('onclick', "location.href='/become-host/hotel/" + `${hotelId}` + "'");
-        // bookingLinkBtn.innerHTML = "View My Booking Info!";
 
         var leaveCommentBtn;
         var isCommentBtnVis = false;

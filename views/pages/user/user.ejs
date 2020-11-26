@@ -15,32 +15,6 @@
 
 </head>
 <body>
-    <!-- Hello world testing hahahah -->
-    <!-- <div class="index__bg">
-        <nav id="navbar">
-            <div class="navbar__logo">
-                <i class="fas fa-hotel"></i>
-                <a href="/">Hotel Finder</a>
-            </div>
-            <div class="navbar__center__menu">
-                <span class="navbar__menu__item active">
-                    <a href="/about/">About Us</a>
-                </span>
-            </div>
-            <div class="navbar__right__menu">
-                <span class="navbar__menu__item">
-                    <a href="#"><i class="far fa-moon"></i></a>
-                </span>
-                <span class="navbar__menu__item"><a href="#">Become a host</a></span>
-                <span class="navbar__menu__item">
-                    <a href="#">
-                        <i class="fas fa-bars"></i>
-                        <i class="far fa-user-circle"></i>
-                    </a>
-                </span>
-            </div>
-        </nav>
-    </div> -->
     <section class="profile__wrapper">
         <div class="profile__left">
             <div class="profile__left__upper">
@@ -76,23 +50,113 @@
             </div>
         </div>
         <div class="profile__right">
-            <div class="profile__right__heading">
-                Hi, I'm <%- user.username %>
-                <button class="forget__me__btn">
-                    Forget Me
-                </button>
+            <div class="profile__right__heading__wrapper">
+                <div class="profile__right__heading">
+                    Hi, I'm <%- user.username %>
+                </div>
+                <form id="user_delete_form" action="/account/<%= user.user_id %>?_method=DELETE" method="POST">
+                    <button class="forget__me__btn" onclick="forgetMe()">Forget Me</button>
+                </form>
             </div>
             <div class="profile__right__joined">
                 Joined in 20xx
             </div>
-            <a href=# id="underline">Edit profile</a>
+            <button class="profile__edit__btn" onclick="showForm()">Edit profile</button>
+            <section>
+                <form id="profileForm" class="profile__edit__form" method="POST" enctype="multipart/form-data">
+                    <div class="profile__form__row">
+                        <label for="about">
+                            <div class="profile__form__heading">About</div>
+                            <div class="profile__form__text__wrapper">
+                                <textarea name="about" rows="4" autocomplete="off" 
+                                    class="profile__form__about" id="about" spellcheck="false" oninput="changeSubmitButton()"></textarea>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="profile__form__row">
+                        <label for="location">
+                            <div class="profile__form__heading">Location</div>
+                                <div class="profile__form__text__wrapper">
+                                    <input name="location" class="profile__form__location" id="location" 
+                                        autocomplete="off" type="text" aria-describedby="" 
+                                        value="Lynnwood, WA" oninput="changeSubmitButton()">
+                                </div>
+                        </label>
+                    </div>
+                    <div class="profile__form__row">
+                        <div class="profile__form__heading">Languages I speak</div>
+                        <!-- <div class="">
+                            <span class="" lang="en">English</span>
+                            <div class="">
+                                <button type="button" class="_187sg6v">
+                                    <span class="">
+                                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" 
+                                            style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4px; overflow: visible;" 
+                                            aria-label="Remove from selection" role="img" focusable="false">
+                                            <path d="m6 6 20 20"></path>
+                                            <path d="m26 6-20 20"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="">
+                            <span class="" lang="ko">한국어</span>
+                            <div class="">
+                                <button type="button" class="_187sg6v">
+                                    <span class="">
+                                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" 
+                                            style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4px; overflow: visible;" 
+                                            aria-label="Remove from selection" role="img" focusable="false">
+                                            <path d="m6 6 20 20"></path>
+                                            <path d="m26 6-20 20"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div> -->
+                        <button type="button" class="profile__addmore__btn" onclick="">Add more</button>
+                    </div>
+                    <div class="profile__form__row">
+                        <div class="profile__form__submit__btns">
+                            <button type="button" class="profile__cancle__btn" onclick="hideForm()">Cancel</button>
+                            <button id="profileSubmit" type="button" disabled="" class="profile__submit__btn" onclick="submitProfile()">Save</input>
+                        </div>
+                    </div>
+                    <hr class="right__divider"/>
+                </form>
+            </section>
             <div class="profile__right__heading__sub">
                 About
             </div>
             <div class="profile__right__about">
-                <i class="fas fa-home"></i> Lives in Someplace, State
+                <i class="fas fa-quote-left"></i>
+                <span id="profile_about_me">
+                    <% if (!user.userProfileBio.about) { %>
+                        This is about me..
+                    <% } else { %>
+                    <%= user.userProfileBio.about %>
+                    <% } %>
+                </span>
+                <i class="fas fa-quote-right"></i>
                 <br>
-                <i class="fas fa-comment-alt"></i> Speaks English, Coreana
+                <i class="fas fa-home"></i>
+                <span id="profile_location">&nbsp;
+                    <% if (!user.userProfileBio.location) { %>
+                        Where do you live?
+                    <% } else { %>
+                    <%= user.userProfileBio.location %>
+                    <% } %>
+                </span>
+                <br>
+                <i class="fas fa-comment-alt"></i>
+                <span id="profile_languages">&nbsp;Speak 
+                    <% if (!user.userProfileBio.languages) { %>
+                        some language
+                    <% } else { %>
+                        <%= user.userProfileBio.languages %>
+                    <% } %>
+                </span>
                 <br>
             </div>
             <hr class="right__divider"/>
@@ -124,6 +188,7 @@
     
     <br>
     <script src="/js/Account/forgetme.js" defer></script>
+    <script src="/js/User/userProfileFormController.js" defer></script>
     <script src="/js/User/userTabController.js" defer></script>
     <%- include('../../partials/footer') %>
 </body>
