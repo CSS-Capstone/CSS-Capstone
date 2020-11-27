@@ -132,18 +132,9 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
     var searchedData = req.body;
-    // console.log(req.body);
-    // console.log(req.body.location);
     var location = req.body.location;
-    // console.log(location);
     var checkInDate = req.body.checkin__date;
     var checkOutDate = req.body.checkout__date;
-    searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
-    // console.log(searchedData.location);
-    // console.log(searchedData);
-    
-    // no need for two of these
-
     searchedData.location = trim.trimCity(JSON.stringify(searchedData.location));
     // ============================================
     // DO NOT JUST REMOVE THE THING
@@ -169,7 +160,6 @@ app.post('/', async (req, res) => {
     console.log("=========FROM INDEX POST =============");
     console.log(dateObj);
     res.cookie('searchKeyword', searchKeyword);
-    // console.log(req.cookies);
     res.redirect(`/hotel/searched/${locationStr}`);
 });
 
@@ -199,8 +189,6 @@ app.post('/auth/login', async (req, res) => {
         let isLoggedIn = req.session.user == null ? false : true;
 
         db.query('SELECT * FROM USER WHERE email = ?', [email], async (error, results) => {
-            // console.log(results);
-            
             // if email or password is incorrect
             if(results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
                 return res.status(401).render('pages/index', {
