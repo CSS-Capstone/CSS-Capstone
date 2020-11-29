@@ -2,6 +2,7 @@
 const numberOfGuestsContainer = document.querySelector('.guests');
 const roomTypeContainer = document.getElementsByName('hotelRoomType');
 
+initializeBookingPrice();
 // Add Event Listener
 numberOfGuestsContainer.addEventListener('change', (event) => {
     fillOutSummaryInfo();
@@ -12,6 +13,24 @@ roomTypeContainer.forEach(eachRoomType => {
         fillOutSummaryInfo();
     });
 });
+
+// Util Function
+function initializeBookingPrice() {
+    let totalPrice = 0;
+    let hotelDefaultPriceDOM = document.querySelector('.hotelSearched_detail_header_title');
+    let hotelDefaultPriceAttribute = hotelDefaultPriceDOM.getAttribute('data-price-night');
+    const checkoutDate = document.querySelector('#to').value;
+    const checkfromDate = document.querySelector('#from').value;
+    let checkoutDateInDate = new Date(checkoutDate);
+    let checkinDateInDate = new Date(checkfromDate);
+    let NumberOfDaysStayin = Math.abs(checkinDateInDate - checkoutDateInDate) / 86400000;
+    if (NumberOfDaysStayin === 0) {
+        NumberOfDaysStayin = Number(1);
+    }
+    const totalPriceDOM = document.querySelector('.hotelSearched_detail_summary_totalPrice');
+    totalPrice = Number(NumberOfDaysStayin * hotelDefaultPriceAttribute).toFixed(2);
+    totalPriceDOM.textContent = `$${totalPrice}`;
+}
 
 function fillOutSummaryInfo() {
     const hotelDetail_summary_conatiner = document.querySelector('.hotelSearched_detail_summary_details');

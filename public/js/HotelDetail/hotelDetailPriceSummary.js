@@ -2,6 +2,8 @@
 const hotelRateDOM = document.querySelector('.hotel_rating');
 const numberOfGuestContainer = document.querySelector('.guests');
 const roomTypeContainer = document.getElementsByName('hotelRoomType');
+
+initializeBookingPrice();
 // EventListeners
 numberOfGuestContainer.addEventListener('change', (event) => {
     fillOutSummaryInfo();
@@ -14,12 +16,32 @@ roomTypeContainer.forEach(eachRoomtType => {
 });
 
 // Util Functions
+function initializeBookingPrice() {
+    let totalPrice = 0;
+    const checkoutDate = document.querySelector('#to').value;
+    const checkfromDate = document.querySelector('#from').value;
+    let checkoutDateInDate = new Date(checkoutDate);
+    let checkinDateInDate = new Date(checkfromDate);
+    let NumberOfDaysStayin = Math.abs(checkinDateInDate - checkoutDateInDate) / 86400000;
+    if (NumberOfDaysStayin === 0) {
+        NumberOfDaysStayin = Number(1);
+    }
+    const hotelRateAttribute = Number(hotelRateDOM.getAttribute('data-rate-value'));
+    const hotelPrice = grabAllHotelRate(hotelRateAttribute);
+    const hotelTotalPriceDOM = document.querySelector('.hotelDetail_summary_totalPrice');
+    totalPrice = Number(NumberOfDaysStayin * hotelPrice).toFixed(2);
+    hotelTotalPriceDOM.textContent = `$${totalPrice}`;
+}
+
 function fillOutSummaryInfo() {
     const hotelDetail_summary_detailsUl = document.querySelector('.hotelDetail_summary_details');
-    // Clear all Existing Child first
-    clearExistingChildDOM(hotelDetail_summary_detailsUl);
-    const numberOfDays = 1;    // this will be dynamic based on the calendar
-    const NumberOfDaysStayin = numberOfDays;
+    // DATE CALCULATION
+    const checkoutDate = document.querySelector('#to').value;
+    const checkfromDate = document.querySelector('#from').value;
+    let checkoutDateInDate = new Date(checkoutDate);
+    let checkinDateInDate = new Date(checkfromDate);
+    let NumberOfDaysStayin = Math.abs(checkinDateInDate - checkoutDateInDate) / 86400000;
+    // PRE_EXIST ITEMS
     const hotelRateAttribute = Number(hotelRateDOM.getAttribute('data-rate-value'));
     const guestNumber = document.querySelector('.guests').value;
     // get additional price based on user's input
@@ -28,7 +50,9 @@ function fillOutSummaryInfo() {
     const roomType = roomTypeInfo[0];
     const roomPrice = roomTypeInfo[1];
     const guestAdditionalPrice = getPricePerGuests(guestNumber);
-    const hotelTotalPrice = getTotalPrice(hotelPrice, guestAdditionalPrice, roomPrice);
+    const hotelTotalPrice = getTotalPrice(NumberOfDaysStayin, hotelPrice, guestAdditionalPrice, roomPrice);
+    // Clear all Existing Child first
+    clearExistingChildDOM(hotelDetail_summary_detailsUl);
     // ===========================
     // Organize Data =============
     applyDataToDOM(hotelDetail_summary_detailsUl, roomType, roomPrice, guestNumber, guestAdditionalPrice, hotelTotalPrice)
@@ -49,13 +73,13 @@ function applyDataToDOM(hotelDetail_summary_detailsUl,roomType, roomPrice, guest
     // Room Type DOM=
     const roomTypeLi = document.createElement('li');
     const roomtTypeSmall = document.createElement('small');
-    roomtTypeSmall.innerHTML = `Selected Room <strong>${roomType}</strong> Price: <strong>$${roomPrice}.00</strong>`;
+    roomtTypeSmall.innerHTML = `Selected Room <strong>${roomType}</strong> Price: <strong>$${roomPrice}</strong>`;
     roomTypeLi.appendChild(roomtTypeSmall);
     // =================
     // Guest Number DOM=
     const guestNumLi = document.createElement('li');
     const guestNumSmall = document.createElement('small');
-    guestNumSmall.innerHTML = `Number of guest(s) <strong>${Number(guestNumber) + Number(1)}</strong>: Price: <strong>${guestAdditionalPrice}.00</strong>`;
+    guestNumSmall.innerHTML = `Number of guest(s) <strong>${guestNumber}</strong>: Price: <strong>${guestAdditionalPrice.toFixed(2)}</strong>`;
     guestNumLi.appendChild(guestNumSmall);
     // ====================
     // Append li tags to Ul
@@ -93,10 +117,18 @@ function getPriceRoomType() {
 }
 
 // calculate total price
-function getTotalPrice(hotelPrice, guestAdditionalPrice, roomTypePrice) {
+function getTotalPrice(NumberOfDaysStayin, hotelPrice, guestAdditionalPrice, roomTypePrice) {
     let totalPrice = 0;
-    console.log("In Total Price: ", hotelPrice, guestAdditionalPrice, roomTypePrice);
-    totalPrice = (Number(hotelPrice) + Number(guestAdditionalPrice) + Number(roomTypePrice)).toFixed(2);
+    // console.log("In Total Price: ", hotelPrice, guestAdditionalPrice, roomTypePrice);
+    let hotelDefaultPrice = Number(hotelPrice);
+    let numberStayingDates = Number(NumberOfDaysStayin);
+    let numberRoomPrice = Number(roomTypePrice);
+    let numberAdditionaPriceGuest = Number(guestAdditionalPrice);
+    if (numberStayingDates === 0) {
+        numberStayingDates = Number(1);
+    }
+    totalPrice = (hotelDefaultPrice * numberStayingDates) + numberRoomPrice + numberAdditionaPriceGuest;
+    totalPrice = totalPrice.toFixed(2);
     return totalPrice;
 }
 

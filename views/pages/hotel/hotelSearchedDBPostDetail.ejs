@@ -300,7 +300,12 @@
                         <div class="hotelSearched_detail_each_review_container">
                             <div class="hotelSearched_detail_each_review_header">
                                 <div>
-                                    <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                    <% if (user_map.get(userComment[i].user_id)) { %>
+                                        
+                                        <img class="hotelSearched_detail_each_review_header_image" src="<%=user_map.get(userComment[i].user_id)%>" alt="user profile image"/>
+                                    <% } else { %>
+                                        <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default profile image who does not have user image"/>
+                                    <% } %>
                                 </div>
                                 <div class="hotelSearched_detail_each_review_header_content">
                                     <h3 class="hotelSearched_detail_each_review_header_content_username">
@@ -322,7 +327,11 @@
                         <div class="hotelSearched_detail_review_container">
                             <div class="hotelSearched_detail_review_header">
                                 <div>
-                                    <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                    <% if (user_map.get(userComment[i].user_id)) { %>
+                                        <img class="hotelSearched_detail_each_review_header_image" src="<%=user_map.get(userComment[i].user_id)%>" alt="user profile image"/>
+                                    <% } else { %>
+                                        <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default profile image who does not have user image"/>
+                                    <% } %>
                                 </div>
                                 <div class="hotelSearched_detail_each_review_header_content">
                                     <h3 class="hotelSearched_detail_each_review_header_content_username">
@@ -405,7 +414,12 @@
                         <div class="modal_review_each_container">
                             <div class="modal_review_each_header">
                                 <div>
-                                    <img class="modal_hotelDetail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default user image"/>
+                                    <% if (user_map.get(userComment[i].user_id)) { %>
+                                        
+                                        <img class="hotelSearched_detail_each_review_header_image" src="<%=user_map.get(userComment[i].user_id)%>" alt="user profile image"/>
+                                    <% } else { %>
+                                        <img class="hotelSearched_detail_each_review_header_image" src="/images/default_user_profile_img_login.png" alt="default profile image who does not have user image"/>
+                                    <% } %>
                                 </div>
                                 <div class="hotelSearched_detail_each_review_header_content">
                                     <h3 class="modal_hotelDetail_each_review_header_content_username"><%=userComment[i].username%></h3>

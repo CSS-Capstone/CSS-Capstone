@@ -713,6 +713,7 @@ body {
     width: 60px;
     height: 60px;
     margin-right: 1rem;
+    border-radius: 2rem;
 }
 
 .hotelDetail_each_review_header_content_username {
