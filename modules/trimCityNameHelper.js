@@ -86,4 +86,20 @@ function isInputEmpty(commentReview) {
     return comment;
 }
 
-module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData, validateCheckInAndOutDate, isInputEmpty };
+function removeLastQuote(cityName) {
+    if (typeof(cityName) === 'undefined') {
+        return;    
+    } else if (cityName.trim().length === 0) {
+        return;
+    } else {
+        if (cityName[cityName.length - 1] === '"') {
+            console.log('Last char is "');
+            cityName = cityName.replace('"', "");
+            return cityName;
+        } else {
+            return;
+        }
+    }
+}
+
+module.exports = { trimCitiyNameHelper, trimCityNameAndCountryName, addSemiToEachImageData, validateCheckInAndOutDate, isInputEmpty, removeLastQuote };
