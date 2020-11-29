@@ -387,6 +387,12 @@ router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
                                             INNER JOIN USER AS user
                                             ON comment.user_id = user.user_id 
                                             WHERE comment.hotel_id=?`;
+    const queryToUserProfile = `SELECT DISTINCT comment.user_id, userProfile.img_id
+                                FROM COMMENT AS comment
+                                INNER JOIN USER_PROFILE_IMAGE AS userProfile
+                                ON userProfile.user_id = comment.user_id
+                                WHERE comment.hotel_id = ?`;
+    let user_map = new Map();
     let hotel_id_data = [hotelId];
     let imageArray = [];
     db.query(findHotelQuery, hotel_id_data, async (searchedPostedHotelError, searchedPostedHotelResult) => {
@@ -442,16 +448,39 @@ router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
                     console.log(searchedPostHotelReviewError);
                     throw searchedPostHotelReviewError;
                 }
+                console.log("REVIEW GET IN?");
                 let userComment = searchedPostHotelReviewResult;
-                res.render('pages/hotel/hotelSearchedDBPostDetail', 
+                db.query(queryToUserProfile, hotel_id_data, async (searchedPostHotelProfileImgError, searchedPostHotelProfileImgResult) => {
+                    console.log("PROFILE IMAGE GOT IN?");
+                    if (searchedPostHotelProfileImgError) {
+                        console.log("ERROR: DB ERROR hotel Searched Profile Images Retrieve");
+                        console.log(searchedPostHotelProfileImgError);
+                        throw searchedPostHotelProfileImgError;
+                    }
+                    for (let i = 0 ; i < searchedPostHotelProfileImgResult.length; i++) {
+                        let params = {
+                            Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
+                        ,   Key: `${searchedPostHotelProfileImgResult[i].img_id}`
+                        };
+                        let eachProfilePhoto = await s3.s3.getObject(params).promise();
+                        let profileImageData = eachProfilePhoto.Body;
+                        let buffer = Buffer.from(profileImageData);
+                        let base64data = buffer.toString('base64');
+                        let profileImageDOM = 'data:image/jpeg;base64,' + base64data;
+                        user_map.set(searchedPostHotelProfileImgResult[i].user_id, profileImageDOM);
+                        console.log("GOT IT");
+                    }
+                    res.render('pages/hotel/hotelSearchedDBPostDetail', 
                     {
                         hotelDBObj:hotelDBObj, 
                         imageArray:imageArray, 
                         weatherData:weatherData, 
                         airQualityData:airQualityData, 
                         userComment:userComment,
-                        StripePublicKey:StripePublicKey
+                        StripePublicKey:StripePublicKey,
+                        user_map:user_map
                     });
+                });
             })
         });
     });
@@ -507,6 +536,14 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
                                             INNER JOIN USER AS user
                                             ON comment.user_id = user.user_id 
                                             WHERE hotel.api_hotel_id=?`;
+    const queryToUserProfile = `SELECT DISTINCT comment.user_id, userProfile.img_id
+                                FROM COMMENT AS comment
+                                INNER JOIN USER_PROFILE_IMAGE AS userProfile
+                                ON userProfile.user_id = comment.user_id
+                                INNER JOIN HOTEL AS hotel
+                                ON hotel.hotel_id = comment.hotel_id
+                                WHERE hotel.api_hotel_id = ?`;
+    let user_map = new Map();
     let queryRetrieveTargetHotel = hotelId;
     try {
         const weatherDataResponse = await fetch(weatherAPIURL);
@@ -527,29 +564,50 @@ router.get('/hotel/searched/detail/:id', authMW.isLoggedIn, async (req, res) => 
                     throw errorDetailHotelAPI;
                 }
                 console.log("==== RESULT DETAIL HOTEL API ====");
-                console.log(resultDetailHotelAPI);
-
-                const hotelObj = {
-                    hotelId
-                ,   hotelLabel
-                ,   hotelFullName
-                ,   hotelScore
-                ,   hotelCoordLat
-                ,   hotelCoordLon
-                ,   hotelLocationName
-                ,   hotelCountryName
-                ,   GEO_Formatted_Address
-                ,   cityFullName
-                ,   preSelected_CheckInDate
-                ,   preSelected_CehckOutDate
-                ,   resultDetailHotelAPI: resultDetailHotelAPI 
-                
-                };
-                res.render('pages/hotel/hotelSearchedDetail', {
-                    hotelObj: hotelObj, 
-                    StripePublicKey:StripePublicKey, 
-                    weatherData:weatherData,
-                    airQualityData: airQualityData
+                // console.log(resultDetailHotelAPI);
+                db.query(queryToUserProfile, [queryRetrieveTargetHotel], async (userProfileImageError, userProfileResult) => {
+                    if (userProfileImageError) {
+                        console.log("ERROR: ERROR USER PROFILE IMAGE API COMMNET");
+                        console.log(userProfileImageError);
+                        throw userProfileImageError;
+                    }
+                    console.log(userProfileResult);
+                    
+                    for (let i = 0; i < userProfileResult.length; i++) {
+                        let params = {
+                            Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
+                        ,   Key: `${userProfileResult[i].img_id}`
+                        };
+                        let eachProfilePhoto = await s3.s3.getObject(params).promise();
+                        let profileImageData = eachProfilePhoto.Body;
+                        let buffer = Buffer.from(profileImageData);
+                        let base64data = buffer.toString('base64');
+                        let profileImageDOM = 'data:image/jpeg;base64,' + base64data; 
+                        user_map.set(userProfileResult[i].user_id, profileImageDOM);
+                        // console.log(user_map);
+                    }
+                    const hotelObj = {
+                        hotelId
+                    ,   hotelLabel
+                    ,   hotelFullName
+                    ,   hotelScore
+                    ,   hotelCoordLat
+                    ,   hotelCoordLon
+                    ,   hotelLocationName
+                    ,   hotelCountryName
+                    ,   GEO_Formatted_Address
+                    ,   cityFullName
+                    ,   preSelected_CheckInDate
+                    ,   preSelected_CehckOutDate
+                    ,   resultDetailHotelAPI: resultDetailHotelAPI                     
+                    };
+                    res.render('pages/hotel/hotelSearchedDetail', {
+                        hotelObj: hotelObj, 
+                        StripePublicKey:StripePublicKey, 
+                        weatherData:weatherData,
+                        airQualityData: airQualityData,
+                        user_map:user_map
+                    });
                 });
             });
         } catch(error) {
@@ -596,9 +654,30 @@ router.get('/hotel/searched/detail/currency/:currencyCode', async (req, res) => 
 });
 
 // insert booking data into DB based on hotel from DB
-//res.redirect(`/hotel/searched/detailDB/${paymentData.body.hotelId}/payment`);
-router.get('/hotel/searched/detailDB/:id/payment', (req, res) => {
-    res.send("Hello payment thing");
+router.get('/hotel/searched/detailDB/:id/payment', authMW.isLoggedIn, (req, res) => {
+    const user_id = req.session.user.user_id;
+    let hotelDBCookieData = req.cookies.hotelBookingDataDB;
+    // console.log(hotelDBCookieData);
+    let hotelCheckInDateString = hotelDBCookieData.body.check_in_date;
+    let hotelCheckOutDateString = hotelDBCookieData.body.check_out_date;
+    // DATA SET UP TO INSERT INTO DB
+    let hotelCheckInDate = new Date(hotelCheckInDateString);
+    let hotelCheckOutDate = new Date(hotelCheckOutDateString);
+    let hotelBookingDate = new Date();
+    let hotelBookingPrice = hotelDBCookieData.body.totalPrice;
+    let hotelBooking_hotel_id = hotelDBCookieData.body.hotelId;
+    let insertBookingData = [hotelBookingDate, hotelBookingPrice, user_id, hotelBooking_hotel_id, hotelCheckInDate, hotelCheckOutDate];
+    const insertBookingDataToDB = `INSERT INTO BOOKING (booking_Date, booking_price, user_id, hotel_id, check_in_date, check_out_date) VALUES (?,?,?,?,?,?)`;
+    // QUERY TO INSERT INTO DB BOOKING TABLE
+    db.query(insertBookingDataToDB, insertBookingData, (hotelBookingQueryError, hotelBookingQueryResult) => {
+        if (hotelBookingQueryError) {
+            console.log("ERROR INSERT INTO HOTEL BOOKING RECORD (DB)");
+            console.log(hotelBookingQueryError);
+            throw hotelBookingQueryError;
+        }
+        console.log("AFFECTED DATA FOR INSERTING BOOKING (DB): ", hotelBookingQueryResult.affectedRows);
+        res.redirect(`/hotel/searched/detailDB/${hotelBooking_hotel_id}/paymentconfirm`);
+    });
 });
 
 router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, res) => {
@@ -705,12 +784,18 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
     });
 });
 
-router.get('/hotel/searched/detail/:id/paymentconfirm', async (req, res) => {
+// Confirm page for API hotel
+router.get('/hotel/searched/detail/:id/paymentconfirm', (req, res) => {
     let hotelCookieData = req.cookies.hotelBookingData;
-    let hotel_APi_data = req.params.id;
-    console.log(hotel_APi_data);
+    // let hotel_APi_data = req.params.id;
+    // console.log(hotel_APi_data);
     // res.clearCookie("hotelBookingData");
-    console.log(hotelCookieData);
+    // console.log(hotelCookieData);
+    res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
+});
+
+router.get('/hotel/searched/detailDB/:id/paymentconfirm', (req, res) => {
+    let hotelCookieData = req.cookies.hotelBookingDataDB;
     res.render('pages/booking/bookConfirm', {hotelCookieData:hotelCookieData});
 });
 
@@ -757,5 +842,6 @@ router.post('/hotel/searched/detailDB/:id/payment', (req, res) => {
         res.redirect(`/hotel/searched/detailDB/${paymentData.body.hotelId}/payment`);
     });
 }); 
+
 
 module.exports = router;
