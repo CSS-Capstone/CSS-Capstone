@@ -27,7 +27,7 @@ async function uploadImage() {
             body: formData
         }).then(async (uploadRes) => {
             const imageUploadRes = await uploadRes.json();
-            const imageData = imageUploadRes.profile_img_dom;
+            const imageData = imageUploadRes.profile.imgDom;
             const profileImg = document.getElementById('profile__image__main');
             profileImg.setAttribute('src', `${imageData}`);
             const profileImgModal = document.getElementById('profile__image__modal');

@@ -13,23 +13,31 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
 
-    if (!user.profile_img || user.profile_img === "default_profile_img") {
-        req.session.user.profile_img = "default_profile_img";
+    if (!user.profile.img || user.profile.img === "default_profile_img") {
+        req.session.user.profile.img = "default_profile_img";
         res.render('pages/user/user', {user: req.session.user});
     } else {
         console.log('You seem to have more than a default photo');
         let params = {
             Bucket: process.env.AWS_USER_PROFILE_BUCKET_NAME
-        ,   Key: `${user.profile_img}`
+        ,   Key: `${user.profile.img}`
         };
-        let photoImageData = await s3.s3.getObject(params).promise();
-        let imageData = photoImageData.Body;
-        let buff = Buffer.from(imageData);
-        let base64data = buff.toString('base64');
-        let imageDOM = 'data:image/jpeg;base64,'+ base64data;
-        user.profile_img_dom = imageDOM;
-        req.session.user = user;
-        res.render('pages/user/user', {user: req.session.user});
+        s3.s3.getObject(params, (err, data) => {
+            if (err) { 
+                console.log('Failed to get the image from S3.' + err); 
+                user.profile.img = "default_profile_img";
+                req.session.user = user;
+                res.render('pages/user/user', {user: req.session.user});
+            } else {
+                let imageData = data.Body;
+                let buff = Buffer.from(imageData);
+                let base64data = buff.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,'+ base64data;
+                user.profile.imgDom = imageDOM;
+                req.session.user = user;
+                res.render('pages/user/user', {user: req.session.user});
+            }
+        });
     }
 });
 
@@ -49,26 +57,26 @@ router.post('/user/upload', authMW.isLoggedIn, multer.upload, async (req, res) =
         const fileName = uuid.v5(image[0], process.env.SEED_KEY);
         const fullFileName = userId + "_" + fileName + "." + fileType;
 
-        if(!user.profile_img || user.profile_img === "default_profile_img") {
+        if(!user.profile.img || user.profile.img === "default_profile_img") {
             imageHelper.uploadImage(userId, file, fullFileName);
             
             let buff = Buffer.from(file.buffer);
             let base64data = buff.toString('base64');
             let imageDOM = 'data:image/jpeg;base64,'+ base64data;
-            req.session.user.profile_img = fullFileName;
-            req.session.user.profile_img_dom = imageDOM
+            req.session.user.profile.img = fullFileName;
+            req.session.user.profile.imgDom = imageDOM
             res.json(req.session.user);
         } else {
-            if (user.profile_img === fullFileName) {
+            if (user.profile.img === fullFileName) {
                 res.json(req.session.user);
             } else {
-                imageHelper.updateImage(userId, user.profile_img, file, fullFileName);
+                imageHelper.updateImage(userId, user.profile.img, file, fullFileName);
 
                 let buff = Buffer.from(file.buffer);
                 let base64data = buff.toString('base64');
                 let imageDOM = 'data:image/jpeg;base64,'+ base64data;
-                req.session.user.profile_img = fullFileName;
-                req.session.user.profile_img_dom = imageDOM
+                req.session.user.profile.img = fullFileName;
+                req.session.user.profile.imgDom = imageDOM
                 res.json(req.session.user);
             }
         }
@@ -96,7 +104,9 @@ router.post('/user/updateProfile', authMW.isLoggedIn, async(req, res) => {
         else console.log('Successful update to user profile');
     });
 
-    req.session.user.userProfileBio = userProfileBio;
+    req.session.user.profile.about = userProfileBio.about;
+    req.session.user.profile.location = userProfileBio.location;
+    req.session.user.profile.languages = userProfileBio.languages;
     res.json(req.session.user);
 });
 
@@ -141,7 +151,7 @@ router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
                                     INNER JOIN
                                         BOOKING BK
                                     ON
-                                        HTL.hotel_id = BK.hotel_id AND HTL.user_id = ?
+                                        HTL.hotel_id = BK.hotel_id AND BK.user_id = ?
                                     ORDER BY
                                         BK.booking_date
                                     DESC`; 
@@ -163,6 +173,7 @@ router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
             };
             userBookingHistoryArr.push(booking);
         }
+        // HTL.hotel_id = BK.hotel_id AND 
         req.session.user.userBookingHistory = userBookingHistoryArr;
         res.json(req.session.user);
     });

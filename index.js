@@ -228,19 +228,31 @@ app.post('/auth/login', async (req, res) => {
                     httpOnly: true
                 }
                 
-                req.session.user = results[0];
-                var userProfileBio = {
-                    about: results[0].profile_about,
-                    location: results[0].profile_location,
-                    languages: results[0].profile_languages
+                const userResult = results[0];
+
+                req.session.user = {
+                    user_id: userId,
+                    email: userResult.email,
+                    username: userResult.username,
+                    password: userResult.password,
+                    is_host: userResult.is_host,
+                    is_developer: userResult.is_developer,
+                    isAdmin: userResult.isAdmin,
+                    profile: {
+                        img: userResult.profile_img,
+                        imgDom: null,
+                        about: userResult.profile_about,
+                        location: userResult.profile_location,
+                        languages: userResult.profile_languages
+                    }
                 };
 
                 db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ?`, [userId], async (error, photo) => {
                     let profile_img = (Object.keys(photo).length === 0) ? 'default_profile_img' : photo[0].img_id;
                     res.cookie('jwt', token, cookieOptions);
-                    req.session.user.profile_img = profile_img;
-                    req.session.user.userProfileBio = userProfileBio;
+                    req.session.user.profile.img = profile_img;
                     req.session.isLoggedIn = true;
+                    console.log(req.session.user);
                     res.status(200).redirect('/');
                 });
                 

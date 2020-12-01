@@ -5,7 +5,7 @@ const db = require('../utilities/db');
 const DEFAULT_PROFILE_PHOTO = "default_profile_img";
 
 async function getProfilePhoto(user) {
-    const imgData = await getImage(user.profile_img);
+    const imgData = await getImage(user.profile.img);
     const convertedImg = encode(imgData.Body);
     return  "<img class='profile__image' src='data:image/jpeg;base64," + convertedImg + "'" + "/>";     
 }

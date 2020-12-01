@@ -68,8 +68,6 @@ function ifDataEmpty(domElem, message) {
 async function getComments() {
     const getCommentsRequest = await fetch(`/user/viewComments`);
     const commentsData = await getCommentsRequest.json();
-    const userData = commentsData;
-    console.log(userData);
     const comments = commentsData.userComments;
     var commentsPanel = document.getElementById('comments');
 

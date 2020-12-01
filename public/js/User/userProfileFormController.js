@@ -53,9 +53,9 @@ async function submitProfile() {
         })
     }).then(async (uploadRes) => {
         const profileRes = await uploadRes.json();
-        const aboutData = profileRes.userProfileBio.about;
-        const locationData = profileRes.userProfileBio.location;
-        const languagesData = profileRes.userProfileBio.languages;
+        const aboutData = profileRes.profile.about;
+        const locationData = profileRes.profile.location;
+        const languagesData = profileRes.profile.languages;
         
         document.getElementById('profile_about_me').innerHTML 
         = "&nbsp;" + ((locationData) ? aboutData : 'This is about me..') + "&nbsp;";

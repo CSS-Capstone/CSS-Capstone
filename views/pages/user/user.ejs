@@ -6,22 +6,21 @@
     <title>Hotel-Finder</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-    <!-- Index CSS -->
+    <!-- Component CSS -->
     <link rel="stylesheet" href="/css/users.css">
+    <link rel="stylesheet" href="/css/modalUserPhoto.css">
+    <link rel="stylesheet" href="/css/modalUserProfileLang.css">
     <link rel="stylesheet" href="/css/userTab.css">
     <link rel="stylesheet" href="/css/footer.css">
-    <!-- User Tab Script -->
-    <link rel="stylesheet" type="text/css" href="/css/modalUserPhoto.css">
-
 </head>
 <body>
     <section class="profile__wrapper">
         <div class="profile__left">
             <div class="profile__left__upper">
-                <% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
+                <% if (!user.profile.img || user.profile.img === "default_profile_img") { %>
                     <img class='profile__image' src='images/default_user_profile_img_login.png' id='profile__image__main'/>
                 <% } else { %>
-                    <img class='profile__image' src="<%= user.profile_img_dom%>" id='profile__image__main'/>
+                    <img class='profile__image' src="<%= user.profile.imgDom%>" id='profile__image__main'/>
                 <% } %>
                 <br>
                 <a href="#" id="underline" onclick="openForm()">Update photo</a>
@@ -85,37 +84,7 @@
                     </div>
                     <div class="profile__form__row">
                         <div class="profile__form__heading">Languages I speak</div>
-                        <!-- <div class="">
-                            <span class="" lang="en">English</span>
-                            <div class="">
-                                <button type="button" class="_187sg6v">
-                                    <span class="">
-                                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" 
-                                            style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4px; overflow: visible;" 
-                                            aria-label="Remove from selection" role="img" focusable="false">
-                                            <path d="m6 6 20 20"></path>
-                                            <path d="m26 6-20 20"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="">
-                            <span class="" lang="ko">한국어</span>
-                            <div class="">
-                                <button type="button" class="_187sg6v">
-                                    <span class="">
-                                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" 
-                                            style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4px; overflow: visible;" 
-                                            aria-label="Remove from selection" role="img" focusable="false">
-                                            <path d="m6 6 20 20"></path>
-                                            <path d="m26 6-20 20"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </div> -->
-                        <button type="button" class="profile__addmore__btn" onclick="">Add more</button>
+                        <button type="button" class="profile__addmore__btn" onclick="showLangModal()">Add more</button>
                     </div>
                     <div class="profile__form__row">
                         <div class="profile__form__submit__btns">
@@ -132,29 +101,29 @@
             <div class="profile__right__about">
                 <i class="fas fa-quote-left"></i>
                 <span id="profile_about_me">
-                    <% if (!user.userProfileBio.about) { %>
+                    <% if (!user.profile.about) { %>
                         This is about me..
                     <% } else { %>
-                    <%= user.userProfileBio.about %>
+                    <%= user.profile.about %>
                     <% } %>
                 </span>
                 <i class="fas fa-quote-right"></i>
                 <br>
                 <i class="fas fa-home"></i>
                 <span id="profile_location">&nbsp;
-                    <% if (!user.userProfileBio.location) { %>
+                    <% if (!user.profile.location) { %>
                         Where do you live?
                     <% } else { %>
-                    <%= user.userProfileBio.location %>
+                    <%= user.profile.location %>
                     <% } %>
                 </span>
                 <br>
                 <i class="fas fa-comment-alt"></i>
                 <span id="profile_languages">&nbsp;Speak 
-                    <% if (!user.userProfileBio.languages) { %>
+                    <% if (!user.profile.languages) { %>
                         some language
                     <% } else { %>
-                        <%= user.userProfileBio.languages %>
+                        <%= user.profile.languages %>
                     <% } %>
                 </span>
                 <br>
@@ -190,6 +159,7 @@
     <script src="/js/Account/forgetme.js" defer></script>
     <script src="/js/User/userProfileFormController.js" defer></script>
     <script src="/js/User/userTabController.js" defer></script>
+    <%- include('../../partials/modal_user_profile_lang') %>
     <%- include('../../partials/footer') %>
 </body>
 </html>

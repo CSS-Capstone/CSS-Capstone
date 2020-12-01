@@ -11,10 +11,10 @@
 			Profile Photo
 		</div>
 		<div class="photo__main">
-			<% if (!user.profile_img || user.profile_img === "default_profile_img") { %>
+			<% if (!user.profile.img || user.profile.img === "default_profile_img") { %>
 				<img class='profile__image' src='images/default_user_profile_img_login.png' id='profile__image__modal'/>
 			<% } else { %>
-				<img class='profile__image' src="<%= user.profile_img_dom%>" id='profile__image__modal'/>
+				<img class='profile__image' src="<%= user.profile.imgDom%>" id='profile__image__modal'/>
 			<% } %>
 		</div>
 		<div class="photo__upload__paragraph">
