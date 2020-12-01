@@ -199,11 +199,15 @@ async function getBookingHistory() {
 
         var chkInDate = document.createElement('div');
         chkInDate.setAttribute('class', 'booking__info__chkin');
-        chkInDate.innerHTML = "Check-in Date: " + `${bookingHistories[i].check_in_date}`;
+        var chkInDateString = new Date(bookingHistories[i].check_in_date);
+        chkInDateString = chkInDateString.toDateString();
+        chkInDate.innerHTML = "Check-in Date: " + `${chkInDateString}`;
 
         var chkOutDate = document.createElement('div');
         chkOutDate.setAttribute('class', 'booking__info__chkin');
-        chkOutDate.innerHTML = "Check-out Date: " + `${bookingHistories[i].check_out_date}`;
+        var chkOutDateString = new Date(bookingHistories[i].check_out_date);
+        chkOutDateString = chkOutDateString.toDateString();
+        chkOutDate.innerHTML = "Check-out Date: " + `${chkOutDateString}`;
 
         infoContainer.appendChild(hotelName);
         infoContainer.appendChild(hotelAddr);
