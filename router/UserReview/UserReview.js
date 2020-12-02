@@ -3,6 +3,8 @@ const router = express.Router();
 const authMW = require('../../modules/auth');
 const dotenv = require('dotenv');
 const multer = require('../../utilities/multer');
+const AWS = require('aws-sdk');
+const s3 = require('../../utilities/s3');
 const imageHelper = require('../../modules/profilePhotoHelper');
 const trimCityNameHelper = require('../../modules/trimCityNameHelper');
 const hotelRetrieveHelper = require('../../modules/hotelRetrieveHelper');
@@ -23,6 +25,14 @@ router.get('/user/review/:bookingId/new', authMW.isLoggedIn, authMW.isAbleToWrit
                             INNER JOIN HOTEL AS hotel 
                             ON hotel.hotel_id = booking.hotel_id 
                             WHERE booking.booking_id=?`;
+    const GetHotelFromDB = `SELECT *
+                            FROM BOOKING AS booking
+                            INNER JOIN HOTEL AS hotel
+                            ON hotel.hotel_id = booking.hotel_id
+                            INNER JOIN USER_HOTEL_IMAGE AS hotelImage
+                            ON booking.hotel_id = hotelImage.hotel_id
+                            WHERE booking.booking_id=?
+                            LIMIT 1; `;
     db.query(isHotelFromAPI, currentBookingId, (isFromApiError, isFromApiResult) => {
         if (isFromApiError) {
             console.log("ERROR: GET REVIEW BOOKING isHotelFromAPI");
@@ -52,15 +62,45 @@ router.get('/user/review/:bookingId/new', authMW.isLoggedIn, authMW.isAbleToWrit
                 ,   country: getHotelFromAPIResult[0].country
                 ,   city: getHotelFromAPIResult[0].city
                 ,   address: getHotelFromAPIResult[0].address
-                ,   user_id: getHotelFromAPIResult[0].user_id
                 ,   api_hotel_id: getHotelFromAPIResult[0].api_hotel_id
                 };
                 console.log(hotelApiObj);
                 res.render('pages/review/reviewNewApiHotel', {hotelApiObj:hotelApiObj});
             });
         } else {
-            console.log("the data is not from api");
-            res.render('pages/reivew/reviewNewDBHotel');
+            db.query(GetHotelFromDB, [currentBookingId], async (getHotelFromDBError, getHotelFromDBResult) => {
+                if (getHotelFromDBError) {
+                    console.log("ERROR: RENDERING WRITE REVIEW PAGE FOR HOTEL DB");
+                    console.log(getHotelFromDBError);
+                    throw getHotelFromDBError;
+                }
+                let params = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
+                    Key: `${getHotelFromDBResult[0].hotel_img_id}`
+                };
+                let hotel_db_image_data = await s3.s3.getObject(params).promise();
+                let hotel_db_image = hotel_db_image_data.Body;
+                let buffer = Buffer.from(hotel_db_image);
+                let base64String = buffer.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,' + base64String;
+                let hotelDBObj = {
+                    booking_id: getHotelFromDBResult[0].booking_id
+                ,   booking_date: getHotelFromDBResult[0].booking_date
+                ,   booking_price: getHotelFromDBResult[0].booking_price
+                ,   user_id: getHotelFromDBResult[0].user_id
+                ,   hotel_id: getHotelFromDBResult[0].hotel_id
+                ,   check_in_date: getHotelFromDBResult[0].check_in_date
+                ,   check_out_date: getHotelFromDBResult[0].check_out_date
+                ,   hotel_name: getHotelFromDBResult[0].hotel_name
+                ,   country: getHotelFromDBResult[0].country
+                ,   city: getHotelFromDBResult[0].city
+                ,   address: getHotelFromDBResult[0].address
+                ,   imageDOM:imageDOM
+                }
+                console.log("the data is not from api");
+            res.render('pages/review/reviewNewDBHotel', {hotelDBObj:hotelDBObj});
+            });
+            
         }
     });
 });
