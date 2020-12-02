@@ -25,6 +25,89 @@ body {
     margin: 0.5rem 1rem;
 }
 
+/* HOTEL DB */
+
+.mySlides {display: none;}
+
+.hotel_serach_each_hotelDB {
+    display: flex;
+    justify-content: space-between;
+}
+/* Fading animation */
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+.hotelSearchDB_image {
+    width: 280px;
+    height: 180px;
+    border-radius: 2rem;
+}
+
+/* Slideshow container */
+.slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+  }
+
+/* Next & previous buttons */
+.prev, .next {
+    position: absolute;
+    /* top: 45%;
+    left: 5%; */
+    font-size: 1.5rem;
+    color: var(--arrow_background_color);
+    background-color: var(--arrow_color);
+    border-radius: 55%;
+    cursor: pointer;
+    /* visibility: hidden; */
+}
+  
+  /* Position the "next button" to the right */
+.next {
+    top: 45%;
+    right: 5%;
+}
+  
+.prev {
+    top: 45%;
+    left: 5%;
+}
+
+.hotelDB_desc_footer {
+    position: absolute;
+    bottom: 1rem;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hotelDB_desc_price {
+    color: var(--arrow_color);
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--border_bottom);
+}
+
+.hotel_scoreDB {
+    color: var(--arrow_color);
+    font-weight: 100;
+    font-size: 1rem;
+}
+
+.hotel_desc_price_db {
+    color: var(--arrow_color);
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--border_bottom);
+}
+/* END OF HOTEL DB */
+
 .hotel_search_container {
     /* margin: 2rem 1rem; */
     margin: 0 1rem;

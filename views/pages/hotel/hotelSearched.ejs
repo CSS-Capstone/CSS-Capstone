@@ -49,6 +49,58 @@
             <!-- ============================== -->
             <!-- End of Filter -->
             <!-- Lists of Hotels -->
+            <div>
+                <span id = "size-of-hotel-rendered" style = "display: none"><%= hotelsFromDB.length %></span>
+                <% for (let i = 0; i < hotelsFromDB.length; i++) { %>
+                    <div class="hotel_serach_each_hotelDB">
+                        <% if (hotelsFromDB[i].hotel_image === undefined) { %>
+                            <div class="hotelImageDBSlide<%=i%>">
+                                <img class="hotelSearchDB_image" src="/images/userHotelPost.jpg" alt="there are no images for this hotel. Use default image"/>
+                            </div>
+                        <% } else { %>
+                            <div class="slideshow-container" id = "top-rated-slider-<%= i %>">
+                                <% for (let j = 0; j < hotelsFromDB[i].hotel_image.length; j++) { %>
+                                    <div class="mySlides fade hotelImageDBSlide<%=i%>">
+                                        <img class="hotelSearchDB_image" src="<%=hotelsFromDB[i].hotel_image[j]%>" alt="hotel image from database"/>
+                                    </div>
+                                <% } %>
+                                <a class="prev" onclick="plusSlides(-1, this.parentNode)">&#10094;</a>
+                                <a class="next" onclick="plusSlides(1, this.parentNode)">&#10095;</a>
+                            </div>    
+                        <% }%>
+                        
+                        <div class="hotel_desc">
+                            <small class="hotel_db_address"><%=hotelsFromDB[i].hotel_address%></small>
+                            <div class="hotel_desc_header">
+                                <h3>
+                                    <span>
+                                        <i class="fas fa-database"></i>
+                                    </span>
+                                    <%=hotelsFromDB[i].hotel_name%>
+                                </h3>
+                            </div>
+                            <div class="hotel_desc_detail_btn">
+                                <a class="hotel_desc_btn" 
+                                    href="/hotel/searched/detail/posted/<%=hotelsFromDB[i].hotel_id%>">
+                                    View Detail
+                                </a>
+                            </div>
+                            <div class="hotelDB_desc_footer">
+                                <i class="fas fa-star hotel_score_icon">
+                                    <% if (mapForRating.get(hotelsFromDB[i].hotel_id)) { %>
+                                        <span class="hotel_scoreDB">Rate: <%=mapForRating.get(hotelsFromDB[i].hotel_id).toFixed(3)%></span>
+                                    <% } else { %>
+                                        <span class="hotel_scoreDB">Rate: currently no review</span>
+                                    <%} %>
+                                    
+                                </i>
+                                <h4 class="hotel_desc_price_db">$<%=hotelsFromDB[i].hotel_price.toFixed(2)%> / Night</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="each_hotel_divider">
+                <% } %>
+            </div>
             <div class="hotel_searched_hotel_container">
                                
                 <% theHotelData.filterHotelData.forEach(hotel => { %>
@@ -92,71 +144,105 @@
                 
             
                 </div>
-            <script>
-                function initialize() {
-                    initMap();
-                    activatePlacesSearch();
-                }
-                function activatePlacesSearch(){
-                    var input = document.getElementById('location_search');
-                    let option = {
-                        types: ['(cities)']
-                    };
-                    var autocomplete = new google.maps.places.Autocomplete(input, option);
-                }
-                function initMap() {  
-                    let map;
-                    let longitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lon%>");
-                    let latitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lat%>");
-                    let mapOption = {
-                        zoom: 11,
-                        center: {
-                            lat: latitude
-                        ,   lng: longitude
-                        }
-                    };
-                    map = new google.maps.Map(document.getElementById("map"), mapOption);
-                    // coordinate create 
-                    const hotelCoord = <%- JSON.stringify(theHotelData.mapHotelData) %>;
-                    // console.log(hotelCoord);
-                    hotelCoord.forEach(eachCoordinate => {
-                        //console.log(eachCoordinate.location);
-                        const hotelName = eachCoordinate.name;
-                        const coordLat = Number(eachCoordinate.location.lat);
-                        const coordLon = Number(eachCoordinate.location.lon);
-                        // console.log(hotelName)
-                        const coord = {
-                            lat: coordLat
-                        ,   lng: coordLon
+                <script defer>
+                    function initialize() {
+                        initMap();
+                        activatePlacesSearch();
+                    }
+                    function activatePlacesSearch(){
+                        var input = document.getElementById('location_search');
+                        let option = {
+                            types: ['(cities)']
                         };
-                        const props = {
-                            coord: coord,
-                            content: hotelName
-                        }
-                        addMarkerToMap(props);
-                    });
-
-                    function addMarkerToMap(props) {
-                        let marker = new google.maps.Marker({
-                            position: props.coord
-                        ,   map: map
+                        var autocomplete = new google.maps.places.Autocomplete(input, option);
+                    }
+                    function initMap() {  
+                        let map;
+                        let longitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lon%>");
+                        let latitude = Number("<%=theHotelData.hoteldata.results.locations[0].location.lat%>");
+                        let mapOption = {
+                            zoom: 5,
+                            center: {
+                                lat: latitude
+                            ,   lng: longitude
+                            }
+                        };
+                        map = new google.maps.Map(document.getElementById("map"), mapOption);
+                        // coordinate create 
+                        const hotelCoord = <%- JSON.stringify(theHotelData.mapHotelData) %>;
+                        // console.log(hotelCoord);
+                        hotelCoord.forEach(eachCoordinate => {
+                            //console.log(eachCoordinate.location);
+                            const hotelName = eachCoordinate.name;
+                            const coordLat = Number(eachCoordinate.location.lat);
+                            const coordLon = Number(eachCoordinate.location.lon);
+                            // console.log(hotelName)
+                            const coord = {
+                                lat: coordLat
+                            ,   lng: coordLon
+                            };
+                            const props = {
+                                coord: coord,
+                                content: hotelName
+                            }
+                            addMarkerToMap(props);
                         });
-
-                        if (props.content) {
-                            let infoWindow = new google.maps.InfoWindow({
-                                content: props.content
+                        // BELOW ARE FOR DB
+                        let currentAddressDB = [];
+                        <% hotelsFromDB.forEach( (eachHotelData) => { %>
+                            currentAddressDB = "<%=eachHotelData.hotel_address%>";
+                            var geocoder = new google.maps.Geocoder();
+                            if (geocoder) {
+                                geocoder.geocode({
+                                    'address': currentAddressDB
+                                }, (geoCodeResult, geoCodeStatus) => {
+                                    if (geoCodeStatus == google.maps.GeocoderStatus.OK) {
+                                        var googleMapMarker = new google.maps.Marker({
+                                            position: geoCodeResult[0].geometry.location
+                                        ,   map: map
+                                        });
+                                        var thePropsForDBMarker = {
+                                            content: "<%=eachHotelData.hotel_name%>"
+                                        };
+                                        if (thePropsForDBMarker.content) {
+                                            console.log("From DB Map");
+                                            var infoWindows = new google.maps.InfoWindow({
+                                                content: thePropsForDBMarker.content
+                                            });
+                                            googleMapMarker.addListener('mouseover', function() {
+                                                infoWindows.open(map, googleMapMarker);
+                                            });
+                                            googleMapMarker.addListener('mouseout', function() {
+                                                infoWindows.close();
+                                            });
+                                        }
+                                    } else {
+                                        throw ("No Result Found in Map Display DB" + geoCodeStatus);
+                                    }
+                                });
+                            }
+                        <% }); %>
+                        
+                        function addMarkerToMap(props) {
+                            let marker = new google.maps.Marker({
+                                position: props.coord
+                            ,   map: map
                             });
-                            marker.addListener('mouseover', function() {
-                                infoWindow.open(map, marker);
-                            });
-                            marker.addListener('mouseout', function() {
-                                infoWindow.close();
-                            });
+    
+                            if (props.content) {
+                                let infoWindow = new google.maps.InfoWindow({
+                                    content: props.content
+                                });
+                                marker.addListener('mouseover', function() {
+                                    infoWindow.open(map, marker);
+                                });
+                                marker.addListener('mouseout', function() {
+                                    infoWindow.close();
+                                });
+                            }
                         }
                     }
-                    
-                }
-            </script>
+                </script>
             <script async defer
                 src="https://maps.googleapis.com/maps/api/js?key=<%=theKey%>&callback=initialize&libraries=places&v=weekly">
             </script>
@@ -165,6 +251,7 @@
     <%- include('../../partials/places_api') %>
     <%- include('../../partials/footer') %>
     <script src="/js/HotelSearch/hotelSearchPrice.js"></script>
-    <script src="/js/HotelSearch/hotelSearchImage.js"></script>    
+    <script src="/js/HotelSearch/hotelSearchImage.js"></script>
+    <script src="/js/HotelSearch/hotelSearchDBImage.js"></script> 
 </body>
 </html>
