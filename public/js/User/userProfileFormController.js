@@ -19,6 +19,25 @@ function showForm() {
         user_profile_form[i].style.color = "";
         user_profile_form[i].style.display = "block";
     }
+
+    // var langs = document.getElementById('profile_languages').innerText;
+    // if (langs === '&nbsp;Speaks&nbsp;some languages') {
+    //     console.log('get something');
+    //     console.log(langs);
+    // } else {
+    //     var temp = langs.replace(/\s/g, '');
+    //     temp = temp.replace('Speaks', '');
+    //     temp = temp.replace(',', ' ');
+    //     var tempArr = temp.split(' ');
+        
+    //     tempArr.forEach((eachLang) => {
+    //         languagesArr.forEach((item) => {
+    //             if (eachLang === item.lang) {
+    //                 initalizeLanguageContainers(item);
+    //             }
+    //         });
+    //     });
+    // }
 }
 
 function hideForm() {
@@ -34,13 +53,40 @@ function changeSubmitButton() {
     profile_submit_btn.style.background = '#000000';
 }
 
-function htmlDecode(input) {
-    var e = document.createElement('div');
-    e.innerHTML = input;
-    return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+function deleteLanguage(btnName) {
+    btnName.remove();
+    return;
+}
+
+function getLanguages() {
+    var returnArr = [];
+    var userLanguages = document.querySelectorAll('.profile__form__languages__container');
+    if (userLanguages.length > 0) {
+        for (let i = 0; i < userLanguages.length; i++) {
+            returnArr.push({
+                lang: `${userLanguages[i].childNodes[0].innerHTML}`
+            });
+        }
+    } else {
+        returnArr = [
+            { lang: "한국어" },
+            { lang: "English" }
+        ];
+    }
+    return returnArr;
 }
 
 async function submitProfile() {
+    var langs = getLanguages();
+    var langString = "";
+
+    for (let i = 0; i < langs.length; i++) {
+        if (i > 0) {
+            langString += ", ";
+        }
+        langString += langs[i].lang 
+    }
+
     fetch(`/user/updateProfile`, {
         method: 'POST',
         headers: {
@@ -49,7 +95,7 @@ async function submitProfile() {
         body: JSON.stringify({
             about: userAbout.value,
             location: userLocation.value,
-            languages: 'English, Korean'
+            languages: langString
         })
     }).then(async (uploadRes) => {
         const profileRes = await uploadRes.json();

@@ -84,6 +84,8 @@
                     </div>
                     <div class="profile__form__row">
                         <div class="profile__form__heading">Languages I speak</div>
+                        <div class="profile__form__languages__row" id="lang__row">
+                        </div>
                         <button type="button" class="profile__addmore__btn" onclick="showLangModal()">Add more</button>
                     </div>
                     <div class="profile__form__row">
@@ -104,7 +106,7 @@
                     <% if (!user.profile.about) { %>
                         This is about me..
                     <% } else { %>
-                    <%= user.profile.about %>
+                        <%= user.profile.about %>
                     <% } %>
                 </span>
                 <i class="fas fa-quote-right"></i>
@@ -114,16 +116,16 @@
                     <% if (!user.profile.location) { %>
                         Where do you live?
                     <% } else { %>
-                    <%= user.profile.location %>
+                        <%= user.profile.location %>
                     <% } %>
                 </span>
                 <br>
                 <i class="fas fa-comment-alt"></i>
-                <span id="profile_languages">&nbsp;Speak 
+                <span id="profile_languages">  
                     <% if (!user.profile.languages) { %>
-                        some language
+                        &nbsp;Speaks&nbsp;some languages
                     <% } else { %>
-                        <%= user.profile.languages %>
+                        &nbsp;Speaks&nbsp;<%= user.profile.languages %>
                     <% } %>
                 </span>
                 <br>
