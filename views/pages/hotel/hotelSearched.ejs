@@ -37,7 +37,7 @@
         <br />
         <br />
     <main class="hotel_search_container">
-        <div class="hotel_searched_info" style = "overflow-y: scroll; width:100%; height: 800px;">
+        <div class="hotel_searched_info" style = "overflow-y: scroll; width:100%; height: 600px;">
             <small class="hotel_searched_count"><%= theHotelData.filterHotelData.length %>+ hotels had been found</small>
             <h1 class="hotel_searched_location">City: <%= theHotelData.hoteldata.results.locations[0].fullName %></h1>
             <!-- <hr class="each_hotel_divider"> -->
@@ -150,7 +150,7 @@
                         activatePlacesSearch();
                     }
                     function activatePlacesSearch(){
-                        var input = document.getElementById('location_search');
+                        var input = document.getElementById('location__searchterm');
                         let option = {
                             types: ['(cities)']
                         };
@@ -248,7 +248,7 @@
             </script>
         </section>
     </main>
-    <%- include('../../partials/places_api') %>
+    
     <%- include('../../partials/footer') %>
     <script src="/js/HotelSearch/hotelSearchPrice.js"></script>
     <script src="/js/HotelSearch/hotelSearchImage.js"></script>
