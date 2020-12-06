@@ -244,16 +244,39 @@ app.post('/auth/login', async (req, res) => {
                         about: userResult.profile_about,
                         location: userResult.profile_location,
                         languages: userResult.profile_languages
+                    }, 
+                    developer: {
+                        is_active: null,
+                        api_key: null
                     }
                 };
 
-                db.query(`SELECT img_id FROM USER_PROFILE_IMAGE WHERE user_id = ?`, [userId], async (error, photo) => {
-                    let profile_img = (Object.keys(photo).length === 0) ? 'default_profile_img' : photo[0].img_id;
-                    res.cookie('jwt', token, cookieOptions);
-                    req.session.user.profile.img = profile_img;
-                    req.session.isLoggedIn = true;
-                    console.log(req.session.user);
-                    res.status(200).redirect('/');
+                const userImgQuery = `SELECT * FROM USER_PROFILE_IMAGE WHERE user_id = ?;`;
+                const userDevQuery = `SELECT * FROM DEVELOPER WHERE user_id = ?;`
+
+                db.query(userImgQuery, [userId], async (error, photo) => {
+                    if (error) { console.log('Failed to retrieve the photo of user'); }
+                    else {
+                        db.query(userDevQuery, [userId], async (err, dev) => {
+                            if (err) { console.log('Failed to retrieve the dev of user'); }
+                            else {
+                                let profile_img = (Object.keys(photo).length === 0) ? 'default_profile_img' : photo[0].img_id;
+                                res.cookie('jwt', token, cookieOptions);
+                                req.session.user.profile.img = profile_img;
+                                if (Object.keys(dev).length !== 0) {
+                                    var booleanVal = dev[0].is_active === 1 ? "true" : "false";
+                                    let devTemp = {
+                                        is_active: booleanVal,
+                                        api_key: dev[0].api_key
+                                    };
+                                    req.session.user.developer = devTemp;
+                                } 
+                                req.session.isLoggedIn = true;
+                                console.log(req.session.user);
+                                res.status(200).redirect('/');
+                            }
+                        });
+                    }
                 });
                 
                 // console.log(req.user);

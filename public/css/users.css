@@ -62,6 +62,8 @@
     justify-content: space-between;
 }
 
+
+
 .profile__right__heading {
     font-size: var(--font-large);
     font-weight: var(--weight-regular);
@@ -181,13 +183,88 @@
     background: var(--color-light-grey);
 }
 
-.profile__cancle__btn:hover {
+.profile__edit__btn:hover, .profile__addmore__btn:hover, .profile__cancle__btn:hover {
     text-decoration: underline;
     border: 1px solid transparent;
     background: rgb(247, 247, 247);
     padding: 0.3rem 0rem;
     border-radius: 0.2rem;
 }
+
+.profile__form__toggle__wrapper, .profile__form__developer__wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.profile__developer__api__btn {
+    border: 1px solid transparent;
+    background: rgb(195, 195, 195);
+    padding: 0.3rem 0.4rem;
+    color: var(--color-white);
+    font-size: var(--font-small);
+    font-weight: var(--weight-regular);
+    border-radius: 0.3rem;
+}
+
+.profile__developer__api__btn:hover {
+    background: rgb(100, 222, 0);
+} 
+
+.profile__form__developer__key {
+    padding: 0.8rem;
+    width: 65%;
+    border: 1px solid var(--color-light-grey);
+    border-radius: 0.6rem;
+    font-size: var(--font-micro);
+}
+
+/* Toggle switch */
+/* toggle in label designing */ 
+.toggle { 
+    position : relative ; 
+    display : inline-block; 
+    width : 80px; 
+    height : 26px; 
+    background-color: var(--color-light-grey); 
+    border-radius: 30px; 
+    border: 1px solid var(--color-light-grey);
+} 
+        
+/* After slide changes */ 
+.toggle:after { 
+    content: ''; 
+    position: absolute; 
+    width: 40px; 
+    height: 25px; 
+    border-radius: 1rem; 
+    background-color: gray; 
+    top: 1px;  
+    left: 1px; 
+    transition:  all 0.5s; 
+} 
+        
+/* Toggle text */ 
+p { 
+    font-family: Arial, Helvetica, sans-serif; 
+    font-weight: bold; 
+} 
+        
+/* Checkbox cheked effect */ 
+.checkbox:checked + .toggle::after { 
+    left : 40px;  
+} 
+        
+/* Checkbox cheked toggle label bg color */ 
+.checkbox:checked + .toggle { 
+    background-color: #589fe6; 
+} 
+        
+/* Checkbox vanished */ 
+.checkbox {  
+    display : none; 
+} 
 
 .profile__form__submit__btns {
     display: flex;

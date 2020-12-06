@@ -19,25 +19,7 @@ function showForm() {
         user_profile_form[i].style.color = "";
         user_profile_form[i].style.display = "block";
     }
-
-    // var langs = document.getElementById('profile_languages').innerText;
-    // if (langs === '&nbsp;Speaks&nbsp;some languages') {
-    //     console.log('get something');
-    //     console.log(langs);
-    // } else {
-    //     var temp = langs.replace(/\s/g, '');
-    //     temp = temp.replace('Speaks', '');
-    //     temp = temp.replace(',', ' ');
-    //     var tempArr = temp.split(' ');
-        
-    //     tempArr.forEach((eachLang) => {
-    //         languagesArr.forEach((item) => {
-    //             if (eachLang === item.lang) {
-    //                 initalizeLanguageContainers(item);
-    //             }
-    //         });
-    //     });
-    // }
+    initSlider();
 }
 
 function hideForm() {
@@ -56,6 +38,67 @@ function changeSubmitButton() {
 function deleteLanguage(btnName) {
     btnName.remove();
     return;
+}
+
+function initSlider() {
+    try {
+        var isActive = document.querySelector('#developer__toggle__switch').attributes['state'].value;
+        if (isActive === "true") {
+            document.querySelector('#developer__toggle__switch').checked = true;
+        } else {
+            document.querySelector('#developer__toggle__switch').checked = false;
+        }
+    } catch(error) {
+
+    }
+}
+
+function updateState(clickedThis) {
+    var currentState = clickedThis.attributes['state'].value;
+    var changeState = (currentState === "true") ? "false" : "true";
+    document.getElementById('developer__toggle__switch').setAttribute('state', `${changeState}`);
+    changeSubmitButton();
+}
+
+async function generateAPIKeys() {
+    var apiKeyWrapper = document.querySelector('.profile__form__toggle__wrapper');
+    try {
+        const apiDataRequest = await fetch(`/user/getApi`);
+        const apiData = await apiDataRequest.json();
+        const isActive = apiData.developer.is_active;
+        const api = apiData.developer.api_key;
+        
+        var apiKeyInput = document.createElement('input');
+        apiKeyInput.setAttribute('readonly', true);
+        apiKeyInput.setAttribute('class', "profile__form__developer__key");
+        apiKeyInput.setAttribute('value', `${api}`);
+        
+        var sliderInput = document.createElement('input');
+        sliderInput.setAttribute('type', 'checkbox');
+        sliderInput.setAttribute('id', 'developer__toggle__switch');
+        sliderInput.setAttribute('class', 'checkbox');
+        sliderInput.setAttribute('onclick', "updateState(this)");
+        sliderInput.setAttribute('state', "false");
+
+        var sliderLable = document.createElement('label');
+        sliderLable.setAttribute('for', 'developer__toggle__switch');
+        sliderLable.setAttribute('class', 'toggle');
+
+        apiKeyWrapper.appendChild(apiKeyInput);
+        apiKeyWrapper.appendChild(sliderInput);
+        apiKeyWrapper.appendChild(sliderLable);
+        hideGenBtn();
+    } catch (error) {
+        console.log(error);
+    };
+}
+
+function hideGenBtn() {
+    var apiSlider = document.querySelectorAll('.profile__developer__api__btn');
+
+    for (let i = 0; i < apiSlider.length; i++) {
+        apiSlider[i].style.display = "none";
+    }
 }
 
 function getLanguages() {
@@ -87,6 +130,9 @@ async function submitProfile() {
         langString += langs[i].lang 
     }
 
+    var apiKey = document.querySelector('.profile__form__developer__key').attributes['value'].value;
+    var isActive = document.querySelector('#developer__toggle__switch').attributes['state'].value;
+
     fetch(`/user/updateProfile`, {
         method: 'POST',
         headers: {
@@ -95,7 +141,9 @@ async function submitProfile() {
         body: JSON.stringify({
             about: userAbout.value,
             location: userLocation.value,
-            languages: langString
+            languages: langString,
+            api_key: apiKey,
+            is_active: isActive
         })
     }).then(async (uploadRes) => {
         const profileRes = await uploadRes.json();

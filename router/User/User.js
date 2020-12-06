@@ -90,23 +90,33 @@ router.post('/user/updateProfile', authMW.isLoggedIn, async(req, res) => {
     var userProfileBio = {
         about: req.body.about,
         location: req.body.location,
-        languages: req.body.languages
+        languages: req.body.languages,
+        api_key: req.body.api_key,
+        is_active: req.body.is_active
     };
     
     let bioQuery = `UPDATE USER SET profile_about = ?, profile_location = ?, profile_languages = ? WHERE user_id=?`;
     let bioData = [userProfileBio.about, userProfileBio.location, 
         userProfileBio.languages, req.session.user.user_id];
     
+    let devQuery = `UPDATE DEVELOPER SET api_key = ?, is_active = ? WHERE user_id=?`;
+    let devData = [userProfileBio.api_key, (userProfileBio.is_active === "true"), req.session.user.user_id];
+    
     db.query(bioQuery, bioData, async (err, results) => {
         if (err) console.log('Failed to update user profile : ' + err);
         else console.log('Successful update to user profile');
     });
 
-    console.log(userProfileBio.languages);
+    db.query(devQuery, devData, async (err, results) => {
+        if (err) console.log('Failed to update user dev info : ' + err);
+        else console.log('Successful update to user dev info');
+    });
 
     req.session.user.profile.about = userProfileBio.about;
     req.session.user.profile.location = userProfileBio.location;
     req.session.user.profile.languages = userProfileBio.languages;
+    req.session.user.developer.api_key = userProfileBio.api_key;
+    req.session.user.developer.is_active = userProfileBio.is_active;
     res.json(req.session.user);
 });
 
@@ -249,6 +259,27 @@ router.get('/user/viewHotelPosts', authMW.isLoggedIn, async (req, res) => {
             }
         });
     }
+});
+
+router.get('/user/getApi', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/developer');
+
+    var d = new Date().getTime();
+	
+    var apiKey = (req.session.user.user_id + uuid.v4(d)).replace(/[\W_]+/g,"");
+
+    console.log(apiKey);
+
+    let devQuery = `INSERT INTO DEVELOPER SET api_key = ?, is_active = ?, user_id=?`;
+    let devData = [apiKey, false, req.session.user.user_id];
+    db.query(devQuery, devData, async (err, results) => {
+        if (err) console.log('Failed to INSERT user dev info : ' + err);
+        else console.log('Successful to INSERT user dev info');
+    }); 
+
+    req.session.user.developer.api_key = apiKey;
+    req.session.user.developer.is_active = false;
+    res.json(req.session.user);
 });
 
 module.exports = router;

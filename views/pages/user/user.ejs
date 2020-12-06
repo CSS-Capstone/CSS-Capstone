@@ -89,6 +89,25 @@
                         <button type="button" class="profile__addmore__btn" onclick="showLangModal()">Add more</button>
                     </div>
                     <div class="profile__form__row">
+                        <div class="profile__form__developer__wrapper">
+                            <div class="profile__form__heading">Developer</div>
+                            <% if (!user.developer.api_key) { %>
+                                <button type="button" class="profile__developer__api__btn" onclick="generateAPIKeys()">Generate API Key</button>
+                        </div>
+                        <div class="profile__form__toggle__wrapper">
+                            
+                        </div>
+                            <% } else { %>
+                        </div>
+                        <div class="profile__form__toggle__wrapper">
+                            <input readonly type="text" class="profile__form__developer__key" 
+                                value="<%=user.developer.api_key %>"></input>
+                            <input type="checkbox" id="developer__toggle__switch" class="checkbox" state="<%=user.developer.is_active %>" onclick="updateState(this)"/> 
+                            <label for="developer__toggle__switch" class="toggle"></label> 
+                        </div>
+                            <% } %>
+                    </div>
+                    <div class="profile__form__row">
                         <div class="profile__form__submit__btns">
                             <button type="button" class="profile__cancle__btn" onclick="hideForm()">Cancel</button>
                             <button id="profileSubmit" type="button" disabled="" class="profile__submit__btn" onclick="submitProfile()">Save</input>
