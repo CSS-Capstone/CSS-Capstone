@@ -150,6 +150,17 @@
                 <br>
             </div>
             <hr class="right__divider"/>
+            <div class="profile__right__heading__sub">
+            <% if (user.developer.is_active && user.developer.is_active === "true") { %>
+                    Developer
+                </div>
+                <form id="user_delete_form" action="/developer">
+                    <button class="developer__page__btn">Developer Page</button>
+                </form>
+                <hr class="right__divider"/>
+            <% } else { %>
+                </div>
+            <% } %>
         </div>
     </section>
     <section class="user__tab__wrapper">

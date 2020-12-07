@@ -29,9 +29,9 @@ router.delete('/account/:id', async (req, res) => {
     await queryHelper.deleteAccout(userId).then((val) => {
         if (val) {
             console.log(val);
-            res.redirect('/');
         }
     });
+    return res.redirect('/logout');
 });
 
 
