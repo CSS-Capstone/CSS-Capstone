@@ -5,13 +5,13 @@ const db = require('../../utilities/db');
 const s3 = require('../../utilities/s3');
 const bcrypt = require('bcryptjs');
 
-router.get('/djemals%20tbvjdbwj', async (req, res) => {
+router.get('/djemals-tbvjdbwj', async (req, res) => {
     res.render('pages/sign_in', {
         errorMessage: ''
     });
 })
 
-router.post('/auth/djemals%20tbvjdbwj', (req, res) => {
+router.post('/auth/djemals-tbvjdbwj', (req, res) => {
     let adminEmail = req.body.email;
     let adminPassword = req.body.password;
 
@@ -46,13 +46,13 @@ router.post('/auth/djemals%20tbvjdbwj', (req, res) => {
             }
 
             else {
-                res.redirect('/djemals%20tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
+                res.redirect('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
             }
         }
     });
 })
 
-router.get('/djemals%20tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM', (req, res) => {
+router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM', (req, res) => {
     // query all users data
     // that are not admin (isAdmin = 0, isAdmin = false)
     db.query('SELECT * FROM USER WHERE isAdmin = false', (error, userResults) => {
@@ -130,7 +130,7 @@ router.get('/djemals%20tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xi
                     // console.log(usersBookingsPriceDatePair);
                     // console.log(usersBookingsPriceDatePair.length);
 
-                    res.render('pages/admin', {
+                    res.render('pages/admin/admin', {
                         usersNotAdmin: usersNotAdmin,
                         usersBookingsPriceDatePair: usersBookingsPriceDatePair
                     });
