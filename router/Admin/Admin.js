@@ -6,7 +6,7 @@ const s3 = require('../../utilities/s3');
 const bcrypt = require('bcryptjs');
 
 router.get('/djemals-tbvjdbwj', async (req, res) => {
-    res.render('pages/sign_in', {
+    res.render('pages/admin/sign_in', {
         errorMessage: ''
     });
 })
@@ -16,32 +16,12 @@ router.post('/auth/djemals-tbvjdbwj', (req, res) => {
     let adminPassword = req.body.password;
 
     db.query('SELECT * FROM USER WHERE email = ?', [adminEmail], async (error, results) => {
-        if (error) {
-            console.log(error);
-        }
+        if (error) { console.log(error); }
         else {
-            // console.log(results);
-            // if email or password is incorrect
-            if (results.length === 0 || !(await bcrypt.compare(adminPassword, results[0].password))) {
-                // send a message saying that email or password is incorrect
-                res.render('pages/sign_in', {
+            if (results.length === 0 || !(await bcrypt.compare(adminPassword, results[0].password))
+                || !results[0].isConfirmed || !results[0].isAdmin) {
+                res.render('pages/admin/sign_in', {
                     errorMessage: 'email or password is incorrect'
-                });
-            }
-
-            // if account is confirmed
-            else if (!results[0].isConfirmed) {
-                // send a message saying that account is not confirmed yet, ask for DB manager to confirm the account
-                res.render('pages/sign_in', {
-                    errorMessage: 'account is not confirmed yet'
-                });
-            }
-
-            // if account is admin
-            else if (!results[0].isAdmin) {
-            //     // send a message saying that account is not admin
-                res.render('pages/sign_in', {
-                    errorMessage: 'account is not admin'
                 });
             }
 
@@ -50,7 +30,7 @@ router.post('/auth/djemals-tbvjdbwj', (req, res) => {
             }
         }
     });
-})
+});
 
 router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM', (req, res) => {
     // query all users data
@@ -78,8 +58,6 @@ router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7
                     console.log(error);
                 }
                 else {
-                    // console.log(bookingResults.length);
-                    // console.log(bookingResults);
 
                     // var userBookings = bookingResults;
                     var usersBookingsPriceDatePair = [];
@@ -120,16 +98,6 @@ router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7
                         currUser = {};
                     }
                     
-                    // for (let n = 0; n < usersNotAdmin.length; n++) {
-                    //     console.log(usersNotAdmin[n].bookings);
-                    // }
-
-                    // console.log(usersNotAdmin);
-                    // console.log(usersNotAdmin.length);
-
-                    // console.log(usersBookingsPriceDatePair);
-                    // console.log(usersBookingsPriceDatePair.length);
-
                     res.render('pages/admin/admin', {
                         usersNotAdmin: usersNotAdmin,
                         usersBookingsPriceDatePair: usersBookingsPriceDatePair
@@ -140,12 +108,6 @@ router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7
         
         
     })
-
-    // send the JSON data to 'pages/admin'
-    // the data will be all the bookings' price and date
-    // do we have to specified the user of each booking?
-
-    // res.render('pages/admin');
-})
+});
 
 module.exports = router;
