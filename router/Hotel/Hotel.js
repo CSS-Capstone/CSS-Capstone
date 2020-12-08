@@ -346,7 +346,7 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                         }
                     console.log("============================")
                     console.log(theHotelCountyName);
-                    const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(theHotelCountyName) >= 0);
+                    const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
                     const mapHotelData = filterHotelData.map(filteredHotel => {
                     const filterObj = {
                             id: filteredHotel.id
@@ -464,7 +464,7 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                             console.log(testingValue);
                             console.log(theHotelCountyName);
                             
-                            const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(theHotelCountyName) >= 0);
+                            const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
                             
                             const mapHotelData = filterHotelData.map(filteredHotel => {
                             const filterObj = {
