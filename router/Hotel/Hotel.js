@@ -328,114 +328,190 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
                     console.log(hotelRetrieveError);
                     throw hotelRetrieveError;
                 }
-                let hotel_id = [];
-                // let hotelImageMap = new Map();
-                for (let i = 0; i < hotelRetrieveResult.length; i++) {
-                    hotel_id.push(hotelRetrieveResult[i].hotel_id);
-                }
-                // my try before retrieveAllHotelImageBasedOnCity
-                let mapForRating = new Map();
-                db.query(retrieveAllHotelComments, [hotel_id], (hotelCommentRateError, hotelCommentRateResult) => {
-                    if (hotelCommentRateError) {
-                        console.log("ERROR: RETRIEVE STORED PROCEDURE COMMENT RATE HOTEL SEARCH");
-                        console.log(hotelCommentRateError);
-                        throw hotelCommentRateError;
+                console.log("=================================")
+                console.log(hotelRetrieveResult);
+                console.log(hotelRetrieveResult.length);
+                if (hotelRetrieveResult.length == 0) {
+                    console.log("Got in here With 0");
+                    let hotelsFromDB = [];
+                    const fullCountryName = hoteldata.results.locations[0].countryName;
+                    let testingValue = hoteldata.results.hotels[1].locationName;
+                    let theHotelCountyName = '';
+                        for (let i = testingValue.length; i >= 0; i--) {
+                            if (testingValue.charAt(i) === ',') {
+                                theHotelCountyName = testingValue.slice(i+1);
+                                theHotelCountyName = theHotelCountyName.trim();
+                                break;
+                            }
+                        }
+                    console.log("============================")
+                    console.log(theHotelCountyName);
+                    const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(theHotelCountyName) >= 0);
+                    const mapHotelData = filterHotelData.map(filteredHotel => {
+                    const filterObj = {
+                            id: filteredHotel.id
+                        ,   name: filteredHotel.label
+                        ,   location: {
+                                lat: filteredHotel.location.lat
+                            ,   lon: filteredHotel.location.lon
+                            }
+                        };
+                        return filterObj;
+                    });
+                    const theHotelData = {
+                        hoteldata: hoteldata
+                    ,   filterHotelData: filterHotelData
+                    ,   mapHotelData: mapHotelData
                     }
-                    console.log(hotel_id);
-                    for (let i = 0; i < hotelCommentRateResult.length; i++) {
-                        mapForRating.set(hotelCommentRateResult[i].hotel_id, hotelCommentRateResult[i].rating);
+                    let searchKeyword = req.cookies.searchKeyword;
+                    let isLoggedIn = req.session.user == null ? false : true;
+            
+                    let userDetailLogin = {
+                        email: ''
                     }
-                    console.log("==== AFTER LOOP ====")
-                    console.log(mapForRating);
-                    // moved
-                    db.query(retrieveAllHotelImageBasedOnCity, [hotel_id], async (hotelImageRetrieveError, hotelImageRetrieveResult) => {
-                        if (hotelImageRetrieveError) {
-                            console.log("ERROR: RETRIEVE HOTEL IMAGE FROM DB BASED ON CITY");
-                            console.log(hotelImageRetrieveError);
-                            throw hotelImageRetrieveError;
+
+                    let userDetailRegister = {
+                        email: '',
+                        username: ''
+                    }
+                    // console.log(mapForRating);
+                    res.render('pages/hotel/hotelSearched', {
+                        theHotelData: theHotelData, 
+                        theKey: theKey,
+                        hotelsFromDB: hotelsFromDB,
+                        searchKeyword: searchKeyword,
+                        isLoggedIn: isLoggedIn,
+                        registerMessage: '',
+                        loginMessage: '',
+                        resetPasswordMessage: '',
+                        modalStyle: '',
+                        stayInWhere: '',
+                        formDataLogin: userDetailLogin,
+                        formDataRegister: userDetailRegister
+                    });
+                } else {
+                    console.log("GOT IN HERE? NOT ZERO");
+                    let hotel_id = [];
+                    // let hotelImageMap = new Map();
+                    for (let i = 0; i < hotelRetrieveResult.length; i++) {
+                        hotel_id.push(hotelRetrieveResult[i].hotel_id);
+                    }
+                    // my try before retrieveAllHotelImageBasedOnCity
+                    let mapForRating = new Map();
+                    db.query(retrieveAllHotelComments, [hotel_id], (hotelCommentRateError, hotelCommentRateResult) => {
+                        if (hotelCommentRateError) {
+                            console.log("ERROR: RETRIEVE STORED PROCEDURE COMMENT RATE HOTEL SEARCH");
+                            console.log(hotelCommentRateError);
+                            throw hotelCommentRateError;
                         }
-                        let imageHashMap = {};
-                        for (let i = 0; i < hotelImageRetrieveResult.length; i++) {
-                            imageHashMap[hotelImageRetrieveResult[i].hotel_id] = [];
+                        console.log(hotel_id);
+                        for (let i = 0; i < hotelCommentRateResult.length; i++) {
+                            mapForRating.set(hotelCommentRateResult[i].hotel_id, hotelCommentRateResult[i].rating);
                         }
-                        // console.log("========================");
-                        // console.log(imageHashMap);
-                        for (let i = 0; i < hotelImageRetrieveResult.length; i++) {
-                            let params = {
-                                Bucket: process.env.AWS_HOTEL_BUCKET_NAME
-                            ,   Key: `${hotelImageRetrieveResult[i].hotel_img_id}`
-                            };
-                            //console.log(hotelImageRetrieveResult[i].hotel_img_id);
-                            let hotel_img_data = await s3.s3.getObject(params).promise();
-                            let hotel_img = hotel_img_data.Body;
-                            let buffer = Buffer.from(hotel_img);
-                            let base64data = buffer.toString('base64');
-                            let imageDOM = 'data:image/jepg;base64,' + base64data;
-                            imageHashMap[hotelImageRetrieveResult[i].hotel_id].push(imageDOM);
-                        }
-                        
-                        let hotelAddress = [];
-                        let eachHotelAddressObj = {};
-                        let hotelsFromDB = [];
-                        let eachHotelDBObj = {};
-                        for (let i = 0; i < hotelRetrieveResult.length; i++) {
-                            eachHotelDBObj.hotel_id = hotelRetrieveResult[i].hotel_id;
-                            eachHotelDBObj.hotel_name = hotelRetrieveResult[i].hotel_name;
-                            eachHotelDBObj.hotel_price = hotelRetrieveResult[i].hotel_price;
-                            eachHotelDBObj.hotel_address = hotelRetrieveResult[i].address;
-                            eachHotelDBObj.hotel_image = imageHashMap[eachHotelDBObj.hotel_id];
-                            hotelsFromDB.push(eachHotelDBObj);
-                            eachHotelDBObj = {};
-                        }
-                        const fullCountryName = hoteldata.results.locations[0].countryName;
-                        const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(fullCountryName) >= 0);
-                        const mapHotelData = filterHotelData.map(filteredHotel => {
-                        const filterObj = {
-                                id: filteredHotel.id
-                            ,   name: filteredHotel.label
-                            ,   location: {
-                                    lat: filteredHotel.location.lat
-                                ,   lon: filteredHotel.location.lon
-                                }
-                            };
-                            return filterObj;
-                        });
-                        const theHotelData = {
-                            hoteldata: hoteldata
-                        ,   filterHotelData: filterHotelData
-                        ,   mapHotelData: mapHotelData
-                        }
-                        let searchKeyword = req.cookies.searchKeyword;
-                        let isLoggedIn = req.session.user == null ? false : true;
-                
-                        let userDetailLogin = {
-                            email: ''
-                        }
-    
-                        let userDetailRegister = {
-                            email: '',
-                            username: ''
-                        }
+                        console.log("==== AFTER LOOP ====")
                         console.log(mapForRating);
-                        res.render('pages/hotel/hotelSearched', {
-                            theHotelData: theHotelData, 
-                            theKey: theKey,
-                            hotelsFromDB: hotelsFromDB,
-                            mapForRating: mapForRating,
-                            searchKeyword: searchKeyword,
-                            isLoggedIn: isLoggedIn,
-                            registerMessage: '',
-                            loginMessage: '',
-                            resetPasswordMessage: '',
-                            modalStyle: '',
-                            stayInWhere: '',
-                            formDataLogin: userDetailLogin,
-                            formDataRegister: userDetailRegister
+                        // moved
+                        db.query(retrieveAllHotelImageBasedOnCity, [hotel_id], async (hotelImageRetrieveError, hotelImageRetrieveResult) => {
+                            if (hotelImageRetrieveError) {
+                                console.log("ERROR: RETRIEVE HOTEL IMAGE FROM DB BASED ON CITY");
+                                console.log(hotelImageRetrieveError);
+                                throw hotelImageRetrieveError;
+                            }
+                            let imageHashMap = {};
+                            for (let i = 0; i < hotelImageRetrieveResult.length; i++) {
+                                imageHashMap[hotelImageRetrieveResult[i].hotel_id] = [];
+                            }
+                            // console.log("========================");
+                            // console.log(imageHashMap);
+                            for (let i = 0; i < hotelImageRetrieveResult.length; i++) {
+                                let params = {
+                                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                                ,   Key: `${hotelImageRetrieveResult[i].hotel_img_id}`
+                                };
+                                //console.log(hotelImageRetrieveResult[i].hotel_img_id);
+                                let hotel_img_data = await s3.s3.getObject(params).promise();
+                                let hotel_img = hotel_img_data.Body;
+                                let buffer = Buffer.from(hotel_img);
+                                let base64data = buffer.toString('base64');
+                                let imageDOM = 'data:image/jepg;base64,' + base64data;
+                                imageHashMap[hotelImageRetrieveResult[i].hotel_id].push(imageDOM);
+                            }
+                            
+                            let hotelAddress = [];
+                            let eachHotelAddressObj = {};
+                            let hotelsFromDB = [];
+                            let eachHotelDBObj = {};
+                            for (let i = 0; i < hotelRetrieveResult.length; i++) {
+                                eachHotelDBObj.hotel_id = hotelRetrieveResult[i].hotel_id;
+                                eachHotelDBObj.hotel_name = hotelRetrieveResult[i].hotel_name;
+                                eachHotelDBObj.hotel_price = hotelRetrieveResult[i].hotel_price;
+                                eachHotelDBObj.hotel_address = hotelRetrieveResult[i].address;
+                                eachHotelDBObj.hotel_image = imageHashMap[eachHotelDBObj.hotel_id];
+                                hotelsFromDB.push(eachHotelDBObj);
+                                eachHotelDBObj = {};
+                            }
+                            const fullCountryName = hoteldata.results.locations[0].countryName;
+                            let testingValue = hoteldata.results.hotels[1].locationName;
+                            let theHotelCountyName = '';
+                            for (let i = testingValue.length; i >= 0; i--) {
+                                if (testingValue.charAt(i) === ',') {
+                                    theHotelCountyName = testingValue.slice(i+1);
+                                    theHotelCountyName = theHotelCountyName.trim();
+                                    break;
+                                }
+                            }
+                            console.log("==============================");
+                            console.log(testingValue);
+                            console.log(theHotelCountyName);
+                            
+                            const filterHotelData = hoteldata.results.hotels.filter(s => s.locationName.indexOf(theHotelCountyName) >= 0);
+                            
+                            const mapHotelData = filterHotelData.map(filteredHotel => {
+                            const filterObj = {
+                                    id: filteredHotel.id
+                                ,   name: filteredHotel.label
+                                ,   location: {
+                                        lat: filteredHotel.location.lat
+                                    ,   lon: filteredHotel.location.lon
+                                    }
+                                };
+                                return filterObj;
+                            });
+                            const theHotelData = {
+                                hoteldata: hoteldata
+                            ,   filterHotelData: filterHotelData
+                            ,   mapHotelData: mapHotelData
+                            }
+                            let searchKeyword = req.cookies.searchKeyword;
+                            let isLoggedIn = req.session.user == null ? false : true;
+                    
+                            let userDetailLogin = {
+                                email: ''
+                            }
+        
+                            let userDetailRegister = {
+                                email: '',
+                                username: ''
+                            }
+                            console.log(mapForRating);
+                            res.render('pages/hotel/hotelSearched', {
+                                theHotelData: theHotelData, 
+                                theKey: theKey,
+                                hotelsFromDB: hotelsFromDB,
+                                mapForRating: mapForRating,
+                                searchKeyword: searchKeyword,
+                                isLoggedIn: isLoggedIn,
+                                registerMessage: '',
+                                loginMessage: '',
+                                resetPasswordMessage: '',
+                                modalStyle: '',
+                                stayInWhere: '',
+                                formDataLogin: userDetailLogin,
+                                formDataRegister: userDetailRegister
+                            });
                         });
                     });
-                });
-                
-                
+                }
             });
         }
     } catch(err) {
