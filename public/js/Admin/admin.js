@@ -33,6 +33,7 @@ function getCookie(cname) {
 
 loadTheme();
 loadUserTable();
+loadChart();
 
 async function loadUserTable() {
     const userDataRequest = await fetch(`/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd`);
@@ -132,33 +133,22 @@ function openCloseDropdown(event) {
 	}
 }
 
-var ctx = document.getElementById('myChart')
-ctx.height = 500
-ctx.width = 500
-var data = {
-	labels: ['January', 'February', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-	datasets: [{
-		fill: false,
-		label: 'Completed',
-		borderColor: successColor,
-		data: [120, 115, 130, 100, 123, 88, 99, 66, 120, 52, 59],
-		borderWidth: 2,
-		lineTension: 0,
-	}, {
-		fill: false,
-		label: 'Issues',
-		borderColor: dangerColor,
-		data: [66, 44, 12, 48, 99, 56, 78, 23, 100, 22, 47],
-		borderWidth: 2,
-		lineTension: 0,
-	}]
+function loadChart() {
+    var ctx = document.getElementById('myChart')
+    ctx.height = 500
+    ctx.width = 500
+    var data = {
+        labels: ['$0-50', '$51-100', '$101-200', '$200-300', '$300+'],
+        datasets: [{
+            data: [35, 25, 20, 10, 10],
+            backgroundColor: ['#9BBFE0', '#E8A09A', '#FBE29F', '#C6D68F', '#F7B7A3']
+        }]
+    }
+    
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: {
+        }
+    })
 }
-
-var lineChart = new Chart(ctx, {
-	type: 'line',
-	data: data,
-	options: {
-		maintainAspectRatio: false,
-		bezierCurve: false,
-	}
-})
