@@ -15,6 +15,7 @@ let stripeHandler = StripeCheckout.configure({
 ,   token: function(token) {
         console.log(token);
         const body = sendStripeDataForBack_End();
+
         const hotelBookingId = body.hotelId;
         fetch(`/hotel/searched/detail/${hotelBookingId}/payment`, {
             method: 'POST',
@@ -56,14 +57,17 @@ function sendStripeDataForBack_End() {
     const hotelCheckOutDate = document.querySelector('#to');
     let hotelCheckInDateValue = hotelCheckInDate.value;
     let hotelCheckOutDateValue = hotelCheckOutDate.value;
-    console.log(hotelBookingId);
-    console.log(theTotalHotelPriceStripe);
-    console.log(hotelName);
-    console.log(hotelLocation);
-    console.log(hotelAddress);
-    console.log(hotelDefaultPrice);
-    console.log(hotelCheckInDateValue);
-    console.log(hotelCheckOutDateValue);
+    // console.log(hotelBookingId);
+    // console.log("=====================yay")
+    // console.log(theInformationForStripe)
+    // console.log(theTotalHotelPriceStripe);
+    // console.log("========================yay")
+    // console.log(hotelName);
+    // console.log(hotelLocation);
+    // console.log(hotelAddress);
+    // console.log(hotelDefaultPrice);
+    // console.log(hotelCheckInDateValue);
+    // console.log(hotelCheckOutDateValue);
     const body = {
         hotelId: hotelBookingId
     ,   totalPrice: theTotalHotelPriceStripe
@@ -109,6 +113,7 @@ function organizeDataFromStripe() {
     // stripe front-end
     const theInformationForStripe = sendStripeDataForBack_End();
     theTotalHotelPriceStripe = theInformationForStripe.totalPrice;
+    console.log(theTotalHotelPriceStripe);
     stripeHandler.open({
         amount: (theTotalHotelPriceStripe * 100)
     });
@@ -130,17 +135,39 @@ function calculateTotal() {
     const guestPrice = getPricePerGuests(guestNumber);
     const hotelRateAttribute = Number(hotelRateDOMEle.getAttribute('data-rate-value'));
     const hotelPrice = grabAllHotelRate(hotelRateAttribute);
-    const theTotalPriceBooking = getTotalPrice(hotelPrice, guestPrice, roomPrice);
-    return [theTotalPriceBooking, guestNumber, roomType];
+    // console.log("Cal:=======Rate==========");
+    // console.log(hotelRateAttribute);
+    // console.log("Cal:======The Hotel Price===============");
+    // console.log(hotelPrice);
+    // console.log("Cal:======The Hotel Guest PRice===============");
+    // console.log(guestPrice);
+    // console.log("Cal:======The Hotel ROom PRice===============");
+    // console.log(roomPrice);
+    let totalBookingPrice = Number(hotelPrice) + Number(guestPrice) + Number(roomPrice);
+    // console.log("CAL:============== HOTEL TOTAL PRICE FROM calcualte Function===============");
+    // console.log(totalBookingPrice);
+    // const theTotalPriceBooking = getTotalPrice(hotelPrice, guestPrice, roomPrice);
+    // console.log("CAL: ======== TOTAL PRICE BOOKING=======");
+    // ok, the total price booking is NaN
+    // console.log(theTotalPriceBooking);
+    return [totalBookingPrice, guestNumber, roomType];
 }
 
 // calculate total price
-function getTotalPrice(hotelPrice, guestAdditionalPrice, roomTypePrice) {
-    let totalPrice = 0;
-    console.log("In Total Price: ", hotelPrice, guestAdditionalPrice, roomTypePrice);
-    totalPrice = (Number(hotelPrice) + Number(guestAdditionalPrice) + Number(roomTypePrice));
-    return totalPrice;
-}
+// function getTotalPrice(hotelPrice, guestAdditionalPrice, roomTypePrice) {
+//     let totalPrice = 0;
+//     let theHotelPrice = Number(hotelPrice);
+//     let theGuestPrice = Number(guestAdditionalPrice);
+//     let theRoomTypePrice = Number(roomTypePrice);
+//     console.log("=========== IN GET TOTAL PRICE Func ===============");
+//     console.log(theHotelPrice);
+//     console.log(theGuestPrice);
+//     console.log(theRoomTypePrice);
+//     console.log("===========END IN GET TOTAL PRICE Func ===============");
+//     // console.log("In Total Price: ", hotelPrice, guestAdditionalPrice, roomTypePrice);
+//     totalPrice = (Number(hotelPrice) + Number(guestAdditionalPrice) + Number(roomTypePrice));
+//     return totalPrice;
+// }
 
 function getPricePerGuests(numGuest) {
     const DEFAULT_GUEST_PRICE = 7;
