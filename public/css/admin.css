@@ -538,6 +538,11 @@ table th {
 	text-align: left;
 }
 
+table tbody {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
 .dot i {
 	display: inline-block;
 	width: .385rem;
