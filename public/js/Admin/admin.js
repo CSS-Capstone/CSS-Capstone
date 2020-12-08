@@ -33,7 +33,6 @@ function getCookie(cname) {
 
 loadTheme();
 loadUserTable();
-loadChart();
 
 async function loadUserTable() {
     const userDataRequest = await fetch(`/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd`);
@@ -81,6 +80,7 @@ async function loadUserTable() {
    
     table.appendChild(thead);
     table.appendChild(tbody);
+    loadChart(userJsonData.users);
 }
 
 function loadTheme() {
@@ -133,14 +133,39 @@ function openCloseDropdown(event) {
 	}
 }
 
-function loadChart() {
+function loadChart(data) {
+    const priceData = data.usersBookingsPriceDatePair;
+    var bookingPriceCnt = {'$0-50': 0, 
+                            '$51-100': 0, 
+                            '$101-200': 0, 
+                            '$200-300': 0, 
+                            '$300+': 0 };
+    var labels = ['$0-50', '$51-100', '$101-200', '$200-300', '$300+'];
+    
+    for (var i = 0; i < priceData.length; i++) {
+        var price = priceData[i].bookingPrice;
+        if (price > 0 && price <= 50) {
+            bookingPriceCnt['$0-50']++;
+        } else if (price > 50 && price <= 100) {
+            bookingPriceCnt['$51-100']++;
+        } else if (price > 100 && price <= 200) {
+            bookingPriceCnt['$101-200']++;
+        } else if (price > 200 && price <= 300) {
+            bookingPriceCnt['$200-300']++;
+        } else {
+            bookingPriceCnt['$300+']++;
+        }
+    }
+
     var ctx = document.getElementById('myChart')
     ctx.height = 500
     ctx.width = 500
     var data = {
-        labels: ['$0-50', '$51-100', '$101-200', '$200-300', '$300+'],
+        labels: labels,
         datasets: [{
-            data: [35, 25, 20, 10, 10],
+            data: [ bookingPriceCnt[labels[0]], bookingPriceCnt[labels[1]], 
+                    bookingPriceCnt[labels[2]], bookingPriceCnt[labels[3]], 
+                    bookingPriceCnt[labels[4]] ],
             backgroundColor: ['#9BBFE0', '#E8A09A', '#FBE29F', '#C6D68F', '#F7B7A3']
         }]
     }
