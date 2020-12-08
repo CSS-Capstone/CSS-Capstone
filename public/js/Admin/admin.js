@@ -31,7 +31,56 @@ function getCookie(cname) {
   return ""
 }
 
-loadTheme()
+loadTheme();
+loadUserTable();
+
+async function loadUserTable() {
+    const userDataRequest = await fetch(`/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd`);
+    const userJsonData = await userDataRequest.json();
+    const users = userJsonData.users.data;
+    var userData = [];
+
+    for(var i = 0; i < users.length; i++) {
+        userData.push(users[i]);
+    }
+
+    var table = document.getElementById('user__table');
+
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+    
+    var headTexts = ["Id", "Username", "Email", "Email Status", "Hosting Status"];
+
+    for (var i = 0; i < headTexts.length; i++) {
+        var th = document.createElement('th');
+        th.textContent = headTexts[i];
+        headRow.appendChild(th);
+    }
+
+    thead.appendChild(headRow);
+
+    var tbody = document.createElement('tbody');
+
+    for (var i = 0; i < userData.length; i++) {
+        var row = document.createElement('tr');
+        var values = Object.values(userData[i]);
+        for (var j = 0; j < values.length - 1; j++) {
+            var td = document.createElement('td');
+            if (j === 3) {
+                td.innerHTML = (values[j] === 1) ? "Confirmed" : "Unconfirmed";
+            } else if (j === 4) {
+                td.innerHTML = (values[j] === 1) ? "Yes" : "No";
+            } else {
+                td.innerHTML = `${values[j]}`;
+            }
+            row.appendChild(td);
+        }
+        tbody.appendChild(row);
+    }
+   
+    table.appendChild(thead);
+    table.appendChild(tbody);
+}
 
 function loadTheme() {
 	var theme = getCookie(themeCookieName)

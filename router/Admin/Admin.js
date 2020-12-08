@@ -11,7 +11,7 @@ router.get('/djemals-tbvjdbwj', async (req, res) => {
     });
 })
 
-router.post('/auth/djemals-tbvjdbwj', (req, res) => {
+router.post('/djemals-tbvjdbwj/auth', (req, res) => {
     let adminEmail = req.body.email;
     let adminPassword = req.body.password;
 
@@ -26,13 +26,15 @@ router.post('/auth/djemals-tbvjdbwj', (req, res) => {
             }
 
             else {
-                res.redirect('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
+                res.render('pages/admin/admin');
+                //res.redirect('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
             }
         }
     });
 });
 
-router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM', (req, res) => {
+// djemals-tbvjdbwj -> SHA 512 and cutted out random parts
+router.get('/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd', (req, res) => {
     // query all users data
     // that are not admin (isAdmin = 0, isAdmin = false)
     db.query('SELECT * FROM USER WHERE isAdmin = false', (error, userResults) => {
@@ -90,18 +92,26 @@ router.get('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7
 
                     // add all the bookings in respect toi each user and make it as an array of JSON
                     var usersNotAdmin = [];
-                    var currUser = {};
+                    
                     for (let m = 0; m < userResults.length; m++) {
-                        currUser = userResults[m];
-                        currUser.bookings = bookingHash[userResults[m].user_id];
+                        var currUser = {
+                            id: userResults[m].user_id,
+                            username: userResults[m].username,
+                            email: userResults[m].email,
+                            email_status: userResults[m].isConfirmed,
+                            host_status: userResults[m].is_host,
+                            booking_records: null
+                        };
+                        currUser.booking_records = bookingHash[userResults[m].user_id];
                         usersNotAdmin.push(currUser);
-                        currUser = {};
                     }
                     
-                    res.render('pages/admin/admin', {
-                        usersNotAdmin: usersNotAdmin,
+                    var users = {
+                        data: usersNotAdmin,
                         usersBookingsPriceDatePair: usersBookingsPriceDatePair
-                    });
+                    };
+
+                    res.json({ users: users });
                 }
             })
         }

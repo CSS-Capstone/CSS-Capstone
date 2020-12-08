@@ -386,95 +386,12 @@
                 <div class="card">
                     <div class="card-header">
                         <h3>
-                            Table
+                            User Information Table
                         </h3>
                         <i class="fas fa-ellipsis-h"></i>
                     </div>
                     <div class="card-content">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Project</th>
-                                    <th>Manager</th>
-                                    <th>Status</th>
-                                    <th>Due date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>React</td>
-                                    <td>Tran Anh Tuat</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-success"></i>
-                                            Completed
-                                        </span>
-                                    </td>
-                                    <td>17/07/2020</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Vue</td>
-                                    <td>Bui Nhu Sang</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-warning"></i>
-                                            In progress
-                                        </span>
-                                    </td>
-                                    <td>18/07/2020</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Laravel</td>
-                                    <td>Phan Nhat Truong</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-warning"></i>
-                                            In progress
-                                        </span>
-                                    </td>
-                                    <td>17/07/2020</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Django</td>
-                                    <td>Le Anh Tuan</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-danger"></i>
-                                            Delayed
-                                        </span>
-                                    </td>
-                                    <td>07/07/2020</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>MEAN</td>
-                                    <td>John Evan</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-primary"></i>
-                                            Pending
-                                        </span>
-                                    </td>
-                                    <td>20/08/2020</td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>MERN</td>
-                                    <td>Robert</td>
-                                    <td>
-                                        <span class="dot">
-                                            <i class="bg-primary"></i>
-                                            Pending
-                                        </span>
-                                    </td>
-                                    <td>20/08/2020</td>
-                                </tr>
-                            </tbody>
+                        <table id="user__table">
                         </table>
                     </div>
                 </div>
@@ -546,73 +463,7 @@
     <!-- end main content -->
     <!-- import script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-    <script src="/js/Admin/admin.js"></script>
+    <script src="/js/Admin/admin.js" async></script>
     <!-- end import script -->
 </body>
 </html>
-        <!-- <h1>Hello to the admin</h1>
-        <div>
-            <ul>
-                <li>Able to see all users</li>
-                <ul>
-                    <li>People who did booking</li>
-                    <li>Display data using graph</li>
-                    <ul>
-                        <li>Based on booking price</li>
-                        <li>Based on booking date</li>
-                    </ul>
-                </ul>
-                <li>People who post hotel</li>
-                <ul>
-                    <li>All posted hotel</li>
-                    <li>Display Map data on all hotels where hotel located in world map wise</li>
-                    <ul>
-                        <li>Hovering map mark, display list of hotel in that country with city and avg price</li>
-                    </ul>
-                </ul>
-            </ul>
-        </div>
-        <br><br>
-
-        <div>
-            <h2>Able to see all users</h2>
-            <h5>Notice that these are not admin</h5>
-            <ul>
-                <% for(let i = 0; i < usersNotAdmin.length; i++) { %>
-                    <% if(usersNotAdmin[i].username === '') { %>
-                    <li>User does not have username</li>
-                    <% } else { %>
-                    <li><%= usersNotAdmin[i].username %></li>
-                    <% } %>
-                    <ul>
-                        <li>User ID: <b><%= usersNotAdmin[i].user_id %></b> </li>
-                        <li>Email: <b><%= usersNotAdmin[i].email %></b> </li>
-                        <% if(usersNotAdmin[i].isConfirmed === 1) { %>
-                        <li> <b>User has confirmed the account</b> </li>
-                        <% } else { %>
-                        <li> <b>User has not confirmed the account</b> </li>
-                        <% } %>
-                        <% if(usersNotAdmin[i].bookings === undefined) { %>
-                        <li> <b>This user does not have booking</b> </li>
-                        <% } else { %>
-                        <li>Bookings:</li>
-                        <ul>
-                            <% for(let j = 0; j < usersNotAdmin[i].bookings.length; j++) { %>
-                                <li>Booking ID: <%= usersNotAdmin[i].bookings[j].booking_id %></li>
-                                <ul>
-                                    <li>Booking date: <%= usersNotAdmin[i].bookings[j].booking_date %></li>
-                                    <li>Price: $<%= usersNotAdmin[i].bookings[j].booking_price %></li>
-                                    <li>Hotel ID: <%= usersNotAdmin[i].bookings[j].hotel_id %></li>
-                                    <li>Check-in date: <%= usersNotAdmin[i].bookings[j].check_in_date %></li>
-                                    <li>Check-out date: <%= usersNotAdmin[i].bookings[j].check_out_date %></li>
-                                </ul>
-                            <% } %>
-                        </ul>
-                        <% } %>
-                    </ul>
-                    <br>
-                <% } %>
-            </ul>
-
-
-        </div> -->
