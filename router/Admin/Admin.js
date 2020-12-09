@@ -120,4 +120,33 @@ router.get('/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd', (req, res) 
     })
 });
 
+router.get('/djemals-tbvjdbwj/auth/monthlyBookingRate', (req, res) => {
+    const getCurrentMonthBookingCount = `SELECT COUNT(*) AS count, booking_date, SUM(booking_price) AS booking_price
+                                            FROM BOOKING
+                                            WHERE MONTH(booking_date) = MONTH(current_date())
+                                            GROUP BY DATE(booking_date)
+                                            ORDER BY booking_date;`
+    db.query(getCurrentMonthBookingCount, (monthlyBookingError, monthlyBookingResult) => {
+        if (monthlyBookingError) {
+            console.log("ERROR: Admin page getting Monthly Booking Count");
+            console.log(monthlyBookingError);
+            throw monthlyBookingError;
+        }
+        let montlyBookingContainer = [];
+        let monthlyBookingResultObj = {};
+        for (let i = 0; i < monthlyBookingResult.length; i++) {
+            monthlyBookingResultObj.count = monthlyBookingResult[i].count;
+            monthlyBookingResultObj.booking_date = monthlyBookingResult[i].booking_date;
+            monthlyBookingResultObj.booking_price = monthlyBookingResult[i].booking_price;
+            montlyBookingContainer.push(monthlyBookingResultObj);
+            monthlyBookingResultObj = {};
+        }
+        
+        // console.log(montlyBookingContainer);
+        res.json({montlyBookingContainer:montlyBookingContainer});
+    });
+});
+
+module.exports = router;
+
 module.exports = router;
