@@ -173,11 +173,15 @@ async function getBookingHistory() {
         linkContainer.setAttribute('class', 'booking__hisotry__link__container');
         
         var dateToday = new Date(Date.now());
-        var dateToCompare = dateToday.getFullYear() + "-" + (dateToday.getMonth() + 1) + "-" + dateToday.getDate();
-
         var leaveCommentBtn;
         var isCommentBtnVis = false;
-        if (dateToCompare > bookingHistories[i].check_out_date) {
+
+        const checkOutDate = bookingHistories[i].check_out_date;
+        const formattedDate = new Date(checkOutDate.substring(0, 4), checkOutDate.substring(5, 7), checkOutDate.substring(8, 10));
+        var dateToday = new Date(Date.now());
+        const todayDate = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, dateToday.getDate());
+
+        if (todayDate.getTime() - formattedDate.getTime() > 0) {
             isCommentBtnVis = true;
             leaveCommentBtn = document.createElement('button');
             leaveCommentBtn.setAttribute('class', 'leave__comment__btn');
