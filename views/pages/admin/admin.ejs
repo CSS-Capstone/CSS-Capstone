@@ -46,189 +46,41 @@
             <li class="nav-item dropdown">
                 <a class="nav-link">
                     <i class="fas fa-bell dropdown-toggle" data-toggle="notification-menu"></i>
-                    <span class="navbar-badge">15</span>
+                    <span class="navbar-badge"><%=allBookingCancelResult.length%></span>
                 </a>
                 <ul id="notification-menu" class="dropdown-menu notification-menu">
                     <div class="dropdown-menu-header">
                         <span>
-                            Notifications
+                            Booking Cancel Requests
                         </span>
                     </div>
                     <div class="dropdown-menu-content overlay-scrollbar scrollbar-hover">
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
+                        <% allBookingCancelResult.forEach(eachCancelRequest => { %>
+                            <br>
+                            <li class="dropdown-menu-item">
+                                <a href="#" class="dropdown-menu-link">
+                                    <div>
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
                                     <span>
-                                        15/07/2020
+                                        Reason: <%=eachCancelRequest.booking_cancel_reason%> <br>
+                                        By: <%=eachCancelRequest.username%>
+                                        <br>
+                                        <span>
+                                            Booked Date: <%=eachCancelRequest.booking_date.toDateString()%>
+                                        </span>
                                     </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="dropdown-menu-item">
-                            <a href="#" class="dropdown-menu-link">
-                                <div>
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <span>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                                    <br>
-                                    <span>
-                                        15/07/2020
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
+                                </a>
+                            </li>
+                            <br>
+                        <% }); %>
+                        
                     </div>
-                    <div class="dropdown-menu-footer">
+                    <!-- <div class="dropdown-menu-footer">
                         <span>
                             View all notifications
                         </span>
-                    </div>
+                    </div> -->
                 </ul>
             </li>
             <li class="nav-item avt-wrapper">

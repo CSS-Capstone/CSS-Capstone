@@ -26,8 +26,22 @@ router.post('/djemals-tbvjdbwj/auth', (req, res) => {
             }
 
             else {
-                res.render('pages/admin/admin');
-                //res.redirect('/djemals-tbvjdbwj/T8NM51l%20vwiLayy%205DhvIB%20WOgesj5M4xKkx%209Xig7JoRx%20KARwcM');
+                const grabAllBookingCancelRequest = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, user.username, booking.booking_date
+                                                        FROM BOOKING_CANCEL AS cancel
+                                                        INNER JOIN BOOKING AS booking
+                                                        ON cancel.booking_id = booking.booking_id
+                                                        INNER JOIN USER AS user
+                                                        ON user.user_id = booking.user_id`;
+                db.query(grabAllBookingCancelRequest, (allBookingCancelError, allBookingCancelResult) => {
+                     if (allBookingCancelError) {
+                         console.log("ERROR: ADMIN Retrieving All Booking Cancel Data");
+                         console.log(allBookingCancelError);
+                         throw allBookingCancelError;
+                     }
+                     // console.log(allBookingCancelResult);
+                     
+                     res.render('pages/admin/admin', {allBookingCancelResult:allBookingCancelResult});
+                });
             }
         }
     });
