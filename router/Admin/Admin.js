@@ -141,12 +141,36 @@ router.get('/djemals-tbvjdbwj/auth/monthlyBookingRate', (req, res) => {
             montlyBookingContainer.push(monthlyBookingResultObj);
             monthlyBookingResultObj = {};
         }
-        
         // console.log(montlyBookingContainer);
         res.json({montlyBookingContainer:montlyBookingContainer});
     });
 });
 
-module.exports = router;
+router.get('/djemfls-tbvjdbwj/auth/getHotelByCity', (req, res) => {
+    const retrieveHotelsByCity = `SELECT COUNT(*) AS count, city, country
+                                    FROM HOTEL
+                                    GROUP BY city
+                                    ORDER BY count DESC
+                                    LIMIT 18`;
+    db.query(retrieveHotelsByCity, (retrieveHotelsByCityError, retrieveHotelsByCityResult) => {
+        if (retrieveHotelsByCityError) {
+            console.log("ERROR: Admin page getting hotels data group by city");
+            console.log(retrieveHotelsByCityError);
+            throw retrieveHotelsByCityError;
+        }
+           
+        let hotelsGroupByCityArr = [];
+        let hotelGroupByCityObj = {};
+        for (let i = 0; i < retrieveHotelsByCityResult.length; i++) {
+            hotelGroupByCityObj.hotel_count = retrieveHotelsByCityResult[i].count;
+            hotelGroupByCityObj.hotel_city = retrieveHotelsByCityResult[i].city;
+            hotelGroupByCityObj.hotel_country = retrieveHotelsByCityResult[i].country;
+            hotelsGroupByCityArr.push(hotelGroupByCityObj);
+            hotelGroupByCityObj = {};
+        }
+        // console.log(hotelsGroupByCityArr);
+        res.json({hotelsGroupByCityArr:hotelsGroupByCityArr});
+    });
+});
 
 module.exports = router;
