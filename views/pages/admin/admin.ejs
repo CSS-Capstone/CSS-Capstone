@@ -58,12 +58,12 @@
                         <% allBookingCancelResult.forEach(eachCancelRequest => { %>
                             <br>
                             <li class="dropdown-menu-item">
-                                <a href="#" class="dropdown-menu-link">
+                                <a href="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=eachCancelRequest.booking_cancel_id%>" class="dropdown-menu-link">
                                     <div>
                                         <i class="fas fa-tasks"></i>
                                     </div>
                                     <span>
-                                        Reason: <%=eachCancelRequest.booking_cancel_reason.substring(0,10)%>... <br>
+                                        Reason: <%=eachCancelRequest.booking_cancel_reason%> <br>
                                         By: <%=eachCancelRequest.username%>
                                         <br>
                                         <span>
