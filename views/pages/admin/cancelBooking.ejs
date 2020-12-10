@@ -48,8 +48,12 @@
             </textarea>
             <small class="cancelBooking_reason_submit_from">Submitted From: <%=retrieveBookingCancelResult[0].username%></small>
             <div class="cancelBooking_button_container">
-                <button class="cancelBooking_button_deny">Deny</button>
-                <button class="cancelBooking_button_confirm">Confirm</button>
+                <form class="cancelBooking_deny_form" action="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=retrieveBookingCancelResult[0].booking_cancel_id%>?_method=DELETE" method="POST">
+                    <button class="buttonForCancel cancelBooking_button_deny">Deny</a>
+                </form>
+                <form action="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=retrieveBookingCancelResult[0].booking_cancel_id%>" method="POST">
+                    <button class="buttonForCancel cancelBooking_button_confirm">Confirm</button>
+                </form>
             </div>
         </div>
     </section>

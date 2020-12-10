@@ -51,7 +51,8 @@ router.get('/djemals-tbvjdbwj/auth', (req, res) => {
                                                         INNER JOIN BOOKING AS booking
                                                         ON cancel.booking_id = booking.booking_id
                                                         INNER JOIN USER AS user
-                                                        ON user.user_id = booking.user_id`;
+                                                        ON user.user_id = booking.user_id
+                                                        WHERE cancel.cancel_status = "Sent"`;
     db.query(grabAllBookingCancelRequest, (allBookingCancelError, allBookingCancelResult) => {
          if (allBookingCancelError) {
              console.log("ERROR: ADMIN Retrieving All Booking Cancel Data");
@@ -203,7 +204,6 @@ router.get('/djemfls-tbvjdbwj/auth/getHotelByCity', (req, res) => {
     });
 });
 
-// TODO: HANDLE IMAGE THAT ARE COMING FROM API
 router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
     let requestCancel_id = req.params.id;
     const retrieveSelectedBookingCancel = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, 
@@ -268,8 +268,6 @@ router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
                 retrieveBookingCancelResult:retrieveBookingCancelResult
             }); 
         }
-        
-        
     });
 });
 
@@ -328,7 +326,7 @@ router.post('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
                 }
                 console.log("Affected Rows Booking Cancel Update Confirm");
                 console.log(stausUpdateConfirmResult.affectedRows);
-                res.status(200).redirect(`/djemals-tbvjdbwj/auth`);
+                res.status(200).redirect('/djemals-tbvjdbwj/auth');
             });
         } else {
             console.log("Cannot find Confirm status change target");
@@ -357,7 +355,7 @@ router.delete('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
                 }
                 console.log("AFFECTED ROWS");
                 console.log(statusUpdateResult.affectedRows);
-                res.status(200).redirect(`/djemals-tbvjdbwj/auth`);
+                res.status(200).redirect('/djemals-tbvjdbwj/auth');
             });
         } else {
             console.log("Cannot find cancel status change target");
