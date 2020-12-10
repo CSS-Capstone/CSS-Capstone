@@ -274,25 +274,33 @@ router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
 });
 
 router.get('/djemals-tbvjdbwj/auth/sendPromoEmail', (req, res) => {
-    var promoMailPath = path.join(__dirname, 'promoEmail.ejs');
+    //var promoMailPath = path.join(__dirname, 'promoEmail.ejs');
 
-    var mailingList = ['solomonjc0218@gmail.com', 'josephcc.dev@gmail.com', 'jeeyoung8230@gmail.com'];
+    var testPath = path.join(__dirname, '..', '..', 'views/mailTemplates/promoEmail.ejs');
+    var promoMailPath = path.normalize(testPath);
 
-    ejs.renderFile(promoMailPath, async (err, data) => {
-        if (err) { console.log('Something went wrong with ejs rendering before sending email : ' + err); }
-        else {
-            var mailOptions = {
-                from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                to: mailingList,
-                subject: 'This is a promtion email from Hotel Finder!!',
-                html: data
-            };
-            console.log("HTML data ===================", mailOptions.html);
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) { console.log('Failed to send emails'); }
+    fs.access(promoMailPath, (fileError) => {
+        if (fileError) {
+            console.log("Can't find the template file for the email");
+        } else {
+            var mailingList = ['solomonjc0218@gmail.com', 'josephcc.dev@gmail.com', 'jeeyoung8230@gmail.com'];
+
+            ejs.renderFile(promoMailPath, async (err, data) => {
+                if (err) { console.log('Something went wrong with ejs rendering before sending email : ' + err); }
                 else {
-                    console.log('Message seng: ' + info);
-                    res.json({ list: mailingList });
+                    var mailOptions = {
+                        from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                        to: mailingList,
+                        subject: 'This is a promtion email from Hotel Finder!!',
+                        html: data
+                    };
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) { console.log('Failed to send emails'); }
+                        else {
+                            console.log('Email sent successful');
+                            res.json({ list: mailingList });
+                        }
+                    });
                 }
             });
         }
