@@ -3,6 +3,7 @@ const router = express.Router();
 const dotenv = require('dotenv');
 const db = require('../../utilities/db');
 const s3 = require('../../utilities/s3');
+const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
 
 router.get('/djemals-tbvjdbwj', async (req, res) => {
@@ -11,7 +12,8 @@ router.get('/djemals-tbvjdbwj', async (req, res) => {
     });
 })
 
-router.post('/djemals-tbvjdbwj/auth', (req, res) => {
+// /auth 빼버림
+router.post('/djemals-tbvjdbwj', (req, res) => {
     let adminEmail = req.body.email;
     let adminPassword = req.body.password;
 
@@ -26,24 +28,28 @@ router.post('/djemals-tbvjdbwj/auth', (req, res) => {
             }
 
             else {
-                const grabAllBookingCancelRequest = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, user.username, booking.booking_date
+                res.status(200).redirect('/djemals-tbvjdbwj/auth');
+            }
+        }
+    });
+});
+
+router.get('/djemals-tbvjdbwj/auth', (req, res) => {
+    const grabAllBookingCancelRequest = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, user.username, booking.booking_date
                                                         FROM BOOKING_CANCEL AS cancel
                                                         INNER JOIN BOOKING AS booking
                                                         ON cancel.booking_id = booking.booking_id
                                                         INNER JOIN USER AS user
                                                         ON user.user_id = booking.user_id`;
-                db.query(grabAllBookingCancelRequest, (allBookingCancelError, allBookingCancelResult) => {
-                     if (allBookingCancelError) {
-                         console.log("ERROR: ADMIN Retrieving All Booking Cancel Data");
-                         console.log(allBookingCancelError);
-                         throw allBookingCancelError;
-                     }
-                     // console.log(allBookingCancelResult);
-                     
-                     res.render('pages/admin/admin', {allBookingCancelResult:allBookingCancelResult});
-                });
-            }
-        }
+    db.query(grabAllBookingCancelRequest, (allBookingCancelError, allBookingCancelResult) => {
+         if (allBookingCancelError) {
+             console.log("ERROR: ADMIN Retrieving All Booking Cancel Data");
+             console.log(allBookingCancelError);
+             throw allBookingCancelError;
+         }
+         // console.log(allBookingCancelResult);
+         
+         res.render('pages/admin/admin', {allBookingCancelResult:allBookingCancelResult});
     });
 });
 
@@ -129,8 +135,6 @@ router.get('/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd', (req, res) 
                 }
             })
         }
-        
-        
     })
 });
 
@@ -155,6 +159,7 @@ router.get('/djemals-tbvjdbwj/auth/monthlyBookingRate', (req, res) => {
             montlyBookingContainer.push(monthlyBookingResultObj);
             monthlyBookingResultObj = {};
         }
+        
         // console.log(montlyBookingContainer);
         res.json({montlyBookingContainer:montlyBookingContainer});
     });
@@ -184,6 +189,76 @@ router.get('/djemfls-tbvjdbwj/auth/getHotelByCity', (req, res) => {
         }
         // console.log(hotelsGroupByCityArr);
         res.json({hotelsGroupByCityArr:hotelsGroupByCityArr});
+    });
+});
+
+// TODO: HANDLE IMAGE THAT ARE COMING FROM API
+router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
+    let requestCancel_id = req.params.id;
+    const retrieveSelectedBookingCancel = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, 
+                                            booking.booking_date, booking.booking_price, booking.hotel_id,
+                                            booking.check_in_date, booking.check_out_date, user.username, 
+                                            hotel.hotel_name, hotel.country, hotel.city, hotel.address,
+                                            hotel.isAPI, hotel.api_hotel_id, cancel.cancel_status
+                                            FROM BOOKING_CANCEL AS cancel
+                                            INNER JOIN BOOKING AS booking
+                                            ON cancel.booking_id = booking.booking_id
+                                            INNER JOIN USER AS user
+                                            ON user.user_id = booking.user_id
+                                            INNER JOIN HOTEL AS hotel
+                                            ON hotel.hotel_id = booking.hotel_id
+                                            WHERE cancel.booking_cancel_id = ?
+                                            LIMIT 1`;
+    const retrieveHotelImageForBookingCancel = `SELECT *
+                                                FROM USER_HOTEL_IMAGE
+                                                WHERE hotel_id = ?
+                                                LIMIT 1`;
+    db.query(retrieveSelectedBookingCancel, [requestCancel_id], (retrieveBookingCancelError, retrieveBookingCancelResult) => {
+        if (retrieveBookingCancelError) {
+            console.log("ERROR: ADMIN Retrieve Booking Cancel");
+            console.log(retrieveBookingCancelError);
+            throw retrieveBookingCancelError;
+        }
+        // console.log(retrieveBookingCancelResult[0].isAPI);
+        console.log("------- is NULL? -----------");
+        console.log(retrieveBookingCancelResult[0].api_hotel_id);
+        // console.log(retrieveBookingCancelResult);
+        // let retrieve_hotel_id = retrieveBookingCancelResult[0].hotel_id;
+        // console.log(retrieve_hotel_id);
+        if (retrieveBookingCancelResult[0].isAPI == false || retrieveBookingCancelResult[0].api_hotel_id == null) {
+            let cancelBooking_hotel_id = retrieveBookingCancelResult[0].hotel_id;
+            db.query(retrieveHotelImageForBookingCancel, [cancelBooking_hotel_id], async (hotelImageError, hotelImageResult) => {
+                if (hotelImageError) {
+                    console.log("ERROR: Hotel Image Retrieve FROM Admin Page Cancel Booking");
+                    console.log(hotelImageError);
+                    throw hotelImageError;
+                }
+                let imageContainer = [];
+                let S3Param = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
+                    Key: `${hotelImageResult[0].hotel_img_id}`
+                };
+                
+                let hotel_img_data = await s3.s3.getObject(S3Param).promise();
+                let hotel_image = hotel_img_data.Body;
+                let imageBuffer = Buffer.from(hotel_image);
+                let base64data = imageBuffer.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,' + base64data;
+                imageContainer.push(imageDOM);
+                res.status(200).render('pages/admin/cancelBooking', {
+                    retrieveBookingCancelResult:retrieveBookingCancelResult
+                ,   imageContainer:imageContainer
+                }); 
+            });
+            
+        } else {
+            console.log("IF IT IS COMING COME API THEN SHOULD NOT COME HERE");
+            res.status(200).render('pages/admin/cancelBooking', {
+                retrieveBookingCancelResult:retrieveBookingCancelResult
+            }); 
+        }
+        
+        
     });
 });
 
