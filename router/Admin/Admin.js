@@ -5,6 +5,17 @@ const db = require('../../utilities/db');
 const s3 = require('../../utilities/s3');
 const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
+const path = require('path');
+let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_HOTELFINDER_ADDRESS,
+      pass: process.env.EMAIL_HOTELFINDER_PASSWORD 
+    }
+});
 
 router.get('/djemals-tbvjdbwj', async (req, res) => {
     res.render('pages/admin/sign_in', {
@@ -259,6 +270,32 @@ router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
         }
         
         
+    });
+});
+
+router.get('/djemals-tbvjdbwj/auth/sendPromoEmail', (req, res) => {
+    var promoMailPath = path.join(__dirname, 'promoEmail.ejs');
+
+    var mailingList = ['solomonjc0218@gmail.com', 'josephcc.dev@gmail.com', 'jeeyoung8230@gmail.com'];
+
+    ejs.renderFile(promoMailPath, async (err, data) => {
+        if (err) { console.log('Something went wrong with ejs rendering before sending email : ' + err); }
+        else {
+            var mailOptions = {
+                from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                to: mailingList,
+                subject: 'This is a promtion email from Hotel Finder!!',
+                html: data
+            };
+            console.log("HTML data ===================", mailOptions.html);
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) { console.log('Failed to send emails'); }
+                else {
+                    console.log('Message seng: ' + info);
+                    res.json({ list: mailingList });
+                }
+            });
+        }
     });
 });
 

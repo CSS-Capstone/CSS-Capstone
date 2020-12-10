@@ -24,8 +24,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <img src="assets/AT-pro-black.png" alt="ATPro logo" class="logo logo-light">
-                <img src="assets/AT-pro-white.png" alt="ATPro logo" class="logo logo-dark">
+                <!-- <img src="assets/AT-pro-black.png" alt="ATPro logo" class="logo logo-light">
+                <img src="assets/AT-pro-white.png" alt="ATPro logo" class="logo logo-dark"> -->
             </li>
         </ul>
         <!-- end nav left -->
@@ -138,24 +138,34 @@
     <div class="sidebar">
         <ul class="sidebar-nav">
             <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
+                <a href="#" class="sidebar-nav-link active">
                     <div>
-                        <i class="fas fa-tachometer-alt"></i>
+                        <i class="fas fa-chart-line"></i>
                     </div>
                     <span>
                         Dashboard
                     </span>
                 </a>
             </li>
-            <li class="sidebar-nav-item">
+            <!-- <li class="sidebar-nav-item">
                 <a href="#" class="sidebar-nav-link active">
                     <div>
                         <i class="fab fa-hire-a-helper"></i>
                     </div>
                     <span>HotelFinder</span>
                 </a>
+            </li> -->
+            <li class="sidebar-nav-item">
+                <form id="send_promo_form" action="/djemals-tbvjdbwj/auth/sendPromoEmail" method="POST">
+                    <a href="#" class="sidebar-nav-link" onclick="sendPromoMails()" id="">
+                        <div>
+                            <i class="fas fa-mail-bulk"></i>
+                        </div>
+                        <span>Send Promotions</span>
+                    </a>
+                </form>
             </li>
-            <li  class="sidebar-nav-item">
+            <!-- <li  class="sidebar-nav-item">
                 <a href="#" class="sidebar-nav-link">
                     <div>
                         <i class="fas fa-tasks"></i>
@@ -226,7 +236,7 @@
                     </div>
                     <span>Pellentesque</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
     </div>
     <!-- end sidebar -->
@@ -346,6 +356,7 @@
     <script src="/js/Admin/admin.js" async></script>
     <script src="/js/Admin/monthlyBookingRate.js" defer async></script>
     <script src="/js/Admin/hotelGroupByCity.js" defer async></script>
+    <script src="/js/Admin/sendPromoEmails.js" defer async></script>
     <!-- end import script -->
 </body>
 </html>
