@@ -307,4 +307,63 @@ router.get('/djemals-tbvjdbwj/auth/sendPromoEmail', (req, res) => {
     });
 });
 
+router.post('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
+    let cancelBooking_id = req.params.id;
+    const bookingStatusConfirm = 'Confirmed';
+    const checkIfCancelBookingIdExist = `SELECT * FROM BOOKING_CANCEL WHERE booking_cancel_id = ?`;
+    db.query(checkIfCancelBookingIdExist, [cancelBooking_id], (cancelBookingStatusExistError, cancelBookingStatusExistResult) => {
+        if (cancelBookingStatusExistError) {
+            console.log("ERROR: Admin Finding Booking Cancel Status Change to Confirm FAIL");
+            console.log(cancelBookingStatusExistError);
+            throw cancelBookingStatusExistError;
+        }
+        console.log(cancelBookingStatusExistResult);
+        if (cancelBookingStatusExistResult.length > 0) {
+            const changeBookingConfirmStatus = `UPDATE BOOKING_CANCEL SET cancel_status=? WHERE booking_cancel_id = ?`;
+            db.query(changeBookingConfirmStatus, [bookingStatusConfirm, cancelBooking_id], (statusUpdateConfirmError, stausUpdateConfirmResult) => {
+                if (statusUpdateConfirmError) {
+                    console.log("ERROR: Admin Updating Status to Confirm");
+                    console.log(statusUpdateConfirmError);
+                    throw statusUpdateConfirmError;
+                }
+                console.log("Affected Rows Booking Cancel Update Confirm");
+                console.log(stausUpdateConfirmResult.affectedRows);
+                res.status(200).redirect(`/djemals-tbvjdbwj/auth`);
+            });
+        } else {
+            console.log("Cannot find Confirm status change target");
+            res.status(502).redirect("/");
+        }
+    });
+});
+
+router.delete('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
+    let cancelBookingId = req.params.id;
+    const bookingStatusDeny = 'Deny';
+    const checkIfCancelBookingIdExist = `SELECT * FROM BOOKING_CANCEL WHERE booking_cancel_id = ?`;
+    db.query(checkIfCancelBookingIdExist, [cancelBookingId], (checkCancelBookingExistError, checkCancelBookingResult) => {
+        if (checkCancelBookingExistError) {
+            console.log("ERROR: Admin Booking Cancel Status Change to Deny FAIL");
+            console.log(checkCancelBookingExistError);
+            throw checkCancelBookingExistError;
+        }
+        if (checkCancelBookingResult.length > 0) {
+            const changeBookingCancelStatus = `UPDATE BOOKING_CANCEL SET cancel_status=? WHERE booking_cancel_id = ?`;
+            db.query(changeBookingCancelStatus, [bookingStatusDeny, cancelBookingId], (statusUpdateError, statusUpdateResult) => {
+                if (statusUpdateError) {
+                    console.log("ERROR: Update booking status to DENY");
+                    console.log(statusUpdateError);
+                    throw statusUpdateError;
+                }
+                console.log("AFFECTED ROWS");
+                console.log(statusUpdateResult.affectedRows);
+                res.status(200).redirect(`/djemals-tbvjdbwj/auth`);
+            });
+        } else {
+            console.log("Cannot find cancel status change target");
+            res.status(502).redirect("/");
+        }
+    });
+});
+
 module.exports = router;
