@@ -262,15 +262,19 @@
                     </div>
                 </div>
                 <div class="admin_info_box">
-                    <i class="fas fa-bell-slash"></i>
+                    <i class="admin_cancel_booking_icon fas fa-bell-slash"></i>
                     <div class="admin_info_hotel">
-                        1 new Cancel Booking
+                        <h3 class="admin_info_cancel_booking_count">Current Month Cancel Booking Count:
+                            <span class="admin_info_cancel_count_number"></span>
+                        </h3>
                     </div>
                 </div>
                 <div class="admin_info_box">
-                    <i class="fas fa-users"></i>
+                    <i class="admin_new_user fas fa-users"></i>
                     <div class="admin_info_hotel">
-                        1 new User
+                        <h3 class="admin_info_new_user">Current Month New User:
+                            <span class="admin_info_new_user_number"></span>
+                        </h3>
                     </div>
                 </div>
             </div>
@@ -381,6 +385,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-6 col-m-6 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-header-description">
+                        Top 5 Cities With Most New Hotel Postings <br>
+                        <span class="card-header-five-most-new-hotel-cities"></span>
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <canvas id="myFiveMostNewHotelCities" class="graph"></canvas>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- end main content -->
     <!-- import script -->
@@ -389,6 +408,8 @@
     <script src="/js/Admin/monthlyBookingRate.js" defer async></script>
     <script src="/js/Admin/hotelGroupByCity.js" defer async></script>
     <script src="/js/Admin/sendPromoEmails.js" defer async></script>
+    <script src="/js/Admin/hotelCountPerMonth.js" defer async></script>
+    <script src="/js/Admin/newHotelPostingTrend.js" defer async></script>
     <!-- end import script -->
 </body>
 </html>

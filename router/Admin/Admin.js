@@ -204,6 +204,97 @@ router.get('/djemfls-tbvjdbwj/auth/getHotelByCity', (req, res) => {
     });
 });
 
+// GET ALL COUNT OF HOTEL OF THIS MONTH
+router.get('/djemfls-tbvjdbwj/auth/getCurrentMonthHotelNumber', (req, res) => {
+    const getCurrentMonthHotelCount = `SELECT COUNT(*) AS count
+                                        FROM HOTEL
+                                        WHERE MONTH(created_date) = MONTH(current_date())`;
+    let countHotelCurrentMonth = {};
+    db.query(getCurrentMonthHotelCount, (countThisMonthNewHotelError, countThisMonthNewHotelResult) => {
+        if (countThisMonthNewHotelError) {
+            console.log("ERROR: ADMIN FAIL TO COUNT THIS MONTH HOTEL NUMBER");
+            console.log(countThisMonthNewHotelError);
+            throw countThisMonthNewHotelError;
+        }
+        countHotelCurrentMonth.count = countThisMonthNewHotelResult[0];
+        res.json({countHotelCurrentMonth:countHotelCurrentMonth});
+    });
+});
+
+router.get('/djemfls-tbvjdbwj/auth/getCurrentBookingCount', (req, res) => {
+    const getCurrentMonthBookingNumber = `SELECT COUNT(*) AS bookingCount
+                                            FROM BOOKING
+                                            WHERE MONTH(booking_date) = MONTH(current_date())`;
+    db.query(getCurrentMonthBookingNumber, (getCurrentMonthBookingNumError, getCurrentMonthBookingNumResult) => {
+        if (getCurrentMonthBookingNumError) {
+            console.log("ERROR: ADMIN Fail to count this month booking number");
+            console.log(getCurrentMonthBookingNumError);
+            throw getCurrentMonthBookingNumError;
+        }
+        res.json({getCurrentMonthBookingNumResult:getCurrentMonthBookingNumResult});
+    });
+});
+
+router.get('/djemfls-tbvjdbwj/auth/getCurrentBookingCancelRequest', (req, res) => {
+    const getCurrentMonthBookingCancelRequest = `SELECT COUNT(*) AS booking_cancel_request
+                                                    FROM BOOKING_CANCEL
+                                                    WHERE MONTH(request_date) = MONTH(current_date())`;
+    db.query(getCurrentMonthBookingCancelRequest, (getCurrentMonthBookingCancelError, getCurrentMonthBookingCancelResult) => {
+        if (getCurrentMonthBookingCancelError) {
+            console.log("ERROR: ADMIN Fail to count this month booking cancel number");
+            console.log(getCurrentMonthBookingCancelError);
+            throw getCurrentMonthBookingCancelError;
+        }
+        res.json({getCurrentMonthBookingCancelResult:getCurrentMonthBookingCancelResult});
+    });
+});
+
+router.get('/djemfls-tbvjdbwj/auth/getCurrentNewUser', (req, res) => {
+    const getCurrentMonthNewUser = `SELECT COUNT(*) AS new_user
+                                    FROM USER
+                                    WHERE MONTH(user_created_date) = MONTH(current_date())`;
+    db.query(getCurrentMonthNewUser, (getCurrentMonthNewUserError, getCurrentMonthNewUserResult) => {
+        if (getCurrentMonthNewUserError) {
+            console.log("ERROR: ADMIN Fail to count this month new user count");
+            console.log(getCurrentMonthNewUserError);
+            throw getCurrentMonthNewUserError;
+        }
+        console.log(getCurrentMonthNewUserResult);
+        res.json({getCurrentMonthNewUserResult:getCurrentMonthNewUserResult});
+    });
+});
+
+// get 3 month of user rate in line graph
+router.get('/djemfls-tbvjdbwj/auth/getFiveMostNewHotelCities', (req, res) => {
+    const getAllThreeMonthUserTrend = `SELECT COUNT(*) AS count, hotel.created_date, hotel.city
+                                    FROM HOTEL AS hotel
+                                    WHERE MONTH(hotel.created_date) = MONTH(current_date())
+                                    GROUP BY hotel.city
+                                    ORDER BY count DESC
+                                    LIMIT 5`;
+
+    db.query(getAllThreeMonthUserTrend, (getAllThreeMonthUserTrendError, getAllThreeMonthUserTrendResult) => {
+        if (getAllThreeMonthUserTrendError) {
+            console.log("ERROR: ADMIN Fail to retrieve three month hotel user trend");
+            console.log(getAllThreeMonthUserTrendError);
+            throw getAllThreeMonthUserTrendError;
+        }
+        let fiveHotelsGroupByDateArr = [];
+        let fiveHotelGroupByCityObj = {};
+        for (let i = 0; i < getAllThreeMonthUserTrendResult.length; i++) {
+            fiveHotelGroupByCityObj.hotel_count = getAllThreeMonthUserTrendResult[i].count;
+            fiveHotelGroupByCityObj.hotel_city = getAllThreeMonthUserTrendResult[i].city;
+            fiveHotelsGroupByDateArr.push(fiveHotelGroupByCityObj);
+            fiveHotelGroupByCityObj = {};
+        }
+        // console.log('TOP FIVE RESULT', getAllThreeMonthUserTrendResult);
+        // console.log('TOP FIVE HOTELS ARRAY', fiveHotelsGroupByDateArr)
+        res.json({fiveHotelsGroupByDateArr:fiveHotelsGroupByDateArr});
+    });
+});
+
+
+
 router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
     let requestCancel_id = req.params.id;
     const retrieveSelectedBookingCancel = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, 
@@ -364,35 +455,5 @@ router.delete('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
     });
 });
 
-// GET ALL COUNT OF HOTEL OF THIS MONTH
-router.get('/djemfls-tbvjdbwj/auth/getCurrentMonthHotelNumber', (req, res) => {
-    const getCurrentMonthHotelCount = `SELECT COUNT(*) AS count
-                                        FROM HOTEL
-                                        WHERE MONTH(created_date) = MONTH(current_date())`;
-    let countHotelCurrentMonth = {};
-    db.query(getCurrentMonthHotelCount, (countThisMonthNewHotelError, countThisMonthNewHotelResult) => {
-        if (countThisMonthNewHotelError) {
-            console.log("ERROR: ADMIN FAIL TO COUNT THIS MONTH HOTEL NUMBER");
-            console.log(countThisMonthNewHotelError);
-            throw countThisMonthNewHotelError;
-        }
-        countHotelCurrentMonth.count = countThisMonthNewHotelResult[0];
-        res.json({countHotelCurrentMonth:countHotelCurrentMonth});
-    });
-});
-
-router.get('/djemfls-tbvjdbwj/auth/getCurrentBookingCount', (req, res) => {
-    const getCurrentMonthBookingNumber = `SELECT COUNT(*) AS bookingCount
-                                            FROM BOOKING
-                                            WHERE MONTH(booking_date) = MONTH(current_date())`;
-    db.query(getCurrentMonthBookingNumber, (getCurrentMonthBookingNumError, getCurrentMonthBookingNumResult) => {
-        if (getCurrentMonthBookingNumError) {
-            console.log("ERROR: ADMIN Fail to count this month booking number");
-            console.log(getCurrentMonthBookingNumError);
-            throw getCurrentMonthBookingNumError;
-        }
-        res.json({getCurrentMonthBookingNumResult:getCurrentMonthBookingNumResult});
-    });
-});
 
 module.exports = router;

@@ -382,6 +382,7 @@ body {
 	padding: 10px;
 }
 
+
 /* CUSTOM CSS */
 .custom_admin_info_box {
 	display: flex;
@@ -429,9 +430,31 @@ body {
 }
 
 /* BOOKING CANCEL REQUEST */
+.admin_cancel_booking_icon {
+	flex: 0.3;
+	font-size: 2rem;
+	color: var(--color-nice-blue);
+}
 
+.admin_info_cancel_booking_count h3 {
+	color: var(--color-dark-grey);
+	font-weight: bold;
+}
+
+/* NEW USER REQUEST */
+.admin_new_user {
+	flex: 0.3;
+	font-size: 2rem;
+	color: var(--color-nice-blue);
+}
+
+.admin_info_new_user {
+	color: var(--color-dark-grey);
+	font-weight: bold;
+}
 
 /* END OF CUSTOM CSS */
+
 
 /* Extra small devices <= 600px */
 @media only screen and (max-width: 600px) {
