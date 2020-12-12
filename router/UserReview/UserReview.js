@@ -127,4 +127,82 @@ router.post('/user/review', authMW.isLoggedIn, (req, res) => {
     });
 });
 
+// TODO: Create Booking Cancel Request
+// @ PARAM booking id
+router.get('/user/cancelbooking/:id', (req, res) => {
+    let booking_id_to_cancel = req.params.id;
+    let userSession_user_id = req.session.user.user_id;
+    let userSession_username = req.session.user.username;
+    const retrieveHotel_Booking_data = `SELECT *
+                                        FROM BOOKING AS booking
+                                        INNER JOIN HOTEL AS hotel
+                                        ON booking.hotel_id = hotel.hotel_id
+                                        WHERE booking.user_id=? AND booking.booking_id=?`;
+    db.query(retrieveHotel_Booking_data, [userSession_user_id, booking_id_to_cancel], (retrieveDataCanecelBookingError, retrieveDataCancelBookingResult) => {
+        if (retrieveDataCanecelBookingError) {
+            console.log("ERROR: USER REVIEW retrieve data to render for booking cancel");
+            console.log(retrieveDataCanecelBookingError);
+            throw retrieveDataCanecelBookingError;
+        }
+        console.log(retrieveDataCancelBookingResult);
+        let retrieved_bookingCancelData = retrieveDataCancelBookingResult[0];
+        if (retrieved_bookingCancelData.api_hotel_id == null || typeof(retrieved_bookingCancelData.api_hotel_id) == 'undefined') {
+            // hotels from database
+            let hotel_db_id = retrieved_bookingCancelData.hotel_id;
+            const get_hotel_db_image = `SELECT * FROM USER_HOTEL_IMAGE WHERE hotel_id = ?`;
+            db.query(get_hotel_db_image, [hotel_db_id], async (retrieveHotelImageError, retrieveHotelImageResult) => {
+                if (retrieveHotelImageError) {
+                    console.log("ERROR: USER REVIEW, Booking cancel retrieve Image ");
+                    console.log(retrieveHotelImageError);
+                    throw retrieveHotelImageError;
+                }
+                let hotelImageArray = [];
+                let paramsForS3 = {
+                    Bucket: process.env.AWS_HOTEL_BUCKET_NAME
+                ,   Key: `${retrieveHotelImageResult[0].hotel_img_id}`
+                };
+                let hotel_image_data = await s3.s3.getObject(paramsForS3).promise();
+                let hotel_image = hotel_image_data.Body;
+                let imageBuffer = Buffer.from(hotel_image);
+                let imageButterToString64 = imageBuffer.toString('base64');
+                let imageDOM = 'data:image/jpeg;base64,' +imageButterToString64;
+                hotelImageArray.push(imageDOM);
+                res.status(200).render('pages/booking/bookingCancelRequestFromUser', {
+                    retrieved_bookingCancelData:retrieved_bookingCancelData
+                ,   hotelImageArray:hotelImageArray
+                ,   userSession_username:userSession_username
+                });
+            });
+        } else {
+            // hotels that are not from database
+            res.status(200).render('pages/booking/bookingCancelRequestFromUser', {
+                retrieved_bookingCancelData:retrieved_bookingCancelData
+            ,   userSession_username:userSession_username
+            });
+        }
+    });
+});
+
+router.post('/user/cancelBooking', (req, res) => {
+    let cancelBooking_formData = req.body;
+    let cancelBooking_formData_reason = cancelBooking_formData.cancelRequest_reason;
+    const initial_request = "Sent";
+    let filter_cancel_booking_formData_reason = trimCityNameHelper.isInputEmpty(cancelBooking_formData_reason);
+    let target_booking_id = cancelBooking_formData.booking_id;
+    let cancel_request_date = new Date();
+    console.log(filter_cancel_booking_formData_reason);
+    console.log(cancelBooking_formData);
+    const insertInto_Booking_Cancel = `INSERT INTO BOOKING_CANCEL (booking_cancel_reason, booking_id, cancel_status, request_date) VALUES (?, ?, ?, ?)`;
+    db.query(insertInto_Booking_Cancel, [filter_cancel_booking_formData_reason, target_booking_id, initial_request, cancel_request_date], (insertCancelBookingError, insertCancelBookingResult) => {
+        if (insertCancelBookingError) {
+            console.log("ERROR: USER REVIEW insert cancel booking request");
+            console.log(insertCancelBookingError);
+            throw insertCancelBookingError;
+        }
+        console.log("AFFECTED ROW");
+        console.log(insertCancelBookingResult.affectedRows);
+        res.status(200).redirect('/user');
+    });
+});
+
 module.exports = router;
