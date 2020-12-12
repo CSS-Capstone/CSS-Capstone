@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Finder - Cancel Booking</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="/css/cancelBookingFormUserRequest.css">
+</head>
+<body>
+    <section class="cancelBooking_header_section"> 
+        <div class="cancelBooking_header_left">
+            <a class="cancelBooking_header_mainAdmin" href="/user">
+                <i class="fas fa-arrow-circle-left"></i>
+                Go Back to Account Page
+            </a>
+            <h2 class="cancelBooking_hotel_name">Hotel Name: <%=retrieved_bookingCancelData.hotel_name%></h2>
+            <% if (retrieved_bookingCancelData.api_hotel_id ==  null) { %>
+                <img class="booking_cancel_image cancelBooking_image_not_api" src="<%=hotelImageArray[0]%>" alt="hotel image from our website database"/>
+            <% } else { %>
+                <img class="booking_cancel_image" src="https://photo.hotellook.com/image_v2/limit/h<%=retrieved_bookingCancelData.api_hotel_id%>_1/330/330.jpg" alt="hotel image"/>
+            <% } %>
+            <h2 class="cancelBooking_booking_info">Information On Booking</h2>
+            <ul>
+                <li>Booking Date: <%=retrieved_bookingCancelData.booking_date.toDateString()%></li>
+                <li>Desired Check In Date: <%=retrieved_bookingCancelData.booking_check_in_date%></li>
+                <li>Desired Check Out Date: <%=retrieved_bookingCancelData.booking_check_out_date%></li>
+                <li>Booking Price: <%=retrieved_bookingCancelData.booking_price%></li>
+            </ul>
+            <br><hr><br>
+            <h2 class="cancelBooking_hotel_info">Information On Hotel</h2>
+            <ul>
+                <li>Hotel Name: <%=retrieved_bookingCancelData.hotel_name%></li>
+                <li>Hotel Address: <%=retrieved_bookingCancelData.hotel_address%></li>
+                <li>Hotel Country: <%=retrieved_bookingCancelData.country%></li>
+                <li>Hotel City: <%=retrieved_bookingCancelData.city%></li>
+            </ul>
+        </div>
+        <div class="cancelBooking_header_right">
+            <form action="/user/cancelBooking" method="POST">
+                <h2 class="cancelBooking_cancel_booking_title">Reason for Canceling Booking</h2>
+                <input type="hidden" name="booking_id" value="<%=retrieved_bookingCancelData.booking_id%>">
+                <textarea name="cancelRequest_reason" id="cancelBooking_textArea" cols="50" rows="35"></textarea>
+                <br>
+                <small class="cancelBooking_reason_submit_from">Submitted By: <%=userSession_username%></small>
+                <br>
+                <small class="cancelBooking_date_small">Submitted Date: <span class="cancelBooking_date"></span></small>
+                <br>
+                <button class="cancelBooking_button">Submit Request</button>
+            </form>
+        </div>
+    </section>
+</body>
+<script defer async src="/js/Book/cancelBookingFormUserDate.js"></script>
+</html>

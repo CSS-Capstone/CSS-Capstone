@@ -1,0 +1,152 @@
+@import 'global.css';
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 80%;
+    margin: 0 auto;
+    background-color: var(--color-background-grey);
+}
+
+li {
+    list-style: none;   
+}
+
+.cancelBooking_header_section {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.cancelBooking_header_left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2rem;
+    -moz-box-shadow:    inset 0 0 10px #B4D1EE;
+    -webkit-box-shadow: inset 0 0 10px #B4D1EE;
+    box-shadow:         inset 0 0 10px #B4D1EE;
+    background-color: rgb(251, 251, 251);
+    padding: 3rem 1rem;
+}
+
+.cancelBooking_header_mainAdmin {
+    text-decoration: none;
+    color: var(--color-dark-grey);
+    font-weight: bold;
+    
+}
+
+.cancelBooking_image_not_api {
+    width: 330px;
+    height: 330px;
+} 
+
+.booking_cancel_image {
+    border-radius: 50%;
+    box-shadow: 0px 0px 20px #589fe6;
+}
+
+.cancelBooking_hotel_name {
+    color: var(--color-dark-grey);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.cancelBooking_hotel_user {
+    color: var(--color-dark-grey);
+    margin-top: 2rem;
+    font-weight: bold;
+}
+
+.cancelBooking_booking_info {
+    color: var(--color-dark-grey);
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+ul > li {
+    color: var(--color-dark-grey);
+}
+
+.cancelBooking_hotel_info {
+    color: var(--color-dark-grey);
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+ul > li {
+    color: var(--color-dark-grey);
+}
+
+.cancelBooking_header_right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2rem;
+    background-color: rgb(251, 251, 251);
+    padding: 3rem 1rem;
+}
+
+.cancelBooking_cancel_booking_title {
+    color: var(--color-dark-grey);
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.cancelBooking_cancel_status {
+    color: green;
+    font-weight: bold;
+}
+
+.status_data {
+    font-size: 1.2rem;
+    text-decoration: underline;
+    color: rgb(0, 78, 0);
+}
+
+#cancelBooking_textArea {
+    border-radius: 2rem;
+    padding: 1rem;
+    outline: none;
+    font-weight: bold;
+    resize: none;
+}
+
+.cancelBooking_reason_submit_from {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+    margin-top: 0.2rem;
+}
+
+.cancelBooking_date_small {
+    color: var(--color-dark-grey);
+    font-weight: bold;
+    margin-top: 0.2rem;
+}
+
+.cancelBooking_button {
+    width: 100%;
+    cursor: pointer;
+    padding: 0.5rem 0rem;
+    margin-top: 2rem;
+    border-radius: 2rem;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--color-dark-grey);
+    border: none;
+}
+
+.cancelBooking_button {
+    background-color: var(--color-nice-blue);
+}
+
+.cancelBooking_button:hover {
+    color: var(--color-almost-white);
+}
