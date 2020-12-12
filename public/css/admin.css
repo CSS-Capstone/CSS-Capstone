@@ -382,6 +382,57 @@ body {
 	padding: 10px;
 }
 
+/* CUSTOM CSS */
+.custom_admin_info_box {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.admin_info_box {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 130px;
+	border: 1px solid var(--color-strong-blue);
+	border-radius: 2rem;
+	padding: 0.5rem;
+	width: 20%;
+}
+
+/* HOTEL COUNT BOX */
+.admin_hotel_icon {
+	flex: 0.3;
+	font-size: 2rem;
+	color: var(--color-nice-blue);
+}
+
+.admin_info_hotel {
+	flex: 1;
+}
+
+.admin_info_hotel h3 {
+	color: var(--color-dark-grey);
+	font-weight: bold;
+}
+/* BOOKING COUNT BOX */
+.admin_booking_icon {
+	flex: 0.3;
+	font-size: 2rem;
+	color: var(--color-nice-blue);
+}
+
+.admin_info_booking_count h3 {
+	color: var(--color-dark-grey);
+	font-weight: bold;
+}
+
+/* BOOKING CANCEL REQUEST */
+
+
+/* END OF CUSTOM CSS */
+
 /* Extra small devices <= 600px */
 @media only screen and (max-width: 600px) {
 	.sidebar {
