@@ -293,7 +293,32 @@ router.get('/djemfls-tbvjdbwj/auth/getFiveMostNewHotelCities', (req, res) => {
     });
 });
 
-
+// get number of cancel booking rate 
+// TODO: SEND THIS DATA TO JAVASCRIPT TO GENERATE LINE GRAPH
+router.get('/djemfls-tbvjdbwj/auth/getCurrentMonthBookingCancelRate', (req, res) => {
+    const getCurrentMonthBookingCancelRate = `SELECT COUNT(*) AS booking_cancel_count, request_date
+                                                FROM BOOKING_CANCEL
+                                                WHERE MONTH(request_date) = MONTH(current_date())
+                                                GROUP BY request_date
+                                                ORDER BY request_date`;
+    db.query(getCurrentMonthBookingCancelRate, (monthlyBookingCancelError, monthlyBookingCancelResult) => {
+        if (monthlyBookingCancelError) {
+            console.log("ERROR: ADMIN retrieve monthly booking cancel rate");
+            console.log(monthlyBookingCancelError);
+            throw monthlyBookingCancelError;
+        }
+        let monthlyBookingContainer = [];
+        let monthlyBookingCancelObj = {};
+        for (let i = 0; i < monthlyBookingCancelResult.length; i++) {
+            monthlyBookingCancelObj.request_date = monthlyBookingCancelResult[i].request_date;
+            monthlyBookingCancelObj.booking_cancel_count = monthlyBookingCancelResult[i].booking_cancel_count;
+            monthlyBookingContainer.push(monthlyBookingCancelObj);
+            monthlyBookingCancelObj = {};
+        }
+        // console.log(monthlyBookingCancelObj);
+        res.status(200).json({monthlyBookingContainer:monthlyBookingContainer});
+    });
+});
 
 router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
     let requestCancel_id = req.params.id;
@@ -454,6 +479,5 @@ router.delete('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
         }
     });
 });
-
 
 module.exports = router;

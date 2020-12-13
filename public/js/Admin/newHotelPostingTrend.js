@@ -2,7 +2,7 @@ get_five_most_new_hotel_cities();
 
 async function get_five_most_new_hotel_cities() {
     try {
-        console.log("TOP FIVE TRENDING HOTEL POSTING CITIES!!!!")
+        // console.log("TOP FIVE TRENDING HOTEL POSTING CITIES!!!!")
         let getTopFiveNewHotelCitiesFetch = await fetch('/djemfls-tbvjdbwj/auth/getFiveMostNewHotelCities');
         let getTopFiveNewHotelCitiesResponse = await getTopFiveNewHotelCitiesFetch.json();
         let getTopFiveNewHotelCitiesData = getTopFiveNewHotelCitiesResponse.fiveHotelsGroupByDateArr;
