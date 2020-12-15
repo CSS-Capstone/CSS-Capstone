@@ -285,8 +285,65 @@
             </div>
             <!-- END OF TOP 5 CITIES -->
             <!--  -->
-            
-    
+        </div>
+        <div class="row">
+            <div class="col-6 col-m-6 col-sm-12">
+                <div class="card">
+                    <div id='map' style='width: 80vw; height: 88vh;'></div>
+                    <script src="https://unpkg.com/es6-promise@4.2.4/dist/es6-promise.auto.min.js"></script>
+                    <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
+                    <script>
+                        mapboxgl.accessToken = 'pk.eyJ1IjoidGFyY2lzaXVzZGFuaWVsIiwiYSI6ImNraWpvc2hjZjAyMHYyeG54cHpscTUyNmIifQ.9FZIoaEIuaBcdKyKVVEDzQ';
+                        var map = new mapboxgl.Map({
+                            container: 'map',
+                            style: 'mapbox://styles/mapbox/streets-v11',
+                            center: [150, 43],
+                            zoom: 1.1
+                        });
+                        var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+                        var hotelByCountry = <%- JSON.stringify(hotelByCountry) %>
+                        hotelByCountry.forEach( (hotel) => {
+                            mapboxClient.geocoding
+                            .forwardGeocode({
+                                query: hotel.hotel_addr,
+                                autocomplete: false,
+                                limit: 1
+                            })
+                            .send()
+                            .then(function (response) {
+                                if (
+                                    response &&
+                                    response.body &&
+                                    response.body.features &&
+                                    response.body.features.length
+                                ) {
+                                    var feature = response.body.features[0];
+                                    
+                                    new mapboxgl.Marker({color: '#' + hotel.markerColor}).setLngLat(feature.center).addTo(map);
+                                }
+                            });
+                        });
+                    </script>
+                    <div style = "
+                    position: absolute;
+                    left: 1220px;
+                    background-color: white;
+                    width: 150px;
+                    height: 88vh;
+                    border: 1px solid black;
+                    padding: 5px;
+                    margin-left: 40px;">
+                        Marker color
+                        <br><br>
+                        <% countryColor.forEach( (country) => { %>
+                            <span style = "font-color = '<%= country.country_color %>'"><%= country.country_name %></span>
+                            <br>
+                        <% }) %>
+                        <br><br>
+                        Number of hotels: <%= hotelByCountry.length %>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
     <section class="admin__promomail" id='panel'>
@@ -313,63 +370,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div id='map' style='width: 80vw; height: 88vh;'></div>
-        <script src="https://unpkg.com/es6-promise@4.2.4/dist/es6-promise.auto.min.js"></script>
-        <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
-        <script>
-            mapboxgl.accessToken = 'pk.eyJ1IjoidGFyY2lzaXVzZGFuaWVsIiwiYSI6ImNraWpvc2hjZjAyMHYyeG54cHpscTUyNmIifQ.9FZIoaEIuaBcdKyKVVEDzQ';
-            var map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [150, 43],
-                zoom: 1.1
-            });
-            var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
-            var hotelByCountry = <%- JSON.stringify(hotelByCountry) %>
-            hotelByCountry.forEach( (hotel) => {
-                mapboxClient.geocoding
-                .forwardGeocode({
-                    query: hotel.hotel_addr,
-                    autocomplete: false,
-                    limit: 1
-                })
-                .send()
-                .then(function (response) {
-                    if (
-                        response &&
-                        response.body &&
-                        response.body.features &&
-                        response.body.features.length
-                    ) {
-                        var feature = response.body.features[0];
-                        
-                        new mapboxgl.Marker({color: '#' + hotel.markerColor}).setLngLat(feature.center).addTo(map);
-                    }
-                });
-            });
-
-            
-        </script>
-        <div style = "
-        position: absolute;
-        left: 1220px;
-        background-color: white;
-        width: 150px;
-        height: 88vh;
-        border: 1px solid black;
-        padding: 5px;
-        margin-left: 40px;">
-            Marker color
-            <br><br>
-            <% countryColor.forEach( (country) => { %>
-                <span style = "font-color = '<%= country.country_color %>'"><%= country.country_name %></span>
-                <br>
-            <% }) %>
-            <br><br>
-            Number of hotels: <%= hotelByCountry.length %>
-        </div>
-    </div>
+    
     </section>
     <!-- end main content -->
     <!-- import script -->
