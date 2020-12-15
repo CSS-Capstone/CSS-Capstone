@@ -34,6 +34,50 @@ function getCookie(cname) {
 loadTheme();
 loadUserTable();
 
+const nav_btns = document.querySelectorAll('.sidebar-nav-item');
+const user_tab_panel = document.querySelectorAll('#panel');
+
+nav_btns.forEach((eachBtn, index) => {
+    eachBtn.addEventListener('click', (event) => {
+        displayPanel(event, index);
+    });
+});
+
+function displayPanel(event, index) {
+    for (let i = 0; i < nav_btns.length; i++) {
+        nav_btns[i].style.backgroundColor = "";
+        nav_btns[i].style.color = "";
+    }
+    if (index == 0) {
+        getComments();
+        //clearDom('booking_history');
+    } else if (index == 1) {
+        getBookingHistory();
+        //clearDom('hotel_posts');
+    } 
+    event.target.style.backgroundColor = '#589fe6';
+    event.target.style.color = "white";
+
+    for (let i = 0; i < user_tab_panel.length; i++) {
+        user_tab_panel[i].style.display = "none";
+    }
+    user_tab_panel[index].style.display = "block";
+}
+
+function initialSelect() {
+    for (let i = 0; i < user_tab_btn.length; i++) {
+        if (i === 0) {
+            user_tab_btn[i].style.backgroundColor = '#589fe6';
+            user_tab_btn[i].style.color = "white";
+            user_tab_panel[i].style.display = "block";
+        } else {
+            user_tab_btn[i].style.backgroundColor = "";
+            user_tab_btn[i].style.color = "";
+            user_tab_panel[i].style.display = "none";
+        }
+    }
+}
+
 async function loadUserTable() {
     const userDataRequest = await fetch(`/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd`);
     const userJsonData = await userDataRequest.json();

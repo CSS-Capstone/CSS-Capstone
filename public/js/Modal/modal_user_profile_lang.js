@@ -79,7 +79,7 @@ function addListeners() {
                     lang: eachCheckBox.value
                 });
             } else {
-
+                clickedArr.splice(clickedArr.findIndex(item => item.code === eachCheckBox.id), 1);
             }
         })
     });
@@ -95,6 +95,7 @@ function submitLanguages() {
     // Change backdrops
     resetDoms("checkBox__list");
     closeLangModal();
+    changeSubmitButton();
 }
 
 function initalizeLanguageContainers(lang) {
