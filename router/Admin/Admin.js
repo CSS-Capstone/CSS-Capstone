@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const dotenv = require('dotenv');
+const NodeGeocoder = require('node-geocoder');
 const db = require('../../utilities/db');
 const s3 = require('../../utilities/s3');
 const bcrypt = require('bcryptjs');
+
+var options = {
+    provider: 'opencage',
+    apiKey: '9fb9a64523aa49f597c0c288bc6d7745'
+};
+
+var geoCoder = NodeGeocoder(options);
 
 router.get('/djemals-tbvjdbwj', async (req, res) => {
     res.render('pages/admin/sign_in', {
@@ -39,8 +47,69 @@ router.post('/djemals-tbvjdbwj/auth', (req, res) => {
                          throw allBookingCancelError;
                      }
                      // console.log(allBookingCancelResult);
+                     db.query('SELECT COUNT(*), country FROM `css-capstone`.HOTEL GROUP BY country', (countryError, countryResults) => {
+                        if (countryError) {
+                            console.log(countryError);
+                        }
+                        else {
+                            // make a hash map with country as keys
+                            // console.log(countryResults);
+
+                            //there is a duplicate between USA and United States
+                            var hashedHotelColor = {};
+                            var countryColor = [];
+                            var currCountry = {};
+                            let colorInDecimal = 1052413;
+                            for(let i = 0; i < countryResults.length; i++) {
+                                currCountry.country_name = countryResults[i].country;
+                                currCountry.country_color = '#' + colorInDecimal.toString(16).toUpperCase();
+                                hashedHotelColor[countryResults[i].country] = colorInDecimal.toString(16).toUpperCase();
+                                countryColor.push(currCountry);
+                                colorInDecimal += 153961;
+                                currCountry = {}
+                            }
+                            // console.log(hashedHotelColor);
+                            db.query('SELECT * FROM `css-capstone`.HOTEL ORDER BY country', async (hotelsError, hotelsResults) => {
+                                if (hotelsError) {
+                                    console.log(hotelsError);
+                                }
+                                else {
+                                    // console.log(hotelsResults);
+                                    // var testgeo = await geoCoder.geocode('Japan, Aichi, Kota, Fukōzu, 鶴方 国道23号');
+                                    // console.log(testgeo);
+                                    var hotelByCountry = [];
+                                    var currHotel = {};
+                                    var latlong = {};
+                                    for(let j = 0; j < hotelsResults.length; j++) {
+                                        //get city, address, hotel name, hotel id, hotel price, color of marker
+                                        currHotel.hotel_id = hotelsResults[j].hotel_id;
+                                        currHotel.hotel_name = hotelsResults[j].hotel_name;
+                                        currHotel.hotel_city = hotelsResults[j].city;
+                                        currHotel.hotel_addr = hotelsResults[j].address;
+                                        currHotel.hotel_price = hotelsResults[j].hotel_price;
+                                        currHotel.markerColor = hashedHotelColor[hotelsResults[j].country];
+                                        currHotel.latitude = null;
+                                        currHotel.longitude = null;
+                                        //get latitude and longitude
+                                        // latlong = await geoCoder.geocode(currHotel.hotel_addr);
+                                        if(latlong[0] !== undefined) {
+                                            currHotel.latitude = latlong[0].latitude;
+                                            currHotel.longitude = latlong[0].longitude;
+                                        }
+                                        hotelByCountry.push(currHotel);
+                                        currHotel = {};
+                                    }
+                                    // console.log(hotelByCountry);
+                                    res.render('pages/admin/admin', {
+                                        allBookingCancelResult: allBookingCancelResult,
+                                        hotelByCountry: hotelByCountry,
+                                        countryColor: countryColor
+                                    });
+                                }
+                            });
+                        }
+                     });
                      
-                     res.render('pages/admin/admin', {allBookingCancelResult:allBookingCancelResult});
                 });
             }
         }
