@@ -74,10 +74,11 @@ function addListeners() {
     checkBoxes.forEach(function(eachCheckBox) {
         eachCheckBox.addEventListener('change', function(event) {
             if (eachCheckBox.checked) {
-                clickedArr.push({
-                    chkBox_id: eachCheckBox.id,
-                    lang: eachCheckBox.value
-                });
+                var obj = { chkBox_id: eachCheckBox.id, lang: eachCheckBox.value };
+                if (clickedArr.some(item => item.lang === obj.lang)) {
+                } else {
+                    clickedArr.push(obj);
+                }
             } else {
                 clickedArr.splice(clickedArr.findIndex(item => item.code === eachCheckBox.id), 1);
             }

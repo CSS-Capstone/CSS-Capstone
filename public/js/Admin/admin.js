@@ -39,9 +39,6 @@ nav_btns.forEach((eachBtn, index) => {
     eachBtn.addEventListener('click', (event) => {
         displayPanel(event, index);
     });
-    eachBtn.addEventListener('hover', (event) =>  {
-        console.log("on  hoverr");
-    });
 });
 
 loadTheme();
@@ -53,9 +50,9 @@ function displayPanel(event, index) {
         nav_btns[i].style.color = "";
     }
     if (index == 0) {
-        //clearDom('booking_history');
+        console.log('clicked on dashboard');
     } else if (index == 1) {
-        //clearDom('hotel_posts');
+        console.log('clicked on send e main');
     } 
     event.target.style.backgroundColor = '#f1f1f1';
     event.target.style.color = "#eb4d4b";
