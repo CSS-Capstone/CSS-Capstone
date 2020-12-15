@@ -66,8 +66,9 @@ router.get('/djemals-tbvjdbwj/auth', (req, res) => {
 });
 
 // djemals-tbvjdbwj -> SHA 512 and cutted out random parts
-router.get('/djemals-tbvjdbwj/3d9cfb1f8220a46bca8de65d0f252cac2fbd', (req, res) => {
+router.get('/djemals-tbvjdbwj/auth/getUsersAndBooking', (req, res) => {
     // query all users data
+    console.log('do I  get called');
     // that are not admin (isAdmin = 0, isAdmin = false)
     db.query('SELECT * FROM USER WHERE isAdmin = false', (error, userResults) => {
         if (error) {
