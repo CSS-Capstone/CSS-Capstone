@@ -27,8 +27,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <img src="assets/AT-pro-black.png" alt="ATPro logo" class="logo logo-light">
-                <img src="assets/AT-pro-white.png" alt="ATPro logo" class="logo logo-dark">
+                <!-- <img src="assets/AT-pro-black.png" alt="ATPro logo" class="logo logo-light">
+                <img src="assets/AT-pro-white.png" alt="ATPro logo" class="logo logo-dark"> -->
             </li>
         </ul>
         <!-- end nav left -->
@@ -61,12 +61,12 @@
                         <% allBookingCancelResult.forEach(eachCancelRequest => { %>
                             <br>
                             <li class="dropdown-menu-item">
-                                <a href="#" class="dropdown-menu-link">
+                                <a href="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=eachCancelRequest.booking_cancel_id%>" class="dropdown-menu-link">
                                     <div>
                                         <i class="fas fa-tasks"></i>
                                     </div>
                                     <span>
-                                        Reason: <%=eachCancelRequest.booking_cancel_reason.substring(0,10)%>... <br>
+                                        Reason: <%=eachCancelRequest.booking_cancel_reason.substring(0.8)%>... <br>
                                         By: <%=eachCancelRequest.username%>
                                         <br>
                                         <span>
@@ -141,9 +141,9 @@
     <div class="sidebar">
         <ul class="sidebar-nav">
             <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
+                <a href="#" class="sidebar-nav-link" id="active">
                     <div>
-                        <i class="fas fa-tachometer-alt"></i>
+                        <i class="fas fa-chart-line"></i>
                     </div>
                     <span>
                         Dashboard
@@ -151,194 +151,164 @@
                 </a>
             </li>
             <li class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link active">
-                    <div>
-                        <i class="fab fa-hire-a-helper"></i>
-                    </div>
-                    <span>HotelFinder</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <span>Morbi</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-spinner"></i>
-                    </div>
-                    <span>Praesent</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <span>Pellentesque</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-bug"></i>
-                    </div>
-                    <span>Morbi</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <span>Praesent</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <span>Pellentesque</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-adjust"></i>
-                    </div>
-                    <span>Morbi</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fab fa-algolia"></i>
-                    </div>
-                    <span>Praesent</span>
-                </a>
-            </li>
-            <li  class="sidebar-nav-item">
-                <a href="#" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-audio-description"></i>
-                    </div>
-                    <span>Pellentesque</span>
-                </a>
+                <form id="send_promo_form" action="/djemals-tbvjdbwj/auth/sendPromoEmail" method="POST">
+                    <a href="#" class="sidebar-nav-link" onclick="sendPromoMails()" id="">
+                        <div>
+                            <i class="fas fa-mail-bulk"></i>
+                        </div>
+                        <span>Send Promotions</span>
+                    </a>
+                </form>
             </li>
         </ul>
     </div>
     <!-- end sidebar -->
     <!-- main content -->
-    <div class="wrapper">
-        <div class="row">
-        <div class="row">
-            <div class="col-12 col-m-12 col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>
-                            User Information Table
-                        </h3>
-                        <i class="fas fa-ellipsis-h"></i>
+    <div class="admin__dashboard" id='panel'>
+        <div class="wrapper">
+            <div class="row">
+                <!-- SECTION FOR 4 WIDGET INFO BOX -->
+                <div class="custom_admin_info_box col-12 col-m-6 col-sm-12">
+                    <div class="admin_info_box">
+                        <i class="admin_hotel_icon fas fa-bed"></i>
+                        <div class="admin_info_hotel">
+                            <h3 class="admin_info_hotel_count">Current Month New Hotel Count: 
+                                <span class="admin_info_hotel_count_number"></span>
+                            </h3>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <table id="user__table">
-                        </table>
+                    <div class="admin_info_box">
+                        <i class="admin_booking_icon fas fa-book"></i>
+                        <div class="admin_info_hotel">
+                            <h3 class="admin_info_booking_count">Current Month New Booking Count:
+                                <span class="admin_info_booking_count_number"></span>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="admin_info_box">
+                        <i class="admin_cancel_booking_icon fas fa-bell-slash"></i>
+                        <div class="admin_info_hotel">
+                            <h3 class="admin_info_cancel_booking_count">Current Month Cancel Booking Count:
+                                <span class="admin_info_cancel_count_number"></span>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="admin_info_box">
+                        <i class="admin_new_user fas fa-users"></i>
+                        <div class="admin_info_hotel">
+                            <h3 class="admin_info_new_user">Current Month New User:
+                                <span class="admin_info_new_user_number"></span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- END OF SECTION FOR 4 WIDGET INFO BOX -->
+            <div class="row">
+                <div class="col-12 col-m-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>
+                                User Information Table
+                            </h3>
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <div class="card-content">
+                            <table id="user__table">
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-4 col-m-12 col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>
-                            Progress bar
-                        </h3>
-                        <i class="fas fa-ellipsis-h"></i>
-                    </div>
-                    <div class="card-content">
-                        <div class="progress-wrapper">
-                            <p>
-                                Less than 1 hour
-                                <span class="float-right">50%</span>
-                            </p>
-                            <div class="progress">
-                                <div class="bg-success" style="width: 50%"></div>
-                            </div>
+            <div class="row">
+                <div class="col-12 col-m-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>
+                                Chartjs
+                            </h3>
                         </div>
-                        <div class="progress-wrapper">
-                            <p>
-                                1 - 3 hours
-                                <span class="float-right">60%</span>
-                            </p>
-                            <div class="progress">
-                                <div class="bg-primary" style="width:60%"></div>
-                            </div>
-                        </div>
-                        <div class="progress-wrapper">
-                            <p>
-                                More than 3 hours
-                                <span class="float-right">40%</span>
-                            </p>
-                            <div class="progress">
-                                <div class="bg-warning" style="width:40%"></div>
-                            </div>
-                        </div>
-                        <div class="progress-wrapper">
-                            <p>
-                                More than 6 hours
-                                <span class="float-right">20%</span>
-                            </p>
-                            <div class="progress">
-                                <div class="bg-danger" style="width:20%"></div>
-                            </div>
+                        <div class="card-content">
+                            <canvas id="myChart"></canvas>
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </div>
         <div class="row">
-            <div class="col-12 col-m-12 col-sm-12">
+            <div class="col-6 col-m-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3>
-                            Chartjs
+                        <h3 class="card-header-description">
+                            Monthly Booking Rate <span class="card-header-totalPrice"></span>
                         </h3>
                     </div>
                     <div class="card-content">
-                        <canvas id="myChart"></canvas>
+                        <canvas id="myBookingChart" class="graph"></canvas>
                     </div>
                 </div>
             </div>
+            <div class="col-6 col-m-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-header-description">
+                            Booking Cancel Rate of This Month <br>
+                            <span class="card-header-current-month-booking-cancel"></span>
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="myCurrentMonthBookingCancel" class="graph"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-m-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-header-description">
+                            TOP 18 Cities, Users like to Post their Hotels <br>
+                            <span class="card-header-total-number-of-hotels"></span>
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="myHotelGroupByCity" class="graph"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- TOP 5 Cities With Most New Hotel Posting -->
+            <div class="col-6 col-m-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-header-description">
+                            Top 5 Cities With Most New Hotel Postings <br>
+                            <span class="card-header-five-most-new-hotel-cities"></span>
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="myFiveMostNewHotelCities" class="graph"></canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF TOP 5 CITIES -->
+            <!--  -->
+            
+    
         </div>
     </div>
-    <!--  -->
-    <div class="row">
-        <div class="col-6 col-m-6 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-header-description">
-                        Monthly Booking Rate <span class="card-header-totalPrice"></span>
-                    </h3>
-                </div>
-                <div class="card-content">
-                    <canvas id="myBookingChart" class="graph"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-m-6 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-header-description">
-                        TOP 18 Cities, Users like to Post their Hotels <br>
-                        <span class="card-header-total-number-of-hotels"></span>
-                    </h3>
-                </div>
-                <div class="card-content">
-                    <canvas id="myHotelGroupByCity" class="graph"></canvas>
+    <div class="admin__promomail" id="panel">
+        <div class="wrapper">
+            <div class="row">
+                <div class="col-12 col-m-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>
+                                Promotion Email Group
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <form id="">
+                                
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -403,9 +373,14 @@
     <!-- end main content -->
     <!-- import script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-    <script src="/js/Admin/admin.js" async></script>
+    <script src="/js/Admin/admin.js" defer></script>
+    <script src="/js/Admin/loadUserTable.js" async></script>
     <script src="/js/Admin/monthlyBookingRate.js" defer async></script>
     <script src="/js/Admin/hotelGroupByCity.js" defer async></script>
+    <script src="/js/Admin/sendPromoEmails.js" defer async></script>
+    <script src="/js/Admin/hotelCountPerMonth.js" defer async></script>
+    <script src="/js/Admin/newHotelPostingTrend.js" defer async></script>
+    <script src="/js/Admin/monthlyCancelBookingRate.js" defer async></script>
     <!-- end import script -->
 </body>
 </html>

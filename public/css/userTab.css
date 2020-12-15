@@ -87,7 +87,7 @@
     padding: 1.5rem 1.5rem 1.5rem 1.5rem;
 }
 
-.hotel__postings__btn, .leave__comment__btn, .comment__postings__btn {
+.hotel__postings__btn, .leave__comment__btn, .comment__postings__btn, .cancel__booking__btn {
     cursor: pointer;
     outline: none;
     border-radius: 1%;

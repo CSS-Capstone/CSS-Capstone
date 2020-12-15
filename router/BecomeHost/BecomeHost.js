@@ -46,6 +46,7 @@ router.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
     // ASSUME USER ID is has a USER ID 14
     let hotelCity = hotelLocationTrimmedForDB[0];
     let hotelCountry = hotelLocationTrimmedForDB[1];
+    let hotelCreatedDate = new Date();
     let insertQuery = "INSERT INTO `css-capstone`.HOTEL SET ?";
     db.query(insertQuery, 
         {hotel_name: hotelLabel, 
@@ -55,7 +56,8 @@ router.post('/become-host/postHotel', authMW.isLoggedIn, (req, res) => {
         address: hotelLocationStreetAddress,
         isAPI: false,
         isDeveloper: true,
-        user_id: postedUserID}, (err, result) => {
+        user_id: postedUserID,
+        created_date: hotelCreatedDate}, (err, result) => {
             // callback function
             if (err) {
                 console.log(err);

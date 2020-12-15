@@ -124,19 +124,12 @@ async function getComments() {
         var linkContainer = document.createElement('div');
         linkContainer.setAttribute('class', 'user__comment__link__container');
 
-        var viewCommentBtn = document.createElement('button');
-        viewCommentBtn.setAttribute('class', 'comment__postings__btn');
-        viewCommentBtn.setAttribute('onclick', "location.href='/user/review/" + `${comments[i].booking_id}` + "/new'");
-        viewCommentBtn.innerHTML = "View My Comment!";
-
         ratingContainer.appendChild(rating);
         ratingContainer.appendChild(stars);
 
         commentContainer.appendChild(commentDaysAgo);
         commentContainer.appendChild(commentContents);
         
-        linkContainer.appendChild(viewCommentBtn);
-
         rowContainer.appendChild(ratingContainer);
         rowContainer.appendChild(commentContainer);
         rowContainer.appendChild(linkContainer);
@@ -174,7 +167,9 @@ async function getBookingHistory() {
         
         var dateToday = new Date(Date.now());
         var leaveCommentBtn;
+        var bookingCancelBtn;
         var isCommentBtnVis = false;
+        var canCancel = false;
 
         const checkOutDate = bookingHistories[i].check_out_date;
         const formattedDate = new Date(checkOutDate.substring(0, 4), checkOutDate.substring(5, 7), checkOutDate.substring(8, 10));
@@ -187,6 +182,17 @@ async function getBookingHistory() {
             leaveCommentBtn.setAttribute('class', 'leave__comment__btn');
             leaveCommentBtn.setAttribute('onclick', "location.href='/user/review/" + `${bookingHistories[i].booking_id}` + "/new'");
             leaveCommentBtn.innerHTML = "Please leave comments";
+        } 
+        
+        const checkIndate = new Date(bookingHistories[i].check_in_date.substring(0, 4), 
+                                     bookingHistories[i].check_in_date.substring(5, 7), 
+                                     bookingHistories[i].check_in_date.substring(8, 10));
+        if (checkIndate.getTime() - todayDate.getTime() > 0) {
+            canCancel = true;
+            bookingCancelBtn = document.createElement('button');
+            bookingCancelBtn.setAttribute('class', 'cancel__booking__btn');
+            bookingCancelBtn.setAttribute('onclick', "location.href='/user/cancelbooking/" + `${bookingHistories[i].booking_id}`);
+            bookingCancelBtn.innerHTML = "Request to cancel";
         }
 
         var hotelName = document.createElement('div');
@@ -222,6 +228,10 @@ async function getBookingHistory() {
         //linkContainer.appendChild(bookingLinkBtn);
         if (isCommentBtnVis) {
             linkContainer.appendChild(leaveCommentBtn);
+        } 
+
+        if (canCancel) {
+            linkContainer.appendChild(bookingCancelBtn);
         }
 
         rowContainer.appendChild(img);

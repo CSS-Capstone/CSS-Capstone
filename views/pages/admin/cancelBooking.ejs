@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Finder - Cancel Booking</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="/css/cancelBooking.css">
+</head>
+<body>
+    <section class="cancelBooking_header_section"> 
+        <div class="cancelBooking_header_left">
+            <a class="cancelBooking_header_mainAdmin" href="/djemals-tbvjdbwj/auth">
+                <i class="fas fa-arrow-circle-left"></i>
+                Go Back to Main Admin
+            </a>
+            <h2 class="cancelBooking_hotel_name">Hotel Name: <%=retrieveBookingCancelResult[0].hotel_name%></h2>
+            <% if (retrieveBookingCancelResult[0].api_hotel_id ==  null) { %>
+                <img class="booking_cancel_image cancelBooking_image_not_api" src="<%=imageContainer[0]%>" alt="hotel image from our website database"/>
+            <% } else { %>
+                <img class="booking_cancel_image" src="https://photo.hotellook.com/image_v2/limit/h<%=retrieveBookingCancelResult[0].api_hotel_id%>_1/330/330.jpg" alt="hotel image"/>
+            <% } %>
+            <p class="cancelBooking_hotel_user">User:<%=retrieveBookingCancelResult[0].username%> had booked this hotel</p>
+            <h2 class="cancelBooking_booking_info">Information On Booking</h2>
+            <ul>
+                <li>Booking Date: <%=retrieveBookingCancelResult[0].booking_date.toDateString()%></li>
+                <li>Desired Check In Date: <%=retrieveBookingCancelResult[0].booking_check_in_date%></li>
+                <li>Desired Check Out Date: <%=retrieveBookingCancelResult[0].booking_check_out_date%></li>
+                <li>Booking Price: <%=retrieveBookingCancelResult[0].booking_price%></li>
+            </ul>
+            <br><hr><br>
+            <h2 class="cancelBooking_hotel_info">Information On Hotel</h2>
+            <ul>
+                <li>Hotel Name: <%=retrieveBookingCancelResult[0].hotel_name%></li>
+                <li>Hotel Address: <%=retrieveBookingCancelResult[0].hotel_address%></li>
+                <li>Hotel Country: <%=retrieveBookingCancelResult[0].country%></li>
+                <li>Hotel City: <%=retrieveBookingCancelResult[0].city%></li>
+            </ul>
+        </div>
+        <div class="cancelBooking_header_right">
+            <a href=""></a>
+            <h2 class="cancelBooking_cancel_booking_title">Reason for Canceling Booking</h2>
+            <h3 class="cancelBooking_cancel_status">Current Status: <span class="status_data"><%=retrieveBookingCancelResult[0].cancel_status%></span></h3>
+            <textarea readonly name="" id="cancelBooking_textArea" cols="50" rows="35">
+                <%=retrieveBookingCancelResult[0].booking_cancel_reason%>
+            </textarea>
+            <small class="cancelBooking_reason_submit_from">Submitted From: <%=retrieveBookingCancelResult[0].username%></small>
+            <div class="cancelBooking_button_container">
+                <form class="cancelBooking_deny_form" action="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=retrieveBookingCancelResult[0].booking_cancel_id%>?_method=DELETE" method="POST">
+                    <button class="buttonForCancel cancelBooking_button_deny">Deny</a>
+                </form>
+                <form action="/djemfls-tbvjdbwj/auth/getSelectedRequest/<%=retrieveBookingCancelResult[0].booking_cancel_id%>" method="POST">
+                    <button class="buttonForCancel cancelBooking_button_confirm">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
