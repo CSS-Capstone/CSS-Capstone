@@ -186,11 +186,69 @@ input {
 
 
 /* Responsive columns */
-@media screen and (max-width: 600px) {
-    .cards__col {
+@media screen and (max-width: 1177px) {
+    .index__bg {
         width: 100%;
-        display: block;
-        margin-bottom: 20px;
+    }
+    #navbar {
+        width: 100%;
+        background-color: red;
+    }
+    .darkModeContainer {
+        display: none;
+    }
+    .becomehostContainer {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 910px) {
+    .navbar__logo > i {
+        font-size: 1.2rem;
+        display: none;
+    }
+    .navbar__logo a {
+        font-size: 1.2rem;
+    }
+    #navbar {
+        width: 100%;
+        justify-content: space-around;
+    }
+    .navbar__logo {
+        flex: 0.5;
+        justify-content: left;
+    }
+    .navbar__center__menu {
+        flex: 2;
+        justify-content: center;
+    }
+    .navbar__right__menu {
+        flex: 0.5;
+        justify-content: right;
+        text-align: right;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .navbar__center__menu {
+        flex: 1;
+        justify-content: center;
+    }
+    .userIcon {
+        display: none;
+    }
+    .navbar__logo {
+        flex: 0.3;
+        justify-content: left;
+    }
+    .navbar__center__menu {
+        flex: 1.5;
+        justify-content: center;
+    }
+    .navbar__right__menu {
+        flex: 0.5;
+        text-align: center;
+        align-items: center;
     }
 }
 

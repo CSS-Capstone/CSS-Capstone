@@ -53,3 +53,12 @@ a {
     font-size: 2.0rem;
     color: var(--main_content_title);
 }
+
+@media screen and (max-width: 550px) {
+    .footer_lower_content_container {
+        flex-direction: column;
+        align-items: center;
+        text-align: left;
+        margin: 0.5rem;
+    }
+}

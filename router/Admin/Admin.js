@@ -53,7 +53,7 @@ router.post('/djemals-tbvjdbwj', (req, res) => {
     });
 });
 
-router.get('/djemals-tbvjdbwj/auth', (req, res) => {
+router.get('/djemals-tbvjdbwj/auth', authMW.isLoggedIn, authMW.check_is_admin, (req, res) => {
     const grabAllBookingCancelRequest = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, user.username, booking.booking_date
                                             FROM BOOKING_CANCEL AS cancel
                                             INNER JOIN BOOKING AS booking
