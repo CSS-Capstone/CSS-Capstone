@@ -10,6 +10,8 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
+const authMW = require('../../modules/auth');
+
 let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -47,19 +49,21 @@ router.post('/djemals-tbvjdbwj', (req, res) => {
             }
 
             else {
+                req.session.user = {
+                    user_id: results[0].user_id
+                }
                 res.status(200).redirect('/djemals-tbvjdbwj/auth');
             }
         }
     });
 });
 
-router.get('/djemals-tbvjdbwj/auth', (req, res) => {
+router.get('/djemals-tbvjdbwj/auth', authMW.isLoggedIn, authMW.check_is_admin, (req, res) => {
     const grabAllBookingCancelRequest = `SELECT cancel.booking_cancel_id, cancel.booking_cancel_reason, user.username, booking.booking_date
                                             FROM BOOKING_CANCEL AS cancel
                                             INNER JOIN BOOKING AS booking
                                             ON cancel.booking_id = booking.booking_id
                                             INNER JOIN USER AS user
-                                            ON user.user_id = booking.user_id
                                             ON user.user_id = booking.user_id
                                             WHERE cancel.cancel_status = "Sent"`;
     db.query(grabAllBookingCancelRequest, (allBookingCancelError, allBookingCancelResult) => {
@@ -138,7 +142,6 @@ router.get('/djemals-tbvjdbwj/auth', (req, res) => {
 // djemals-tbvjdbwj -> SHA 512 and cutted out random parts
 router.get('/djemals-tbvjdbwj/auth/getUsersAndBooking', (req, res) => {
     // query all users data
-    console.log('do I  get called');
     // that are not admin (isAdmin = 0, isAdmin = false)
     db.query('SELECT * FROM USER WHERE isAdmin = false', (error, userResults) => {
         if (error) {
@@ -458,36 +461,86 @@ router.get('/djemfls-tbvjdbwj/auth/getSelectedRequest/:id', (req, res) => {
     });
 });
 
-router.get('/djemals-tbvjdbwj/auth/sendPromoEmail', (req, res) => {
-    //var promoMailPath = path.join(__dirname, 'promoEmail.ejs');
+router.post('/djemals-tbvjdbwj/auth/sendPromoEmail', (req, res) => {
+    var mailingGroup = [ '0-50', '51-100', '101-200', '201-300', '300+' ];
+    let promoData = [];
+    let jsonParam = req.body.promoData;
 
-    var testPath = path.join(__dirname, '..', '..', 'views/mailTemplates/promoEmail.ejs');
+    var groupIndex = mailingGroup.findIndex(item => item === jsonParam.promo_group);
+    if (groupIndex === 0) {
+        promoData.push(0);
+        promoData.push(50);
+    } else if (groupIndex === 1) {
+        promoData.push(50);
+        promoData.push(100);
+    } else if (groupIndex === 2) {
+        promoData.push(100);
+        promoData.push(200);
+    } else if (groupIndex === 3) {
+        promoData.push(200);
+        promoData.push(300);
+    } else {
+        promoData.push(300);
+    }
+
+    var testPath = path.join(__dirname, '..', '..', ('views/mailTemplates/' + `${jsonParam.promo_email_template}` + '.ejs'));
     var promoMailPath = path.normalize(testPath);
 
-    fs.access(promoMailPath, (fileError) => {
-        if (fileError) {
-            console.log("Can't find the template file for the email");
-        } else {
-            var mailingList = ['solomonjc0218@gmail.com', 'josephcc.dev@gmail.com', 'jeeyoung8230@gmail.com'];
+    let promoGroupQuery = `SELECT DISTINCT
+                                BK.user_id,
+                                USER.email
+                            FROM
+                                BOOKING BK
+                            INNER JOIN
+                                USER USER
+                            ON 
+                                BK.user_id = USER.user_id`;
+    promoGroupQuery += (groupIndex < 4) ? ` and BK.booking_price > ? and BK.booking_price <= ?`
+                                        : ` and BK.booking_price > ?`;
+    
+    db.query(promoGroupQuery, promoData, async (err, res) => {
+        if (err) { console.log('Failed to RETRIEVE promotion group' + err); }
+        else {
+            console.log('Successful to RETRIEVE promotion group');
+            var mailingList = [];
+            for (var i = 0; i < res.length; i++) {
+                mailingList.push(res[i].email);
+            }
 
-            ejs.renderFile(promoMailPath, async (err, data) => {
-                if (err) { console.log('Something went wrong with ejs rendering before sending email : ' + err); }
-                else {
-                    var mailOptions = {
-                        from: process.env.EMAIL_HOTELFINDER_ADDRESS,
-                        to: mailingList,
-                        subject: 'This is a promtion email from Hotel Finder!!',
-                        html: data
-                    };
-                    transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) { console.log('Failed to send emails'); }
-                        else {
-                            console.log('Email sent successful');
-                            res.json({ list: mailingList });
-                        }
-                    });
-                }
-            });
+            var responseBack = {
+                list: `${mailingList}`
+            }
+            console.log(responseBack);
+            if (mailingList.length > 0) {
+                fs.access(promoMailPath, (fileError) => {
+                    if (fileError) {
+                        console.log("Can't find the template file for the email");
+                        res.json({ responseBack });
+                    } else {
+                        ejs.renderFile(promoMailPath, async (errEjs, data) => {
+                            if (errEjs) { console.log('Something went wrong with ejs rendering before sending email : ' + errEjs); }
+                            else {
+                                var mailOptions = {
+                                    from: process.env.EMAIL_HOTELFINDER_ADDRESS,
+                                    to: mailingList,
+                                    subject: 'This is a promtion email from Hotel Finder!!',
+                                    html: data
+                                };
+                                transporter.sendMail(mailOptions, (error, info) => {
+                                    if (error) { console.log('Failed to send emails'); }
+                                    else {
+                                        console.log('Email sent successful');
+                                        res.json({ list: responseBack });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                console.log('No Email to send');
+                res.json({ responseBack });
+            }
         }
     });
 });

@@ -942,3 +942,309 @@ body {
     color: var(--color-light-grey);
     font-weight: normal;
 }
+
+/* ========================= */
+/* Responsive */
+@media screen and (max-width: 1574px) {
+    .hotelSearched_detail_big_image {
+        width: 580px;
+        height: 500px;
+    }
+    .hotelSearched_detail_small_image {
+        width: 220px;
+        height: 230px;
+    }
+}
+/* hotelDetail_cityVideo_frame */
+@media screen and (max-width: 1520px) {
+    .hotelDetail_cityVideo_frame {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 1145px) {
+    .hotelDetail_header {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 1239px) {
+    .hotelSearched_detail_big_image {
+        width: 480px;
+        height: 500px;
+    }
+}
+
+@media screen and (max-width: 1129px) {
+    .hotelDetail_header {
+        width: 90%;
+        margin: 0;
+    }
+    .hotelSearched_detail_big_image {
+        width: 380px;
+        height: 400px;
+    }
+    .hotelSearched_detail_small_image {
+        width: 160px;
+        height: 180px;
+    }
+}
+
+@media screen and (max-width: 971px) {
+    .hotel_form_group {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 931px) {
+    .hotelDetail_tab_button_container > .hotelDetail_tab_btn {
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 885px) {
+    .hotelSearched_detail_big_image {
+        width: 340px;
+        height: 400px;
+    }
+    .hotelSearched_detail_small_image {
+        width: 140px;
+        height: 180px;
+    }
+    
+    .hotel_room_radio_container {
+        flex-direction: column;
+    }
+
+}
+
+@media screen and (max-width: 795px) {
+    .hotelSearched_detail_big_image {
+        width: 340px;
+        height: 400px;
+    }
+    .hotelSearched_detail_small_image {
+        width: 120px;
+        height: 180px;
+    }
+    .hotelDetail_tab_button_container > .hotelDetail_tab_btn {
+        font-size: 0.8rem;
+    }
+    .weather_left_title {
+        font-size: 0.8rem;
+    }
+    .weather_hotel_cityCountry {
+        font-size: 0.8rem;
+    }
+    .weather_left_icon {
+        width: 80px;
+        height: 80px;
+    }
+    .weather_left_description {
+        font-size: 0.8rem;
+    }
+    .weather_left_feelslike {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_weather_rightside > .weather_current_temp {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_weather_rightside > .weather_current_temp_fahren {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_weather_rightside > .weather_current_temp_celsius {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_weather_wind > h3 {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_weather_humid > h3 {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_air_quality_title {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_air_quality_left > .face {
+        width: 80px;
+        height: 80px;
+    }
+    .hotelDetail_air_quality_value {
+        font-size: 0.8rem;
+    }
+    .hotelDetail_air_quality_index {
+        font-size: 0.8rem;
+    }
+}
+
+@media screen and (max-width: 753px) {
+    .hotelSearched_detail_big_image {
+        width: 320px;
+        height: 400px;
+    }
+    .hotelSearched_detail_small_image {
+        width: 100px;
+        height: 180px;
+    }
+}
+
+@media screen and (max-width: 685px) {
+    .hoteDetail_hotelImageContainer {
+        flex-direction: column;
+        width: 90%;
+        margin: 0 auto;
+    }
+    
+    .hotelSearched_detail_big_image {
+        width: 100%;
+    }
+    .hotelSearched_detail_small_image {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 676px) {
+    .hoteDetail_hotelImageContainer {
+        flex-direction: column;
+        width: 90%;
+        margin: 0 auto;
+    }
+    
+    .hotelSearched_detail_big_image {
+        width: 100%;
+    }
+    .hotelSearched_detail_small_image {
+        width: 90%;
+    }
+    .hotelDetail_header_title {
+        font-size: 0.9rem;
+    }
+    .hotelDetail_header_image {
+        width: 100px;
+        height: 100px;
+    }
+    .hotelDetail_book_btn {
+        width: 120px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    .hotelDetail_address {
+        width: 100%;
+    }
+    .hotel_address_info_conatiner > h2 {
+        font-size: 1rem;
+    }
+    .hotel_city_info_container > h2 {
+        font-size: 1rem;
+    }
+    .hotel_address {
+        font-size: 1.1rem;
+    }
+    .hotel_full_city_country {
+        font-size: 1.1rem;
+    }
+    .hotel_form_group {
+        width: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .hotelInfo_room_section {
+        border-right: none;
+        padding-bottom: 1rem;
+    }
+    .hotelInfo_room_title {
+        font-size: 1.0rem;
+    }
+    .checkin_out_and_map_container {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 634px) {
+    .hotelDetail_tab_button_container button {
+        padding: 0.5rem;
+        font-size: 1.0rem;
+    }
+}
+
+@media screen and (max-width: 601px) {
+    .checkin_out_and_map_container {
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .date_container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .hotelDetail_main_booking_container {
+        width: 90%;
+        flex-direction: column;
+    }
+    .hotelDetail_booking_header {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: space-evenly;
+        padding: 0rem 0rem;
+    }
+    .hotelDetail_header_title {
+        font-size: 1.5rem;
+    }
+    .hotelDetail_header_image {
+        width: 180px;
+        height: 180px;
+    }
+    .hotelDetail_userinfo {
+        width: 100%;
+        margin-left: 0rem;
+        padding-bottom: 2rem;
+    }
+    .checkin_out_and_map_container {
+        flex-direction: row;
+    }
+    .hotel_form_group {
+        flex-direction: row;
+    }
+    .date_container {
+        flex-direction: column;
+    }
+    .hotelDetail_weather_container {
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: column;
+    }
+    .hotelDetail_weather_air_container {
+        flex-direction: column;    
+    }
+    .hotelDetail_weather_leftside {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        height: 100%;
+        border-radius: 2rem;
+        align-items: center;
+        padding: 0.5rem;
+        width: 100%;
+    }
+    
+    .hotelDetail_weather_rightside {
+        width: 100%;
+        /* height: 90%; */
+        display: flex;
+        flex-direction: column;
+    }
+    .hotelDetail_air_quality_left {
+        padding: 0;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+        height: auto;
+    }
+    .hotelDetail_air_quality_left > .face {
+        font-size: 0.5rem;
+    }
+}

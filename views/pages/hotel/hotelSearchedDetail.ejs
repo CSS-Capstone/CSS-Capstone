@@ -77,13 +77,13 @@
         <div class="hotelDetail_hotelImages">
             <div class="hoteDetail_hotelImageContainer">
                 <div class="hotelDetail_hotelImageBlock">
-                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_1/660/490.jpg" alt="Hotel Image 1" data-image-id="<%=hotelObj.hotelId%>" data-image-num="1"/>
+                    <img class="hotelSearched_detail_big_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_1/660/490.jpg" alt="Hotel Image 1" data-image-id="<%=hotelObj.hotelId%>" data-image-num="1"/>
                 </div>
                 <div class="hotelDetail_hotelImageGrid">
-                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_2/360/235.jpg" alt="Hotel Image 2" data-image-id="<%=hotelObj.hotelId%>" data-image-num="2"/>
-                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_3/360/235.jpg" alt="Hotel Image 3" data-image-id="<%=hotelObj.hotelId%>" data-image-num="3"/>
-                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_4/360/235.jpg" alt="Hotel Image 4" data-image-id="<%=hotelObj.hotelId%>" data-image-num="4"/>
-                    <img src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_5/360/235.jpg" alt="Hotel Image 5" data-image-id="<%=hotelObj.hotelId%>" data-image-num="5"/>
+                    <img class="hotelSearched_detail_small_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_2/360/235.jpg" alt="Hotel Image 2" data-image-id="<%=hotelObj.hotelId%>" data-image-num="2"/>
+                    <img class="hotelSearched_detail_small_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_3/360/235.jpg" alt="Hotel Image 3" data-image-id="<%=hotelObj.hotelId%>" data-image-num="3"/>
+                    <img class="hotelSearched_detail_small_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_4/360/235.jpg" alt="Hotel Image 4" data-image-id="<%=hotelObj.hotelId%>" data-image-num="4"/>
+                    <img class="hotelSearched_detail_small_image" src="https://photo.hotellook.com/image_v2/limit/h<%=hotelObj.hotelId%>_5/360/235.jpg" alt="Hotel Image 5" data-image-id="<%=hotelObj.hotelId%>" data-image-num="5"/>
                     <button class="hotelDetail_moreImage_btn" data-image-hotelId="<%=hotelObj.hotelId%>">
                         <strong>Show All Photos</strong>
                     </button>
@@ -119,11 +119,11 @@
                         <div class="hotelDetail_address" data-hotel-address="<%=hotelObj.GEO_Formatted_Address%>">
                             <div class="hotel_address_info_conatiner">
                                 <h2>Hotel Address</h2>
-                                <p><%=hotelObj.GEO_Formatted_Address%></p>
+                                <p class="hotel_address"><%=hotelObj.GEO_Formatted_Address%></p>
                             </div>
                             <div class="hotel_city_info_container">
                                 <h2>City Full Name</h2>
-                                <p><%=hotelObj.cityFullName%></p>
+                                <p class="hotel_full_city_country"><%=hotelObj.cityFullName%></p>
                             </div>
                         </div>
                         <div class="hotel_form_group">
@@ -198,15 +198,15 @@
                     <div class="hotelDetail_weather_container">
                         <div class="hotelDetail_weather_leftside">
                             <h3 class="weather_left_title">Current Weather in City</h3>
-                            <h2><%=hotelObj.hotelLocationName%></h2>
+                            <h2 class="weather_hotel_cityCountry"><%=hotelObj.hotelLocationName%></h2>
                             <img class="weather_left_icon" src="http://openweathermap.org/img/w/<%=weatherData.weather[0].icon%>.png" alt="weather of the city">
                             <p class="weather_left_description"><%=weatherData.weather[0].description%></p>
                             <p class="weather_left_feelslike">Feels like <%=(weatherData.main.feels_like * (9/5) - 459.67).toFixed(2)%>&#8457;</p>
                         </div>
                         <div class="hotelDetail_weather_rightside">
-                            <p>Current Temperature(Kelvin): <strong><%=weatherData.main.temp%>&#8490;</strong></p>
-                            <p>Current Temperature(Fahrenheit): <strong><%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</strong></p>
-                            <p>Current Temperature(Celsius): <strong><%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</strong></p>
+                            <p class="weather_current_temp">Current Temperature(Kelvin): <strong><%=weatherData.main.temp%>&#8490;</strong></p>
+                            <p class="weather_current_temp_fahren">Current Temperature(Fahrenheit): <strong><%=(weatherData.main.temp * (9/5) - 459.67).toFixed(2)%>&#8457;</strong></p>
+                            <p class="weather_current_temp_celsius">Current Temperature(Celsius): <strong><%=(weatherData.main.temp - 273.15).toFixed(2)%>&#8451;</strong></p>
                             <div class="hotelDetail_weather_wind">
                                 <h3>Wind Speed</h3>
                                 <i class="fas fa-wind"></i>&nbsp; <strong><%=weatherData.wind.speed%>mph</strong>

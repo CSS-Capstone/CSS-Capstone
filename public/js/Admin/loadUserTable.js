@@ -54,9 +54,9 @@ function loadChart(data) {
     var bookingPriceCnt = {'$0-50': 0, 
                             '$51-100': 0, 
                             '$101-200': 0, 
-                            '$200-300': 0, 
+                            '$201-300': 0, 
                             '$300+': 0 };
-    var labels = ['$0-50', '$51-100', '$101-200', '$200-300', '$300+'];
+    var labels = ['$0-50', '$51-100', '$101-200', '$201-300', '$300+'];
     
     for (var i = 0; i < priceData.length; i++) {
         var price = priceData[i].bookingPrice;
@@ -67,7 +67,7 @@ function loadChart(data) {
         } else if (price > 100 && price <= 200) {
             bookingPriceCnt['$101-200']++;
         } else if (price > 200 && price <= 300) {
-            bookingPriceCnt['$200-300']++;
+            bookingPriceCnt['$201-300']++;
         } else {
             bookingPriceCnt['$300+']++;
         }

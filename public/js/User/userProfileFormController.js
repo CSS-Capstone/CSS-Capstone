@@ -38,9 +38,7 @@ function changeSubmitButton() {
 function deleteLanguage(btnName) {
     btnName.remove();
     var lang = btnName.childNodes[0].lang;
-    console.log('before clickedArr: ' + clickedArr.length);
     clickedArr.splice(clickedArr.findIndex(item => item.code === lang), 1);
-    console.log('after clickedArr: ' + clickedArr.length);
     return;
 }
 

@@ -191,7 +191,7 @@ async function getBookingHistory() {
             canCancel = true;
             bookingCancelBtn = document.createElement('button');
             bookingCancelBtn.setAttribute('class', 'cancel__booking__btn');
-            bookingCancelBtn.setAttribute('onclick', "location.href='/user/cancelbooking/" + `${bookingHistories[i].booking_id}`);
+            bookingCancelBtn.setAttribute('onclick', "location.href='/user/cancelbooking/" + `${bookingHistories[i].booking_id}` + "'");
             bookingCancelBtn.innerHTML = "Request to cancel";
         }
 

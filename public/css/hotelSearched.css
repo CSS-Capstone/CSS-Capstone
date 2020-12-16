@@ -289,6 +289,89 @@ body {
     height: 100%;
     align-items: center;
     /* position: sticky; */
-    /* padding: 0rem 1rem; */
-    
+    /* padding: 0rem 1rem; */   
 }
+
+
+/* RESPONSIVE SCREEN */
+@media screen and (max-width: 1239px) {
+    .hotel_searched_info {
+        flex: 1.5;
+    }
+    
+    .hotel_desc {
+        flex-direction: column;
+    }
+
+    .hotel_desc_detail_btn {
+        margin: 0.2rem;
+    }
+}
+/* hotel_serach_each_hotel */
+@media screen and (max-width: 999px) {
+    /* .hotel_images {
+        flex: 0.7;
+    }
+    .hotel_desc {
+        flex: 1;
+    } */
+    .hotelDB_desc_footer {
+        align-items: baseline;
+        flex-direction: column;
+        margin-top: 0.5rem;
+    }
+    .hotel_desc_footer {
+        align-items: baseline;
+        flex-direction: column;
+        margin-top: 2rem;
+    }
+    .hotel_desc_detail_btn {
+        margin-bottom: 2rem;
+    }
+    .hotel_desc_btn {
+        margin-bottom: 2rem;
+    }
+    .hotelSearchDB_image {
+        width: 220px;
+        height: 160px;
+    }
+    .hotelSearch_image {
+        width: 220px;
+        height: 160px;
+    }
+}
+
+@media screen and (max-width: 795px) {
+    .hotel_searched_location {
+        font-size: 2rem;
+    }
+    .hotel_search_container {
+        flex-direction: column;
+    }
+    .hotelDB_desc_footer {
+        align-items: baseline;
+        flex-direction: row;
+        margin-top: 0.5rem;
+    }
+    .hotel_desc_footer {
+        align-items: baseline;
+        flex-direction: row;
+        margin-top: 2rem;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .hotel_serach_each_hotelDB {
+        flex-direction: column;
+    }
+    .hotelSearchDB_image {
+        width: 100%;
+    }
+    .hotelSearch_image {
+        width: 100%;
+    }
+    .hotel_serach_each_hotel {
+        flex-direction: column;
+    }
+}
+
