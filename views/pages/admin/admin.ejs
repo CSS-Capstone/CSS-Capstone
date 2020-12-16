@@ -357,13 +357,27 @@
                             </h3>
                         </div>
                         <div class="card-content">
-                            <form id="send_promo_form">
-                                <div id="send__promo__wrapper">
-                                    <select id="send__promo__select">
+                            <div id="send__promo__wrapper">
+                                <span>
+                                <form id="promo_form_group">
+                                    Promo Group
+                                    <select id="promo__group__select">
                                     </select>
-                                    <input type="submit" class="submit__promo__grp__btn" onclick="sendPromoMails()">Submit Promo Group</input>
-                                </div>
-                            </form>
+                                </form>
+                                </span>
+                            </div>
+                            <br>
+                            <div id="send__promo__wrapper">
+                                <span>
+                                <form id="promo_form_template">
+                                    Promo Template
+                                    <select id="promo__template__select">
+                                    </select>
+                                </form>
+                                </span>
+                            </div>
+                            <br>
+                            <input type="submit" class="submit__promo__grp__btn" id="promo_btn"></input>
                         </div>
                     </div>
                 </div>

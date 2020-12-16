@@ -120,6 +120,57 @@ router.post('/user/updateProfile', authMW.isLoggedIn, async(req, res) => {
     res.json(req.session.user);
 });
 
+router.get('/user/reviewCounts', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/reviewCounts');
+
+    let user = req.session.user;
+
+    let reviewCntQuery = `SELECT COUNT(*) AS cnt FROM COMMENT WHERE user_id=?`;
+
+    db.query(reviewCntQuery, [user.user_id], async (err, results) => {
+        if (err) console.log('Failed to get user comment count :' + err);
+        else {
+            console.log('Successful on retrieving review counts');
+            req.session.user.profile.review_count = results[0].cnt;
+            res.json(req.session.user);
+        }
+    });
+});
+
+router.get('/user/hostingCounts', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/hostingCounts');
+
+    let user = req.session.user;
+
+    let hostingCntQuery = `SELECT COUNT(*) AS cnt FROM HOTEL WHERE user_id=?`;
+
+    db.query(hostingCntQuery, [user.user_id], async (err, results) => {
+        if (err) console.log('Failed to get hosting hotel count :' + err);
+        else {
+            console.log('Successful on retrieving hosting hotel counts');
+            req.session.user.profile.hosting_count = results[0].cnt;
+            res.json(req.session.user);
+        }
+    });
+});
+
+router.get('/user/identityVertified', authMW.isLoggedIn, async (req, res) => {
+    console.log('Fetch request: /user/identityVertified');
+
+    let user = req.session.user;
+
+    let hostingCntQuery = `SELECT * FROM USER WHERE user_id=?`;
+
+    db.query(hostingCntQuery, [user.user_id], async (err, results) => {
+        if (err) console.log('Failed to get email confirmation status :' + err);
+        else {
+            console.log('Successful on retrieving email confirmation status');
+            req.session.user.profile.is_verified = results[0].isConfirmed;
+            res.json(req.session.user);
+        }
+    });
+});
+
 router.get('/user/viewComments', authMW.isLoggedIn, async (req, res) => {
     console.log('Fetch request: /user/viewComments');
 

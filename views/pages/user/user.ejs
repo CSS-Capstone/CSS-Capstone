@@ -27,11 +27,14 @@
                 <%- include('../../partials/modal_user_photo', {user: user}) %>
             </div>
             <div class="profile__left__mid">
-                <i class="far fa-star"></i> 1 review
+                <i class="far fa-star"></i> 
+                <span id="profile__review__cnt"></span> 
                 <br>
-                <i class="fas fa-hotel"></i> 5 hotels
+                <i class="fas fa-hotel"></i>
+                <span id="profile__hosting__cnt"></span>
                 <br>
-                <i class="fas fa-check-double"></i> Identity verified
+                <i class="fas fa-check-double"></i>
+                <span id="profile__vertification__status"></span>
             </div>
             <hr/>
             <div class="profile__bottom">
@@ -191,6 +194,7 @@
     <script src="/js/Account/forgetme.js" defer></script>
     <script src="/js/User/userProfileFormController.js" defer></script>
     <script src="/js/User/userTabController.js" defer></script>
+    <script src="/js/User/fetchUserSimpleInfo.js" defer async></script>
     <%- include('../../partials/modal_user_profile_lang') %>
     <%- include('../../partials/footer') %>
     
