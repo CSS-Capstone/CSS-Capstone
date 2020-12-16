@@ -49,6 +49,9 @@ router.post('/djemals-tbvjdbwj', (req, res) => {
             }
 
             else {
+                req.session.user = {
+                    user_id: results[0].user_id
+                }
                 res.status(200).redirect('/djemals-tbvjdbwj/auth');
             }
         }
