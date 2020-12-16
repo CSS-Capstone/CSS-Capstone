@@ -10,6 +10,8 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
+const authMW = require('../../modules/auth');
+
 let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
