@@ -210,6 +210,11 @@ function openForm() {
     document.body.classList.add("showForm");
 }
 
+function openRegisterForm() {
+    showRegister();
+    document.body.classList.add("showForm");
+}
+
 function closeForm() {
     document.body.classList.remove("showForm");
 }
