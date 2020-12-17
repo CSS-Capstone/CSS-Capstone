@@ -685,6 +685,7 @@ router.get('/hotel/searched/detailDB/:id/payment', authMW.isLoggedIn, (req, res)
 
 router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, res) => {
     const user_id = req.session.user.user_id;
+    const hotel_admin_id = 68;
     // ===============================================
     let hotelCookieData = req.cookies.hotelBookingData;
     // console.log("HOTEL PRICE");
@@ -726,7 +727,7 @@ router.get('/hotel/searched/detail/:id/payment', authMW.isLoggedIn, async (req, 
             let isAPI = true;
             let isDeveloper = false;
             let hotelDefaultPrice = hotelCookieData.body.hotelDefaultPrice;
-            let hotelInsertDataSet = [hotelName, hotelDefaultPrice, countryName, cityName, hotelCookieData.body.hotelLocation, isAPI, isDeveloper, user_id, hotel_API_Id];
+            let hotelInsertDataSet = [hotelName, hotelDefaultPrice, countryName, cityName, hotelCookieData.body.hotelLocation, isAPI, isDeveloper, hotel_admin_id, hotel_API_Id];
             //  ============== INSERT DATA FOR BOOKING ===================
             let bookingPrice = hotelCookieData.body.totalPrice;
             let bookingDate = new Date();
