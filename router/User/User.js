@@ -12,10 +12,28 @@ const uuid = require('uuid');
 router.get('/user', authMW.isLoggedIn, async (req, res) => {
 
     var user = req.session.user;
-
+    let isLoggedIn = req.session.user == null ? false : true;
+            
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
     if (!user.profile.img || user.profile.img === "default_profile_img") {
         req.session.user.profile.img = "default_profile_img";
-        res.render('pages/user/user', {user: req.session.user});
+        res.render('pages/user/user', {
+            user: req.session.user,
+            isLoggedIn: isLoggedIn,
+            registerMessage: '',
+            loginMessage: '',
+            resetPasswordMessage: '',
+            modalStyle: '',
+            stayInWhere: '',
+            formDataLogin: userDetailLogin,
+            formDataRegister: userDetailRegister
+        });
     } else {
         console.log('You seem to have more than a default photo');
         let params = {
@@ -27,7 +45,17 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
                 console.log('Failed to get the image from S3.' + err); 
                 user.profile.img = "default_profile_img";
                 req.session.user = user;
-                res.render('pages/user/user', {user: req.session.user});
+                res.render('pages/user/user', {
+                    user: req.session.user,
+                    isLoggedIn: isLoggedIn,
+                    registerMessage: '',
+                    loginMessage: '',
+                    resetPasswordMessage: '',
+                    modalStyle: '',
+                    stayInWhere: '',
+                    formDataLogin: userDetailLogin,
+                    formDataRegister: userDetailRegister
+                });
             } else {
                 let imageData = data.Body;
                 let buff = Buffer.from(imageData);
@@ -35,7 +63,17 @@ router.get('/user', authMW.isLoggedIn, async (req, res) => {
                 let imageDOM = 'data:image/jpeg;base64,'+ base64data;
                 user.profile.imgDom = imageDOM;
                 req.session.user = user;
-                res.render('pages/user/user', {user: req.session.user});
+                res.render('pages/user/user', {
+                    user: req.session.user,
+                    isLoggedIn: isLoggedIn,
+                    registerMessage: '',
+                    loginMessage: '',
+                    resetPasswordMessage: '',
+                    modalStyle: '',
+                    stayInWhere: '',
+                    formDataLogin: userDetailLogin,
+                    formDataRegister: userDetailRegister
+                });
             }
         });
     }
