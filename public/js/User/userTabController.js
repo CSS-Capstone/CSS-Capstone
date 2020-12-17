@@ -151,14 +151,19 @@ async function getBookingHistory() {
 
     for (var i = 0; i < bookingHistories.length; i++) {
         var rowContainer = document.createElement('div');
-        var bookingId = new String(bookingHistories[i].booking_id);
         rowContainer.setAttribute('class', 'booking__history__row');
-        //rowContainer.setAttribute();
 
         var img = document.createElement('img');
         img.setAttribute('class', 'hotel__postings__image');
-        img.setAttribute('src', "https://photo.hotellook.com/image_v2/limit/h" + `${bookingHistories[i].hotel_API_id}` + "_1/330/330.jpg");
-
+        
+        if (bookingHistories[i].hotel_isAPI === 0) {
+            var imgFetchData = await fetch('/user/getHotelImg/' + `${bookingHistories[i].hotel_id}`);
+            var imgJson = await imgFetchData.json();
+            img.setAttribute('src', `${imgJson.imgDom}`);
+        } else {
+            img.setAttribute('src', "https://photo.hotellook.com/image_v2/limit/h" + `${bookingHistories[i].hotel_API_id}` + "_1/330/330.jpg");
+        }
+        
         var infoContainer = document.createElement('div');
         infoContainer.setAttribute('class', 'booking__hisotry__info__container');
 

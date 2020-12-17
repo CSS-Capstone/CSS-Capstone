@@ -202,7 +202,8 @@ router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
     console.log('Fetch request: /user/viewBookingHistory');
 
     let user = req.session.user;
-    let userBookingHistoryArr = [];
+    var userBookingHistoryArr = [];
+    var tempImgArray = [];
     let userBookingHistoryData = [user.user_id];
     let getBookingHistoryQuery = `SELECT BK.booking_id, BK.booking_date, BK.booking_price,
                                         BK.hotel_id, BK.check_in_date, BK.check_out_date,
@@ -230,13 +231,34 @@ router.get('/user/viewBookingHistory', authMW.isLoggedIn, async (req, res) => {
                 hotel_name: results[i].hotel_name,
                 hotel_address: results[i].address,
                 hotel_isAPI: results[i].isAPI,
-                hotel_API_id: results[i].api_hotel_id
+                hotel_API_id: results[i].api_hotel_id,
+                hotel_img_id: null
             };
             userBookingHistoryArr.push(booking);
         }
-        // HTL.hotel_id = BK.hotel_id AND 
         req.session.user.userBookingHistory = userBookingHistoryArr;
         res.json(req.session.user);
+    });
+});
+
+router.get('/user/getHotelImg/:id', authMW.isLoggedIn, async (req, res) => {
+    let hotelId = req.params.id;
+    let getHotelImgQuery = `SELECT hotel_img_id FROM USER_HOTEL_IMAGE WHERE hotel_id=? LIMIT 1`;
+    
+    db.query(getHotelImgQuery, hotelId, async (error, img) => {
+        if (error) { console.log('Failed to get hotel image'); }
+        else {
+            let params = {
+                Bucket: process.env.AWS_HOTEL_BUCKET_NAME,
+                Key: `${img[0].hotel_img_id}`
+            };
+            let eachHotelPhoto = await s3.s3.getObject(params).promise();
+            let eachImageData = eachHotelPhoto.Body;
+            let buffer = Buffer.from(eachImageData);
+            let base64data = buffer.toString('base64');
+            let imageDOM = 'data:image/jpeg;base64,' + base64data;
+            res.json({ imgDom: imageDOM });
+        }
     });
 });
 
