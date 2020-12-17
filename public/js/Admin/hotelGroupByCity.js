@@ -53,6 +53,15 @@ async function get_hotel_barChart_by_city() {
                         ]
                     }
                 ]
+            } ,options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: countHotel[0] 
+                        }
+                    }]
+                }
             }
         });
     } catch (error) {
