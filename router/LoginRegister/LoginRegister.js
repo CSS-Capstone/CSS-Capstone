@@ -131,6 +131,7 @@ router.post('/auth/register', (req, res) => {
     let email = req.body.email;
     let newPassword = req.body.newPassword;
     let confirmPassword = req.body.confirmPassword;
+    let user_created_date = new Date();
     let userDetailLogin = {
         email: ''
     }
@@ -159,7 +160,7 @@ router.post('/auth/register', (req, res) => {
          
         let hashedPassword = await bcrypt.hash(newPassword, 8);
         // console.log(hashedPassword);
-        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true, isConfirmed: false}, async (error, result) => {
+        db.query('INSERT INTO USER SET ?', {user_id: '', email: email, username: username, password: hashedPassword, is_host: true, is_developer: true, isConfirmed: false, user_created_date: user_created_date}, async (error, result) => {
             if (error) {
                 console.log(error);
             } else {
@@ -208,8 +209,9 @@ router.get('/confirm_account/:user_id/:password', (req, res) => {
     let password = req.params.password;
     let passwordDecoded = decodeURI(password);
     let isConfirmed = true;
+    let user_created_date = new Date();
     // console.log(passwordDecoded);
-    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded], (error, results) => {
+    db.query('UPDATE USER SET isConfirmed = ?, user_created_date = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded, user_created_date], (error, results) => {
         if (error) {
             console.log(error);
         }
