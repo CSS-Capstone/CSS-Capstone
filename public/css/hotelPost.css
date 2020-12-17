@@ -246,4 +246,78 @@
 input.invalid {
     background-color: var(--color-warning);
 }
-  
+
+@media screen and (max-width: 1024px) {
+    .postYourHotel_container {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 901px) {
+    .postYourHotel_container {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 846px) {
+    .postYourHotel_container {
+        width: 100%;
+    }
+    #prevBtn {
+        width: 20%;
+        height: 35px;
+        outline: none;
+        border: 1px solid transparent;
+        background-color: var(--color-nice-blue);
+        border-radius: 2rem;
+        font-weight: bold;
+        color: rgb(241, 241, 241);
+        cursor: pointer;
+    }
+    #nextBtn {
+        width: 20%;
+        height: 35px;
+        outline: none;
+        border: 1px solid transparent;
+        background-color: var(--color-nice-blue);
+        border-radius: 2rem;
+        font-weight: bold;
+        color: rgb(241, 241, 241);
+        cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 671px) {
+    .postYourHotel_container {
+        width: 100%;
+    }
+    .postYourHotel_user_posting_section {
+        flex: 1;
+    }
+    .postYourHotel_user_posting_img_section {
+        flex: 0;
+    }
+    #prevBtn {
+        width: 25%;
+        height: 35px;
+        outline: none;
+        border: 1px solid transparent;
+        background-color: var(--color-nice-blue);
+        border-radius: 2rem;
+        font-weight: bold;
+        color: rgb(241, 241, 241);
+        cursor: pointer;
+    }
+    
+    #nextBtn {
+        width: 25%;
+        height: 35px;
+        outline: none;
+        border: 1px solid transparent;
+        background-color: var(--color-nice-blue);
+        border-radius: 2rem;
+        font-weight: bold;
+        color: rgb(241, 241, 241);
+        cursor: pointer;
+    }
+}

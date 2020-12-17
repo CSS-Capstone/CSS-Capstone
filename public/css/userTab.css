@@ -87,11 +87,67 @@
     padding: 1.5rem 1.5rem 1.5rem 1.5rem;
 }
 
-.hotel__postings__btn, .leave__comment__btn, .comment__postings__btn, .cancel__booking__btn {
+.hotel__postings__btn, .leave__comment__btn, .comment__postings__btn {
     cursor: pointer;
     outline: none;
     border-radius: 1%;
     border: 1px solid var(--color-light-grey);
     font-size: var(--font-regular);
     font-weight: var(--weight-semi-bold);
+}
+
+@media screen and (max-width: 1442px) {
+    .user__tab__wrapper {
+        width: 70%;
+        margin: 0 auto;
+        height: auto;
+    }
+    .user__tab__btn__container {
+        height: auto;
+        display: flex;
+        width: 100%;
+    }
+    .user__tab__btn__container button {
+        width: 33%;
+        height: 100%;
+        margin: 1rem 0rem;
+        padding: 1rem;
+        cursor: pointer;
+        outline: none;
+        border: none;
+        font-size: 1.3rem;
+    }
+}
+
+@media screen and (max-width: 1178px) {
+    .user__tab__wrapper {
+        width: 90%;
+        margin: 0 auto;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 713px) {
+    .user__tab__btn__container > .user__tab__btn {
+        font-size: 0.8rem;
+    }
+    .hotel__postings__panel {
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 572px) {
+    .user__tab__wrapper {
+        width: 100%;
+        margin: 0 auto;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .user__tab__btn__container > .user__tab__btn {
+        font-size: 0.6rem;
+    }
 }

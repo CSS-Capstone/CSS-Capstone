@@ -210,3 +210,40 @@ input[type="file"] {
     color: var(--color-mid-grey);
     font-weight: bold;
 }
+
+@media screen and (max-width: 1499px) {
+    .postHotelImage_container {
+        flex-direction: column-reverse;
+    }
+    .postHotelImage_left_container {
+        width: 90%;
+    }
+    .basicInformation_container {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 766px) {
+    .main_image_container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        overflow: scroll;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .postHotelImage_left_container {
+        width: 100%;
+    }
+    .basicInformation_container {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 522px) {
+    .main_image_container {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        overflow: scroll;
+    }
+}
