@@ -369,7 +369,7 @@ router.get('/hotel/searched/:cityname', async (req, res) => {
     }
 });
 
-router.get('/hotel/searched/detail/posted/:id',  async(req, res) => {
+router.get('/hotel/searched/detail/posted/:id',  authMW.isLoggedIn, async(req, res) => {
     let hotelId = req.params.id;
     let dateObj = req.cookies.hotelBookingDateData;
     const StripePublicKey = process.env.STRIPE_PUBLIC_KEY;
