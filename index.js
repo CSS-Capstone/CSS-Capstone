@@ -170,11 +170,49 @@ app.post('/', async (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    res.render('pages/about');
+    let isLoggedIn = req.session.user == null ? false : true;
+
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
+    res.render('pages/about', {
+        isLoggedIn: isLoggedIn,
+        registerMessage: '',
+        loginMessage: '',
+        resetPasswordMessage: '',
+        modalStyle: '',
+        stayInWhere: '',
+        formDataLogin: userDetailLogin,
+        formDataRegister: userDetailRegister,
+        // currDomain: currDomain
+    });
 })
 
 app.get('/faq', (req, res) => {
-    res.render('pages/FAQ');
+    let isLoggedIn = req.session.user == null ? false : true;
+
+    let userDetailLogin = {
+        email: ''
+    }
+    let userDetailRegister = {
+        email: '',
+        username: ''
+    }
+    res.render('pages/FAQ', {
+        isLoggedIn: isLoggedIn,
+        registerMessage: '',
+        loginMessage: '',
+        resetPasswordMessage: '',
+        modalStyle: '',
+        stayInWhere: '',
+        formDataLogin: userDetailLogin,
+        formDataRegister: userDetailRegister,
+        // currDomain: currDomain
+    });
 });
 
 app.get("*", (req, res) => {

@@ -9,7 +9,7 @@ var loginForm = document.querySelector('#login');
 var registerForm = document.querySelector('#register');
 var resetPasswordForm = document.querySelector('#reset_password');
 
-loginForm.addEventListener("submit", checkLoginForm, true);
+// loginForm.addEventListener("submit", checkLoginForm, true);
 registerForm.addEventListener("submit", checkRegisterForm, true);
 resetPasswordForm.addEventListener("submit", checkResetPasswordForm, true);
 
@@ -207,6 +207,11 @@ function checkResetPasswordForm(e) {
 
 function openForm() {
     showLogin();
+    document.body.classList.add("showForm");
+}
+
+function openRegisterForm() {
+    showRegister();
     document.body.classList.add("showForm");
 }
 

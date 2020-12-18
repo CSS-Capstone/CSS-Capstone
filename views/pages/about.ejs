@@ -10,29 +10,15 @@
     <!-- <link rel="stylesheet" href="/css/index.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"> 
     <link rel="stylesheet" href="/css/about.css">
+    <!-- Modal Login CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/modal.css">
+    <!-- Index CSS -->
+    <link rel="stylesheet" href="/css/headerPartial.css">
 </head>
 <body>
     <!-- ============================================= -->
     <!-- ============ Header Start =================== -->
-    <header class="index_header">
-        <nav class="index_header_nav_container">
-            <h1>
-                <a href="/">
-                    <i class="fas fa-umbrella-beach"></i>&nbsp; HotelFinder
-                </a>
-            </h1>
-            <ul>
-                <li>
-                    <a href="/about">About Us</a>
-                </li>
-                <li>
-                    <div class="index_header_nav_darkmode">
-                        <i class="far fa-moon">Dark Mode</i>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('../partials/headerNoSearch') %>
     <!-- ============== End of Header =================-->
     <!-- ============================================= -->
     <!-- ================ Main Start ==================-->

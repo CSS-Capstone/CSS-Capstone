@@ -209,9 +209,8 @@ router.get('/confirm_account/:user_id/:password', (req, res) => {
     let password = req.params.password;
     let passwordDecoded = decodeURI(password);
     let isConfirmed = true;
-    let user_created_date = new Date();
-    // console.log(passwordDecoded);
-    db.query('UPDATE USER SET isConfirmed = ?, user_created_date = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded, user_created_date], (error, results) => {
+    console.log(passwordDecoded);
+    db.query('UPDATE USER SET isConfirmed = ? WHERE user_id = ? AND password = ?', [isConfirmed, userId, passwordDecoded], (error, results) => {
         if (error) {
             console.log(error);
         }

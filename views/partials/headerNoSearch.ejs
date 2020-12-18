@@ -1,0 +1,33 @@
+<div class="index__bg" style = "height: 10.5vh;">
+    <nav id="navbar">
+        <div class="navbar__logo">
+            <i class="fas fa-hotel"></i>
+            <a href="/">Hotel Finder</a>
+        </div>
+        <div class="navbar__center__menu">
+            <span class="navbar__menu__item active" style = "position: relative; top: -8px;">
+                <a href="/about/">About Us</a>
+            </span>
+        </div>
+        <div class="navbar__right__menu">
+            <span class="navbar__menu__item darkModeContainer">
+                <a href="#"><i class="far fa-moon"></i></a>
+            </span>
+            <span class="navbar__menu__item becomehostContainer"><a href="#">Become a host</a></span>
+            <%- include('../partials/modal_account') %>
+            <span class="navbar__menu__item">
+                <a href="#" onclick="showDropDown()" class="dropdown__link">
+                    <i class="fas fa-bars"></i>
+                    <i class="far fa-user-circle userIcon"></i>
+                </a>
+            </span>
+            <%- include('../partials/user_dropdown_menu', {isLoggedIn: isLoggedIn}) %>
+        </div>
+    </nav>
+    <br>
+    <section id="wrapper">
+        <div class="searchbar">
+            
+        </div>
+    </section>
+</div>
